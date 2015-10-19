@@ -1,0 +1,225 @@
+
+
+* {
+	margin: 0;
+}
+
+html {
+    font-size: 16px;
+	overflow-x: hidden;
+    overflow-y: scroll;
+    height:100%;
+    margin: 0;
+
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#000000+67,1414ff+88 */
+    background: #FFFFFF; /* Old browsers */
+
+}
+
+body{
+	 height:100%;
+}
+
+li {
+		float: left;
+}
+
+ul {
+    display: inline-block;
+    height: auto;
+    list-style-type: none;
+    padding: 0;
+    overflow: hidden;
+    width:100%;
+    background-color: rgba(180, 0, 0, 1.0)
+}
+
+.NavButton{
+		display: inline-block;
+		width: 100%;
+
+		color: #FFFFFF;
+
+		font-family: "Arial";
+		font-size:1.4em;
+		text-align: center;
+		text-decoration: none;
+
+		padding-top: 0.5em;
+		padding-bottom: 0.5em;
+		padding-right: 2.0em;
+}
+
+.NavButton:hover, .NavButton:active {
+
+}
+
+.NavFloatLeft{
+	float:left;
+
+}
+
+.NavFloatRight{
+	float:right;
+
+}
+
+.TopLeftTitle{
+	display: block;
+	width: 100%;
+
+	color: #FFFFFF;
+
+	font-family: "Arial";
+	font-size:2.4em;
+	text-align: center;
+	text-decoration: none;
+
+	padding-top: 0.3em;
+	padding-bottom: 0.3em;
+	padding-left:1.0em;
+}
+
+.Anchor{
+
+	/* Nav Bar Height*/
+	top: -4.5em;
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	z-index: -1;
+	left: 0;
+	visibility: hidden;
+}
+
+.PageLine{
+    width:100%;
+    height: 2px;
+    background: rgb(0,0,0);
+}
+/*******************************************************************************
+* * * * * * * * * * * * * * * * Title Section * * * * * * * * * * * * * * * * *
+*******************************************************************************/
+.TitleBlock{
+	padding-top:1%;
+	padding-bottom:2%;
+	text-align:left;
+	padding-left:20%;
+	padding-right:20%;
+	position: relative;
+}
+.TitleContainer{
+	position: relative;
+	top: 10%;
+	-webkit-transform: translateY(-10%);
+	-ms-transform: translateY(-10%);
+	transform: translateY(-10%);
+    text-align: center
+}
+.Title{
+	color:rgb(25,25,25);
+	font-family: "Arial";
+	font-size:3.0em;
+}
+.SubTitle{
+	color:rgb(40,40,40);
+	font-family: "Arial";
+	font-size:1.5em;
+}
+
+/*******************************************************************************
+* * * * * * * * * * * * * * * * * Team Section * * * * * * * * * * * * * * * * *
+*******************************************************************************/
+.TeamBlock{
+    padding-left:20%;
+    padding-right:20%;    
+}
+.TeamMember{
+    margin-bottom: 6em;
+}
+.TeamPhotoLeft{
+    width: 2000px;
+    float: left;
+    border-radius:50%;
+}
+
+.TeamPhotoRight{
+    width: 200px;
+    float: right;
+    
+}
+.TeamMemberNameLeft{
+    /* Push over as wide as image  + spacing*/
+    padding-left: 230px;
+            
+    color:rgb(40,40,40);
+	font-family: "Arial";
+	font-size:2em;
+    font-weight: bold;
+}
+.TeamMemberNameRight{
+    /* Push over as wide as image  + spacing*/
+    padding-right: 230px;
+            
+    color:rgb(40,40,40);
+	font-family: "Arial";
+	font-size:2em;
+    font-weight: bold;
+}
+.TeamMemberBioLeft{
+    /* Push over as wide as image + spacing */
+    padding-left: 230px;
+        
+    color:rgb(60,60,60);
+	font-family: "Arial";
+	font-size:1.5em;
+    line-height: 130%;
+}
+.TeamMemberBioRight{
+    /* Push over as wide as image + spacing */
+    padding-right: 230px;
+        
+    color:rgb(60,60,60);
+	font-family: "Arial";
+	font-size:1.5em;
+    line-height: 130%;
+}
+
+/*******************************************************************************
+* * * * * * * * * * * * * * * * * Docs Section * * * * * * * * * * * * * * * * *
+*******************************************************************************/
+.DocBlock{
+    
+    padding-left:20%;
+    padding-right:20%;  
+}
+.Doc{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.DocName{
+    font-family: "Arial";
+	font-size:2em;
+    font-weight: bold;
+}
+
+.DocDescript{
+    color:rgb(60,60,60);
+	font-family: "Arial";
+	font-size:1.5em;
+    line-height: 130%;
+}
+
+.DocDownload{
+    background-color: rgba(180, 0, 0, 1.0);
+    color:rgb(255,255,255);
+    font-family: "Arial";
+    font-size:1.5em;
+    line-height: 130%; 
+    text-decoration: none;
+    padding: 0.5em 1em 0.5em 1em;
+    margin-top: 0.25em;
+    display: inline-block;
+}

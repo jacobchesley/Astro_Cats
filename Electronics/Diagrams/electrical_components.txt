@@ -1,0 +1,92 @@
+Camera - LinkSprite JPEG Color Camera
+	2MP, 1600 x 1200 pixels
+	Voltage: 5VDC
+	Current: 120 mA
+	Power: 600 mW
+	$54.95
+
+Tempurature and Humidity - SHT15
+	Normal Temp Range (celcius): -20 to 60
+	Normal Humidity Range: 0% - 90%
+	Voltage: 3.3 VDC
+	Measuring Current: 0.55 mA
+	Measure Power: 1.8 mW
+	Sleep Current: 0.3 uA
+	Sleep Power: 0.99 uW
+	$41.95
+
+Barometer - BMP180
+	Relative Accuracy Pressure: 950 to 1050 hPa  @ 25 celcius
+	Relative Accuracy Pressure: 700 to 900 hPa   @ 25 celcius to 40 celcius
+	Absolute Accuracy Pressure: 300 to 1100 hPa
+	Voltage: 3.3 VDC
+	Measuring Current: 1 mA
+	Measure Power: 3.3 mW
+	Sleep Current: 4 uA
+	Sleep Power: 13.2 uW
+	$9.95
+
+UV Sensor - ML8511
+	Max Sensitivity Wavelength: 365 nm
+	Voltage: 3.3 VDC
+	Measuring Current: 300 uA
+	Measure Power: 0.99 mW
+	Sleep Current: 0.1 uA
+	Sleep Power: 0.33 uW
+	$12.95
+
+Solar Irradiance Sensor - Kipp and Zonen SP Lite 2 Silicon Pyranometer
+	Field of View: 180 degrees
+	Spectral Range: 400 to 1100 nm
+	Detector Type: Photo-diode
+	Output Voltage: 0 to 150 mV
+	$445.00 - 15% University discount = 378.25
+
+Accelerometer - ADXL345
+	+- 16g
+	Voltage: 3.3 VDC
+	Measuring Current: 40 uA
+	Measure Power: 0.132 mW
+	Sleep Current: 0.1 uA
+	Sleep Power: 0.33 uW
+	$17.95
+
+GPS - SparkFun Venus GPS
+	2.5 meter accuracy
+	20hz update rate
+	Voltage: 3.3 VDC
+	Current: 68 mA
+	Power: 224 mW
+	$49.95 X2 = 99.90
+
+Payload and Ground Radio - XTend 900 1W RPSMA
+	40 mile range
+	Voltage: 5VDC
+	TX Current: 730 mA
+	RX Current: 80 mA
+	Max Current: 950 mA
+	Max Power: 4.75 watts
+	$194.95 X2 = $389.90
+
+Ground Antenna - L-COM 900 MHz 8 dBi Flat Patch Antenna
+	Frequency: 902-928 MHz
+	Gain: 8dBi
+	Horizontal Beam Width: 75 Degrees
+	Vertical Beam Width: 65 Degrees
+	$54.95
+
+Cellular Payload, Rocket and Ground - SainSmart Small GSM GPRS SIM900
+	Voltage: 5V
+	TX Current: 500 ma
+	Sleep Current :1.5 ma
+	Max Power: 2.5 Watts
+	$25.73 X3 = $77.19
+
+Arduino Mega 2560
+	Voltage: 7-12 VDC
+	$45.95 X3 = 137.85
+
+Max Measure Power: 828 mW
+	With Radio and Cell: 8.078 watts
+
+Max total power: 6 Watts
