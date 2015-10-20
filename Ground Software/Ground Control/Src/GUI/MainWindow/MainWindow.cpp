@@ -3,7 +3,6 @@
 MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 
 	// Create and add menu bar with menus
-
 	wxMenuBar * menuBar = new wxMenuBar;
 	wxMenu * menuFile = new wxMenu;
 	wxMenu * menuSerial = new wxMenu;
@@ -33,4 +32,6 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 
 	// Set the status bar
 	this->CreateStatusBar();
+
+	this->SetIcon(wxIcon("IDI_ICON1"));
 }
