@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#940000">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>UC Astro Cats - Contact</title>
+    <link href="../ucrocketry.css" rel="stylesheet" type="text/css" />
+</head>
+<body> 
+    <ul>
+        <div class="NavFloatLeft">
+            <li><a class="TopLeftTitle" href="../">UC Astro Cats</a></li>
+        </div>
+        <div class="NavFloatRight">
+            <li><a class="NavButton" href="../project/">The Project</a></li>
+            <li><a class="NavButton" href="../team/">The Team</a></li>
+            <li><a class="NavButton" href="../docs/">Documents</a></li>
+            <li><a class="NavButton" href="./">Contact</a></li>
+        </div>
+    </ul>
+
+    
+    <form class="ContactBlock" action="./Contact/contactprocess.php" method="post">
+        <div class="ContactTitle">
+              Contact University of Cincinnati Astro Cats
+        </div>
+        <div class="ContactBlockInputs">
+                    
+            <label for "Name" class="ContactBlockLabel"><br/>Your Name</label><br/>
+             <input type='text' id='name' name='Name' class='ContactTextboxSmall'>
+            <br/>
+
+            <label for "Email" class="ContactBlockLabel"><br/>Email</label><br/>
+            <input type='text' id='Email' name='Email' class='ContactTextboxSmall'>
+            <br/>
+
+            <label for "Subject" class="ContactBlockLabel"><br/>Subject</label><br/>
+            <input type='text' id='Subject' name='Subject' class='ContactTextboxSmall'>
+            <br/>
+        </div>
+        
+        <label for "Message" class="ContactBlockLabel"><br/>Message</label><br/>
+        <textarea name="Message" id="Message" class="ContactTextboxLarge"></textarea>
+        <br/>
+        
+        
+        <p class="ContactBlankField">
+            Leave this empty
+            <input name="comments" />
+        </p>
+
+        <div id="EnvelopeButton">
+            <div id="EnvelopeLeft"></div>
+            <div id="EnvelopeRight"></div>
+            <div id="EnvelopeBottom"></div>
+            <div id="EnvelopeTopInside"></div>
+            <div id="EnvelopeTopOutside"></div>
+            <input name="Send" type="submit" value="" id="ContactButton"/>
+        </div>
+        <div id="EnvelopeLeftText">Send</div>
+        <div class="ContactBlockReturnMessage"></div>
+    </form>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(".NavFloatRight").addClass("NavFloatRight").before('<img class="ThreeBar" src="../images/icons/menu.png"></img>');
+        $(".ThreeBar").click(function(){
+            $(".NavFloatRight").toggle();
+        });
+        $(window).resize(function(){
+            if(window.innerWidth > 768) {
+                $(".NavFloatRight").removeAttr("style");
+            }
+        });
+    </script>
+</body>
+</html>

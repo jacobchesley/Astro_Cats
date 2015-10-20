@@ -1,0 +1,46 @@
+.AboutBlock{
+    background: rgba(40,40,40,1.0);
+    padding-left:15%;
+	padding-right:15%;
+    padding-top: 3.5em;
+    padding-bottom: 2%;
+}
+
+.AboutTitle{
+    font-family: "Arial";
+    font-size: 2em;
+    color:rgb(220,220,220);
+    text-align: center;
+    font-weight:600;
+}
+
+.DiagramBlock{
+    padding-left:15%;
+	padding-right:15%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
+.DiagramTitle{
+    font-family: "Arial";
+    font-size: 2em;
+    color:rgb(40,40,40);
+    text-align: center;
+    font-weight:600;
+}
+
+.ComponentsBlock{
+    background: rgba(80,80,80,1.0);
+    padding-left:15%;
+	padding-right:15%;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
+.ComponentsTitle{
+    font-family: "Arial";
+    font-size: 2em;
+    color:rgb(220,220,220);
+    text-align: center;
+    font-weight:600;
+}

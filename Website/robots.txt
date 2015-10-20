@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /contact
+Disallow: /docs
+Disallow: /images
+
+SITEMAP: http://www.ucrocketry.com/sitemap.txt
