@@ -41,6 +41,13 @@
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Ground Control.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Icon\favicon.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>Ground Control</ProjectName>
