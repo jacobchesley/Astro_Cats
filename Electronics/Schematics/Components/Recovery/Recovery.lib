@@ -1,0 +1,62 @@
+EESchema-LIBRARY Version 2.3
+#encoding utf-8
+#
+# 9_Volt_Battery
+#
+DEF 9_Volt_Battery B 0 40 Y Y 1 F N
+F0 "B" 0 0 60 H V C CNN
+F1 "9_Volt_Battery" 0 150 60 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+S -1000 -500 1000 500 0 1 0 N
+X 9V 0 1000 150 200 R 50 50 1 1 w
+X Gnd 1 1000 -150 200 R 50 50 1 1 w
+ENDDRAW
+ENDDEF
+#
+# Ejection_Charge
+#
+DEF Ejection_Charge EJECT 0 40 Y Y 1 F N
+F0 "EJECT" 0 -150 60 H V C CNN
+F1 "Ejection_Charge" 0 0 60 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+S -500 250 500 -250 0 1 0 N
+X Vcc 0 -500 100 200 L 50 50 1 1 W
+X Gnd 1 -500 -150 200 L 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# Stratologger
+#
+DEF Stratologger STRAT 0 40 Y Y 1 F N
+F0 "STRAT" 0 -250 60 H V C CNN
+F1 "Stratologger" 0 0 60 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+C -900 0 354 0 1 0 N
+S -1350 -450 1350 450 0 1 0 N
+S 1350 450 1350 450 0 1 0 N
+X Gnd 0 1350 -150 200 R 50 50 1 1 W
+X Vcc 1 1350 150 200 R 50 50 1 1 W
+X Switch 2 1250 450 200 U 50 50 1 1 O
+X Switch 3 1150 450 200 U 50 50 1 1 I
+X Main_Ejection 4 950 450 200 U 50 50 1 1 O
+X Main_Ejection 5 850 450 200 U 50 50 1 1 O
+X Drogue_Ejection 6 650 450 200 U 50 50 1 1 O
+X Drogue_Ejection 7 550 450 200 U 50 50 1 1 O
+X Data_IO_1 8 -100 450 200 U 50 50 1 1 B
+X DATA_IO_2 9 -200 450 200 U 50 50 1 1 B
+X Data_IO_3 10 -300 450 200 U 50 50 1 1 B
+X Data_IO_4 11 -400 450 200 U 50 50 1 1 B
+X Data_IO_5 12 -500 450 200 U 50 50 1 1 B
+X External_Audio_1 13 -850 450 200 U 50 50 1 1 O
+X External_Audio_2 14 -950 450 200 U 50 50 1 1 O
+X External_Audio_3 15 -1050 450 200 U 50 50 1 1 O
+ENDDRAW
+ENDDEF
+#
+#End Library
