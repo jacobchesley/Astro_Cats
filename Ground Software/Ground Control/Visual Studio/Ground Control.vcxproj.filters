@@ -20,9 +20,6 @@
     <Filter Include="Source Files\Serial">
       <UniqueIdentifier>{04768576-b39a-493c-9cc6-7ebb77b1bb6f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Serial\CSerial">
-      <UniqueIdentifier>{eac41f08-7578-403c-91f7-2080aa5ab5ad}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
