@@ -37,10 +37,12 @@
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp" />
     <ClCompile Include="..\Src\GUI\MainWindow\MainWindow.cpp" />
+    <ClCompile Include="..\Src\Serial\SerialController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
+    <ClInclude Include="..\Src\Serial\SerialController.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -196,7 +198,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswud\display\</ObjectFileName>
@@ -238,7 +240,7 @@
       <AdditionalIncludeDirectories>$(wxWidgets)\lib\vc_lib\mswu\;$(wxWidgets)\include\;$(wxWidgets)\;..\Src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <ObjectFileName>vc_mswu\display\</ObjectFileName>
       <ProgramDataBaseFileName>vc_mswu\display.pdb</ProgramDataBaseFileName>

@@ -34,4 +34,9 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 	this->CreateStatusBar();
 
 	this->SetIcon(wxIcon("IDI_ICON1"));
+
+	serialController = new SerialController("\\\\.\\COM3", "baud=9600 parity=N data=8 stop=1");
+	
+
+	//serialController->StopSerial();
 }

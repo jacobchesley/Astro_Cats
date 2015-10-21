@@ -6,6 +6,7 @@
 #include "wx/wx.h"
 #endif
 
+#include "Serial\SerialController.h"
 /**
 	Main Window is the main window of the Ground Control.
 */
@@ -18,7 +19,7 @@ class MainWindow : public wxFrame {
 		MainWindow();
 
 	private:
-
+		SerialController * serialController;
 };
 
 /**
