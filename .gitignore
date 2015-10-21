@@ -190,6 +190,8 @@ ClientBin/
 ~$*
 *~
 *.dbmdl
+!AstroCatsComponents.lib
+
 *.dbproj.schemaview
 *.pfx
 *.publishsettings
