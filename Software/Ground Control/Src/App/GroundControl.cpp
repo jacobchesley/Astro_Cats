@@ -1,5 +1,4 @@
 #include "GroundControl.h"
-#include "GUI\MainWindow\MainWindow.h"
 
 IMPLEMENT_APP(GroundControl)
 
