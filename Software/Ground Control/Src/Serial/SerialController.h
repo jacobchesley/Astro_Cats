@@ -23,13 +23,13 @@ class SerialController : wxThread{
 
 	private:
 
-		void RecieveChar(COMSTAT comstat);
+		void ReadBuffer(COMSTAT comstat);
+		int WriteBuffer(char * dataToWrite);
 
 		HANDLE serialPort;
 		wxVector<char> allData;
 
 		DCB dcb;
-		OVERLAPPED overLapped;
 		COMMTIMEOUTS timeouts;
 		DWORD commEvents;
 
