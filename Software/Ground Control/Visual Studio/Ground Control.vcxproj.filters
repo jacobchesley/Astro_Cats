@@ -20,6 +20,12 @@
     <Filter Include="Source Files\Serial">
       <UniqueIdentifier>{04768576-b39a-493c-9cc6-7ebb77b1bb6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels">
+      <UniqueIdentifier>{05be4f00-dc64-4398-a4d5-8527f3e8d501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Radio Signal Strength">
+      <UniqueIdentifier>{a7968ea1-5f9d-4cad-8b19-16fe2433f03f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -30,6 +36,9 @@
     </ClCompile>
     <ClCompile Include="..\Src\Serial\SerialController.cpp">
       <Filter>Source Files\Serial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Radio Signal Strength</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +53,9 @@
     </ClInclude>
     <ClInclude Include="..\Src\Serial\SerialController.h">
       <Filter>Source Files\Serial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h">
+      <Filter>Source Files\GUI\Indicator Panels\Radio Signal Strength</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
