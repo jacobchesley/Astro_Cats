@@ -1,4 +1,4 @@
-update=10/21/2015 4:03:02 PM
+update=10/27/2015 2:52:28 PM
 version=1
 last_client=kicad
 [pcbnew]
@@ -59,3 +59,13 @@ LibName27=atmel
 LibName28=contrib
 LibName29=valves
 LibName30=Shared
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=Renderings/
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
