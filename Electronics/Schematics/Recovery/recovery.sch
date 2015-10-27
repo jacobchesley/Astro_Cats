@@ -28,8 +28,7 @@ LIBS:opto
 LIBS:atmel
 LIBS:contrib
 LIBS:valves
-LIBS:AstroCatsComponents
-LIBS:recovery-cache
+LIBS:Recovery
 EELAYER 25 0
 EELAYER END
 $Descr A3 16535 11693
@@ -65,17 +64,6 @@ F 2 "" H 4850 3150 60  0000 C CNN
 F 3 "" H 4850 3150 60  0000 C CNN
 	1    4850 3150
 	1    0    0    -1  
-$EndComp
-$Comp
-L 9_Volt_Battery B1
-U 1 1 5627F095
-P 6650 3800
-F 0 "B1" H 6650 3800 60  0000 C CNN
-F 1 "9_Volt_Battery" H 6650 3950 60  0000 C CNN
-F 2 "" H 6650 3800 60  0000 C CNN
-F 3 "" H 6650 3800 60  0000 C CNN
-	1    6650 3800
-	-1   0    0    -1  
 $EndComp
 Wire Wire Line
 	4350 3650 5650 3650
@@ -132,17 +120,6 @@ F 3 "" H 12050 3150 60  0000 C CNN
 	1    12050 3150
 	1    0    0    -1  
 $EndComp
-$Comp
-L 9_Volt_Battery B2
-U 1 1 56282CEE
-P 13850 3800
-F 0 "B2" H 13850 3800 60  0000 C CNN
-F 1 "9_Volt_Battery" H 13850 3950 60  0000 C CNN
-F 2 "" H 13850 3800 60  0000 C CNN
-F 3 "" H 13850 3800 60  0000 C CNN
-	1    13850 3800
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	11550 3650 12850 3650
 Wire Wire Line
@@ -197,17 +174,6 @@ F 2 "" H 4850 7650 60  0000 C CNN
 F 3 "" H 4850 7650 60  0000 C CNN
 	1    4850 7650
 	1    0    0    -1  
-$EndComp
-$Comp
-L 9_Volt_Battery B3
-U 1 1 56284A84
-P 6650 8300
-F 0 "B3" H 6650 8300 60  0000 C CNN
-F 1 "9_Volt_Battery" H 6650 8450 60  0000 C CNN
-F 2 "" H 6650 8300 60  0000 C CNN
-F 3 "" H 6650 8300 60  0000 C CNN
-	1    6650 8300
-	-1   0    0    -1  
 $EndComp
 Wire Wire Line
 	4350 8150 5650 8150
@@ -264,17 +230,6 @@ F 3 "" H 12050 7650 60  0000 C CNN
 	1    12050 7650
 	1    0    0    -1  
 $EndComp
-$Comp
-L 9_Volt_Battery B4
-U 1 1 56284AA7
-P 13850 8300
-F 0 "B4" H 13850 8300 60  0000 C CNN
-F 1 "9_Volt_Battery" H 13850 8450 60  0000 C CNN
-F 2 "" H 13850 8300 60  0000 C CNN
-F 3 "" H 13850 8300 60  0000 C CNN
-	1    13850 8300
-	-1   0    0    -1  
-$EndComp
 Wire Wire Line
 	11550 8150 12850 8150
 Wire Wire Line
@@ -308,4 +263,48 @@ Wire Wire Line
 	11050 6900 10900 6900
 Wire Wire Line
 	10900 6900 10900 6600
+$Comp
+L Battery BT4
+U 1 1 562FD159
+P 12850 8300
+F 0 "BT4" H 12950 8350 50  0000 L CNN
+F 1 "Battery" H 12950 8250 50  0000 L CNN
+F 2 "" V 12850 8340 60  0000 C CNN
+F 3 "" V 12850 8340 60  0000 C CNN
+	1    12850 8300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Battery BT2
+U 1 1 562FD1E0
+P 12850 3800
+F 0 "BT2" H 12950 3850 50  0000 L CNN
+F 1 "Battery" H 12950 3750 50  0000 L CNN
+F 2 "" V 12850 3840 60  0000 C CNN
+F 3 "" V 12850 3840 60  0000 C CNN
+	1    12850 3800
+	1    0    0    -1  
+$EndComp
+$Comp
+L Battery BT3
+U 1 1 562FD484
+P 5650 8300
+F 0 "BT3" H 5750 8350 50  0000 L CNN
+F 1 "Battery" H 5750 8250 50  0000 L CNN
+F 2 "" V 5650 8340 60  0000 C CNN
+F 3 "" V 5650 8340 60  0000 C CNN
+	1    5650 8300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Battery BT1
+U 1 1 562FD59E
+P 5650 3800
+F 0 "BT1" H 5750 3850 50  0000 L CNN
+F 1 "Battery" H 5750 3750 50  0000 L CNN
+F 2 "" V 5650 3840 60  0000 C CNN
+F 3 "" V 5650 3840 60  0000 C CNN
+	1    5650 3800
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC
