@@ -36,12 +36,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp" />
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.cpp" />
     <ClCompile Include="..\Src\GUI\MainWindow\MainWindow.cpp" />
     <ClCompile Include="..\Src\Serial\SerialController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
     <ClInclude Include="..\Src\Serial\SerialController.h" />
