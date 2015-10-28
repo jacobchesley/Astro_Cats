@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 
-MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
+MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefaultPosition, wxSize(800,600)){
 
 	// Create and add menu bar with menus
 	wxMenuBar * menuBar = new wxMenuBar;
@@ -89,6 +89,6 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL, i%8);
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING, i%8);
 		i += 1;
-		this->Sleep(500);
+		this->Sleep(800);
 	}
 }
