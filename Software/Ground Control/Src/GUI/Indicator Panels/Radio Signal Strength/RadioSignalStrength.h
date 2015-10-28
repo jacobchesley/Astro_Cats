@@ -1,54 +1,46 @@
 #ifndef RADIO_SIGNAL_STRENGTH_H
 #define RADIO_SIGNAL_STRENGTH_H
 
-// for compilers that support precompilation, includes "wx/wx.h"
-#include "wx/wxprec.h"
+// Include generic indicator pane;
+#include "GUI/Indicator Panels/Indicator Panel/IndicatorPanel.h"
 
-// for all others, include the necessary headers explicitly
-#ifndef WX_PRECOMP
-#include "wx/wx.h"
-#endif
+class RadioSignalStrengthBar;
 
-#include "wx/dcbuffer.h"
+class RadioSignalStrength : public wxPanel {
+	public:
+		RadioSignalStrength(wxWindow * parent, wxString title);
+		void SetRadioSignalStrength(int signalStrength);
+		void SetTitle(wxString newTitle);
 
+private:
+	wxBoxSizer * layout;
+	RadioSignalStrengthBar * bars;
+	wxTextCtrl * titleText;
+	wxTextCtrl * signalText;
+
+};
 /**
-RadioSignalStrength is the GUI panel that indicates the radios signal strength.
+RadioSignalStrengthBar is the GUI panel that indicates the radios signal strength.
 This GUI diplays bars similar to cell phone bar icons, and displays a numercial value
 1-7 describing the strength of the last received packet.
 */
-class RadioSignalStrength : public wxPanel {
+class RadioSignalStrengthBar : public IndicatorPanel {
 
 	public:
 		/**
 		Constructor for the radio signal strength panel.
 		*/
-		RadioSignalStrength(wxWindow * parent);
+		RadioSignalStrengthBar(wxWindow * parent);
 
 		/**
-		Set the signal strength.  Display is automatically updated.
+		Set the number of bars to display.  0 - 7.
 		*/
-		void SetRadioSignalStrength(int strength);
+		void SetNumBars(int numBars);
 
-		/**
-		Repaint the GUI.
-		*/
-		void PaintNow();
 	private:
 
 		int signalStrength;
 		void Render(wxDC& dc);
-		void OnPaint(wxPaintEvent& paintEvent);
-		void OnSize(wxSizeEvent& sizeEvent);
 };
 
-/**
-Enumumerations for main window.
-*/
-enum {
-	ID_CONNECT_SERIAL,
-	ID_SEND_PIL_COMMAND,
-	ID_READ_PIL_STATUS,
-	ID_DOC,
-	ID_ABOUT
-};
 #endif
