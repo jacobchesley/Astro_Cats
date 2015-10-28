@@ -10,16 +10,16 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 	wxMenu * menuHelp = new wxMenu;
 
 	// Serial Menu
-	menuSerial->Append(MainWindow::ID_CONNECT_SERIAL, _("Connect to a Serial Port"));
+	menuSerial->Append(MainWindow::MenuBar::ID_CONNECT_SERIAL, _("Connect to a Serial Port"));
 
 	// Pil Menu
-	menuPIL->Append(MainWindow::ID_SEND_PIL_COMMAND, _("Send Commands to the PIL"));
+	menuPIL->Append(MainWindow::MenuBar::ID_SEND_PIL_COMMAND, _("Send Commands to the PIL"));
 	menuPIL->AppendSeparator();
-	menuPIL->Append(MainWindow::ID_READ_PIL_STATUS, _("Get PIL Status"));
+	menuPIL->Append(MainWindow::MenuBar::ID_READ_PIL_STATUS, _("Get PIL Status"));
 
 	// Help Menu
-	menuHelp->Append(MainWindow::ID_DOC, _("Documentation"));
-	menuHelp->Append(MainWindow::ID_ABOUT, _("About"));
+	menuHelp->Append(MainWindow::MenuBar::ID_DOC, _("Documentation"));
+	menuHelp->Append(MainWindow::MenuBar::ID_ABOUT, _("About"));
 
 	// Append menus to menu bar
 	menuBar->Append(menuFile, _("&File"));
@@ -42,8 +42,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 	radioSplitter->SetSashGravity(0.5);
 	radioSplitter->SetMinimumPaneSize(20);
 
-	radioSignalStrengthPil = new RadioSignalStrength(radioSplitter);
-	radioSignalStrengthRocket = new RadioSignalStrength(radioSplitter);
+	radioSignalStrengthPil = new RadioSignalStrength(radioSplitter, "Signal From PIL");
+	radioSignalStrengthRocket = new RadioSignalStrength(radioSplitter, "Signal From Rocket");
 	radioSplitter->SplitVertically(radioSignalStrengthPil, radioSignalStrengthRocket);
 
 	// Set main layout
@@ -53,4 +53,42 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control"){
 	// Add items to main layout
 	this->GetSizer()->Add(radioSplitter, 1, wxEXPAND, 0);
 	this->GetSizer()->Layout();
+
+	uiUpdater = new UIUpdateThread(this);
+}
+
+void MainWindow::UpdateData(int dataParameter, int dataValue){
+
+	switch (dataParameter) {
+		case MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL:
+			radioSignalStrengthPil->SetRadioSignalStrength(dataValue);
+			break;
+
+		case MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING:
+			radioSignalStrengthRocket->SetRadioSignalStrength(dataValue);
+			break;
+	}
+}
+
+
+
+
+
+
+
+
+UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){
+	mainWindow = window;
+	this->Run();
+}
+
+wxThread::ExitCode UIUpdateThread::Entry(){
+
+	int i = 0;
+	while (true) {
+		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL, i%8);
+		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING, i%8);
+		i += 1;
+		this->Sleep(500);
+	}
 }

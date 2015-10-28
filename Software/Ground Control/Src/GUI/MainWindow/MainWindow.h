@@ -14,6 +14,8 @@
 #include "Serial\SerialController.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 
+class UIUpdateThread;
+
 /**
 	Main Window is the main window of the Ground Control.
 */
@@ -24,9 +26,15 @@ class MainWindow : public wxFrame {
 			Constructor for the main window.
 		*/
 		MainWindow();
+		void UpdateData(int dataParameter, int dataValue);
+		enum DataParam {
+			DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL,
+			DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING
+		};
 
 	private:
 		SerialController * serialController;
+		UIUpdateThread * uiUpdater;
 
 		// Radio Signal Strength Panels
 		wxSplitterWindow * radioSplitter;
@@ -35,7 +43,7 @@ class MainWindow : public wxFrame {
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;
-		enum {
+		enum MenuBar{
 			ID_CONNECT_SERIAL,
 			ID_SEND_PIL_COMMAND,
 			ID_READ_PIL_STATUS,
@@ -44,8 +52,18 @@ class MainWindow : public wxFrame {
 		};
 };
 
-/**
-	Enumumerations for main window.
-*/
+
+// TESTING THREAD
+class UIUpdateThread : wxThread {
+
+public:
+	UIUpdateThread(MainWindow * window);
+protected:
+	virtual ExitCode Entry();
+
+private:
+	MainWindow * mainWindow;
+
+};
 
 #endif
