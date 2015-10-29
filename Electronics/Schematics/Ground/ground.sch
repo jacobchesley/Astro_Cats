@@ -1,0 +1,160 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:Shared
+EELAYER 25 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 1
+Title ""
+Date ""
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L ARDUINO_MEGA U?
+U 1 1 56322F87
+P 4800 3250
+F 0 "U?" H 3900 4500 60  0000 C CNN
+F 1 "ARDUINO_MEGA" V 4800 3200 60  0000 C CNN
+F 2 "" H 4800 3250 60  0000 C CNN
+F 3 "" H 4800 3250 60  0000 C CNN
+	1    4800 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L XTEND_900 XT?
+U 1 1 56322FAC
+P 8400 2800
+F 0 "XT?" H 8400 2800 60  0000 C CNN
+F 1 "XTEND_900" H 8450 2900 60  0000 C CNN
+F 2 "" H 8400 2800 60  0000 C CNN
+F 3 "" H 8400 2800 60  0000 C CNN
+	1    8400 2800
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	7000 2700 5900 2700
+Wire Wire Line
+	7000 2800 6550 2800
+Wire Wire Line
+	6550 2800 6550 2600
+Wire Wire Line
+	6550 2600 5900 2600
+Wire Wire Line
+	5900 2300 7000 2300
+$Comp
+L LM317AT U?
+U 1 1 5632313B
+P 7800 4650
+F 0 "U?" H 7600 4850 40  0000 C CNN
+F 1 "LM317AT" H 7800 4850 40  0000 L CNN
+F 2 "TO-220" H 7800 4750 30  0000 C CIN
+F 3 "" H 7800 4650 60  0000 C CNN
+	1    7800 4650
+	-1   0    0    1   
+$EndComp
+$Comp
+L R R1
+U 1 1 5632317E
+P 7650 4300
+F 0 "R1" V 7730 4300 50  0000 C CNN
+F 1 "240Ω" V 7650 4300 50  0000 C CNN
+F 2 "" V 7580 4300 30  0000 C CNN
+F 3 "" H 7650 4300 30  0000 C CNN
+	1    7650 4300
+	0    1    -1   0   
+$EndComp
+$Comp
+L R R2
+U 1 1 56323226
+P 7950 4300
+F 0 "R2" V 8030 4300 50  0000 C CNN
+F 1 "680Ω" V 7950 4300 50  0000 C CNN
+F 2 "" V 7880 4300 30  0000 C CNN
+F 3 "" H 7950 4300 30  0000 C CNN
+	1    7950 4300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	7800 4400 7800 4300
+Connection ~ 7800 4300
+Wire Wire Line
+	7500 4300 7300 4300
+Wire Wire Line
+	7300 4300 7300 4700
+Wire Wire Line
+	6700 4700 7400 4700
+$Comp
+L Earth #PWR?
+U 1 1 56323375
+P 8250 4300
+F 0 "#PWR?" H 8250 4050 50  0001 C CNN
+F 1 "Earth" H 8250 4150 50  0001 C CNN
+F 2 "" H 8250 4300 60  0000 C CNN
+F 3 "" H 8250 4300 60  0000 C CNN
+	1    8250 4300
+	1    0    0    -1  
+$EndComp
+$Comp
+L +9V #PWR?
+U 1 1 56323393
+P 8250 4700
+F 0 "#PWR?" H 8250 4550 50  0001 C CNN
+F 1 "+9V" H 8250 4840 50  0000 C CNN
+F 2 "" H 8250 4700 60  0000 C CNN
+F 3 "" H 8250 4700 60  0000 C CNN
+	1    8250 4700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8100 4300 8250 4300
+Wire Wire Line
+	8200 4700 8250 4700
+Wire Wire Line
+	6700 4700 6700 2400
+Wire Wire Line
+	6700 2400 7000 2400
+Connection ~ 7300 4700
+Wire Wire Line
+	3700 2750 3300 2750
+Wire Wire Line
+	3300 2750 3300 5350
+Wire Wire Line
+	3300 5350 8250 5350
+Wire Wire Line
+	8250 5350 8250 4700
+Connection ~ 8250 4700
+$EndSCHEMATC
