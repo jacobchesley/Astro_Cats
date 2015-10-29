@@ -1,4 +1,4 @@
-update=10/21/2015 4:03:55 PM
+update=10/29/2015 12:14:29 PM
 version=1
 last_client=kicad
 [pcbnew]
@@ -59,3 +59,4 @@ LibName27=atmel
 LibName28=contrib
 LibName29=valves
 LibName30=Shared
+LibName31=PIL
