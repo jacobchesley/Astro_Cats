@@ -38,7 +38,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	serialController = new SerialController("\\\\.\\COM3", "baud=9600 parity=N data=8 stop=1");
 	
 	// Set up radio signal strength panels in their own splitter window
-	radioSplitter = new wxSplitterWindow(this);
+	radioSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
 	radioSplitter->SetSashGravity(0.5);
 	radioSplitter->SetMinimumPaneSize(20);
 
