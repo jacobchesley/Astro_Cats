@@ -69,7 +69,7 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 
 	// Get size of panel to calculate drawing dimmensions
 	int width = this->GetSize().GetWidth();
-	int height = this->GetSize().GetWidth();
+	int height = this->GetSize().GetHeight();
 
 	// Determine color of signal strengh bars based on signal strength
 	// Signal Strength - Color
