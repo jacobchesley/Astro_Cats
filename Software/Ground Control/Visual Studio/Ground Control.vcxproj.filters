@@ -29,6 +29,12 @@
     <Filter Include="Source Files\GUI\Indicator Panels\Indicator Panel">
       <UniqueIdentifier>{7bc02ad3-6a04-4f57-9536-2b151b8a9c24}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Incoming Data Stream">
+      <UniqueIdentifier>{ebba0f9f-15b5-4465-bfd5-4479a4a10d96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Serial Port Connection">
+      <UniqueIdentifier>{009e7922-68a6-401d-8bb5-ae6db74e146c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -45,6 +51,12 @@
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.cpp">
       <Filter>Source Files\GUI\Indicator Panels\Indicator Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Incoming Data Stream</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp">
+      <Filter>Source Files\GUI\Serial Port Connection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,6 +77,12 @@
     </ClInclude>
     <ClInclude Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.h">
       <Filter>Source Files\GUI\Indicator Panels\Indicator Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h">
+      <Filter>Source Files\GUI\Indicator Panels\Incoming Data Stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h">
+      <Filter>Source Files\GUI\Serial Port Connection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
