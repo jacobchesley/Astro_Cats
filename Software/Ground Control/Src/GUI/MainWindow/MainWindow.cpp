@@ -35,10 +35,14 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	this->SetIcon(wxIcon("IDI_ICON1"));
 
-	serialController = new SerialController("\\\\.\\COM3", "baud=9600 parity=N data=8 stop=1");
+	//serialController = new SerialController("\\\\.\\COM3", "baud=9600 parity=N data=8 stop=1");
 	
+	radioSignalAndDataSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+	radioSignalAndDataSplitter->SetSashGravity(0.5);
+	radioSignalAndDataSplitter->SetMinimumPaneSize(50);
+
 	// Set up radio signal strength panels in their own splitter window
-	radioSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
+	radioSplitter = new wxSplitterWindow(radioSignalAndDataSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
 	radioSplitter->SetSashGravity(0.5);
 	radioSplitter->SetMinimumPaneSize(20);
 
@@ -46,13 +50,19 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	radioSignalStrengthRocket = new RadioSignalStrength(radioSplitter, "Signal From Rocket");
 	radioSplitter->SplitVertically(radioSignalStrengthPil, radioSignalStrengthRocket);
 
+	dataWindow = new IncomingDataStream(radioSignalAndDataSplitter, "Radio Data");
+	radioSignalAndDataSplitter->SplitHorizontally(radioSplitter, dataWindow);
+
 	// Set main layout
 	mainLayout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(mainLayout);
 
 	// Add items to main layout
-	this->GetSizer()->Add(radioSplitter, 1, wxEXPAND, 0);
+	this->GetSizer()->Add(radioSignalAndDataSplitter, 1, wxEXPAND, 0);
 	this->GetSizer()->Layout();
+
+
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSerialConnection, this, MainWindow::MenuBar::ID_CONNECT_SERIAL);
 
 	uiUpdater = new UIUpdateThread(this);
 }
@@ -70,7 +80,15 @@ void MainWindow::UpdateData(int dataParameter, int dataValue){
 	}
 }
 
+void MainWindow::ReciveSerialData(char * serialData, int length) {
+	dataWindow->AppendText(wxString(serialData));
+}
 
+
+void MainWindow::ShowSerialConnection(wxCommandEvent& WXUNUSED(event)) {
+	serialPortConnection = new SerialPortConnection(this);
+	serialPortConnection->Show();
+}
 
 
 
@@ -88,6 +106,9 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 	while (true) {
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL, i%8);
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING, i%8);
+
+		mainWindow->ReciveSerialData("Test", 4);
+
 		i += 1;
 		this->Sleep(800);
 	}

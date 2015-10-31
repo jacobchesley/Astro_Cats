@@ -13,6 +13,8 @@
 
 #include "Serial\SerialController.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
+#include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
+#include "GUI\Serial Port Connection\SerialPortConnection.h"
 
 class UIUpdateThread;
 
@@ -27,12 +29,17 @@ class MainWindow : public wxFrame {
 		*/
 		MainWindow();
 		void UpdateData(int dataParameter, int dataValue);
+		void ReciveSerialData(char * serialData, int length);
+
 		enum DataParam {
 			DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL,
 			DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING
 		};
 
 	private:
+
+		void ShowSerialConnection(wxCommandEvent& WXUNUSED(event));
+
 		SerialController * serialController;
 		UIUpdateThread * uiUpdater;
 
@@ -40,6 +47,13 @@ class MainWindow : public wxFrame {
 		wxSplitterWindow * radioSplitter;
 		RadioSignalStrength * radioSignalStrengthPil;
 		RadioSignalStrength * radioSignalStrengthRocket;
+
+		wxSplitterWindow * radioSignalAndDataSplitter;
+		IncomingDataStream * dataWindow;
+
+		// Serial Port Connection window
+		SerialPortConnection * serialPortConnection;
+
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;
