@@ -12,11 +12,13 @@ RadioSignalStrength::RadioSignalStrength(wxWindow * parent, wxString title) : wx
 	titleText->SetForegroundColour(wxColor(255, 255, 255));
 	titleText->SetFont(wxFont(16, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
 	titleText->SetValue(title);
+	titleText->SetEditable(false);
 
 	signalText = new wxTextCtrl(this, -1);
 	signalText->SetBackgroundColour(wxColor(0, 0, 0));
 	signalText->SetForegroundColour(wxColor(255, 255, 255));
 	signalText->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	signalText->SetEditable(false);
 
 	layout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(layout);
