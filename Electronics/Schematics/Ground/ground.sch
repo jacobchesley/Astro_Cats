@@ -29,15 +29,16 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:Shared
+LIBS:ground-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 1 1
-Title ""
-Date ""
-Rev ""
-Comp ""
+Title "Ground Electronics"
+Date "2015-10-31"
+Rev "1"
+Comp "UC Astro Cats"
 Comment1 ""
 Comment2 ""
 Comment3 ""
@@ -65,16 +66,6 @@ F 3 "" H 8400 2800 60  0000 C CNN
 	1    8400 2800
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	7000 2700 5900 2700
-Wire Wire Line
-	7000 2800 6550 2800
-Wire Wire Line
-	6550 2800 6550 2600
-Wire Wire Line
-	6550 2600 5900 2600
-Wire Wire Line
-	5900 2300 7000 2300
 $Comp
 L LM317AT U?
 U 1 1 5632313B
@@ -108,15 +99,6 @@ F 3 "" H 7950 4300 30  0000 C CNN
 	1    7950 4300
 	0    -1   -1   0   
 $EndComp
-Wire Wire Line
-	7800 4400 7800 4300
-Connection ~ 7800 4300
-Wire Wire Line
-	7500 4300 7300 4300
-Wire Wire Line
-	7300 4300 7300 4700
-Wire Wire Line
-	6700 4700 7400 4700
 $Comp
 L Earth #PWR?
 U 1 1 56323375
@@ -130,7 +112,7 @@ F 3 "" H 8250 4300 60  0000 C CNN
 $EndComp
 $Comp
 L +9V #PWR?
-U 1 1 56323393
+U 1 1 5634F39A
 P 8250 4700
 F 0 "#PWR?" H 8250 4550 50  0001 C CNN
 F 1 "+9V" H 8250 4840 50  0000 C CNN
@@ -140,7 +122,26 @@ F 3 "" H 8250 4700 60  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	8100 4300 8250 4300
+	7000 2700 5900 2700
+Wire Wire Line
+	7000 2800 6550 2800
+Wire Wire Line
+	6550 2800 6550 2600
+Wire Wire Line
+	6550 2600 5900 2600
+Wire Wire Line
+	5900 2300 7000 2300
+Wire Wire Line
+	7800 4400 7800 4300
+Connection ~ 7800 4300
+Wire Wire Line
+	7500 4300 7300 4300
+Wire Wire Line
+	7300 4300 7300 4700
+Wire Wire Line
+	6700 4700 7400 4700
+Wire Wire Line
+	8100 4300 8400 4300
 Wire Wire Line
 	8200 4700 8250 4700
 Wire Wire Line
@@ -157,4 +158,13 @@ Wire Wire Line
 Wire Wire Line
 	8250 5350 8250 4700
 Connection ~ 8250 4700
+Wire Wire Line
+	8400 4300 8400 5500
+Wire Wire Line
+	8400 5500 3150 5500
+Wire Wire Line
+	3150 5500 3150 2650
+Wire Wire Line
+	3150 2650 3700 2650
+Connection ~ 8250 4300
 $EndSCHEMATC
