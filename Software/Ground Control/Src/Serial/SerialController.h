@@ -14,6 +14,7 @@ class SerialController : wxThread{
 	public:
 		SerialController();
 		SerialController(std::string portName, std::string hardwareInfo);
+
 		wxVector<char> GetAllData();
 
 		void StopSerial();

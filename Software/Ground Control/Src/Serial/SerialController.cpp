@@ -139,7 +139,6 @@ int SerialController::WriteBuffer(char * dataToWrite) {
 
 }
 
-
 void SerialController::StopSerial() {
 
 	SetEvent(shutdownEvent);
