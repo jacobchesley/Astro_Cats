@@ -101,4 +101,34 @@ X Gnd 4 150 -650 200 U 50 50 1 1 W
 ENDDRAW
 ENDDEF
 #
+# SP-215
+#
+DEF SP-215 Py 0 40 Y Y 1 F N
+F0 "Py" 0 250 60 H V C CNN
+F1 "SP-215" 0 350 60 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+C 0 0 500 0 1 0 f
+X Signal_(Green) 1 -100 -700 200 U 50 50 1 1 O
+X Vcc_(White) 2 0 -700 200 U 50 50 1 1 W
+X Ground_(Clear) 3 100 -700 200 U 50 50 1 1 W
+ENDDRAW
+ENDDEF
+#
+# Servo_Motor
+#
+DEF Servo_Motor M 0 40 Y Y 1 F N
+F0 "M" -150 -50 60 H V C CNN
+F1 "Servo_Motor" -150 50 60 H V C CNN
+F2 "" 0 0 60 H V C CNN
+F3 "" 0 0 60 H V C CNN
+DRAW
+S -450 -200 450 200 0 1 0 f
+X Gnd 1 650 -100 200 L 50 50 1 1 W
+X Vcc 2 650 0 200 L 50 50 1 1 W
+X Signal 3 650 100 200 L 50 50 1 1 I
+ENDDRAW
+ENDDEF
+#
 #End Library
