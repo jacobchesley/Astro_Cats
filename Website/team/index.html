@@ -28,12 +28,26 @@
             <li><a class="TopLeftTitle" href="../#Astrocats">UC Astro Cats</a></li>
         </div>
         <div class="NavFloatRight">
-            <li><a class="NavButton" href="javascript:history.back()">Back</a></li>
+            <li><a class='NavButton' href='../'>Back</a></li>
+            
+            <script>
+                if(document.referrer.indexOf("ucrocketry.com") > -1){
+                    // Get nav float right element and append history button to it.
+                    var navFloatRight = document.getElementsByClassName("NavFloatRight");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='javascript:history.back()'>Back</a></li>"
+
+                }
+                else{
+                    // Get nav float right element and append back button to home page
+                    var navFloatRight = document.getElementsByClassName("NavFloatRight");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='../'>Back</a></li>"
+                }
+            </script>
         </div>
     </ul>
     
     <div class="TeamBlock_Separate">
-        <div class="TeamBlock_SeparateTitle">Meet the Team</div>
+        <div class="TeamBlock_SeparateTitle"></br>Meet the Team</div>
         <a name="Nick" id="Nick" class="Anchor"></a>
         <div class="TeamMember_Separate">
             <img class="TeamPhotoLeft" src="../images/team/nick.JPG"/>

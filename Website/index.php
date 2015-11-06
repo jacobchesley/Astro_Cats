@@ -6,13 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#940000">
 <meta name="description" content="Univeristy of Cincinnati Astro Cats.  NASA USLI Team.">
-<meta name="keywords" content="University, Cincinnati, Astro, Cats, AstroCats, NASA, SLI, USLI">
+<meta name="keywords" content="University,Cincinnati,Univeristy of Cincinnati,UC,Astro,Cats,AstroCats,NASA,SLI,USLI,Student,Launch,Student Launch,Rocketry, UC Rocketry, UCRocketry, University of Cincinnati Rocketry">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>UC Astro Cats</title>
     <link href="./ucrocketry.css" rel="stylesheet" type="text/css" />
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script src="./jquery/jquery.min.js"></script>
     
     <! ICONS >
     <link rel="apple-touch-icon" sizes="57x57" href="./images/icons/favicons/apple-icon-57x57.png">
@@ -98,11 +98,9 @@
 
                     </br>
                     </br>
-                    <!--
                     <div class="ProjectButtonContainer">
                         <a href="./education/" class="ProjectButton">Educational Outreach Info</a>
                     </div>
-                    -->
                 </div>
             </div>
         </div>
@@ -251,10 +249,92 @@
             </div>
             <div class="DocSection">
                 Safety Documents
-                <div class="NoDoc">
-                    FRR Documents will be available by March 14, 2016 at 8:00 AM Central Time
+                
+                </br>
+                <button id="button1" class="SafetyButton">Show/Hide Safety Training Presentations</button>
+                <div id="wrapper1">
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/presentations/Pre-Job%20Brief%20Training.ppt">Download Pre Job Brief Training Presentation</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/presentations/Personal%20Protective%20Equipment%20Training.ppt">Download Personal Protective Equipment Training Presentation</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/presentations/Hazard%20Recognition%20and%20Mitigation%20Training.ppt">Download Hazard Recognition Training Presentation</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/presentations/Hand%20and%20Power%20Tool%20Training.ppt">Download Hand and Power Tool Training Presentation</a>
+                    </div>
+                </div>
+                
+                </br>
+                <button id="button2" class="SafetyButton">Show/Hide Safety Training Logs</button>
+                <div id="wrapper2">
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/logs/Pre-Job%20Brief%20Training%20Sheet.pdf">Download Pre Job Brief Training Log</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/logs/Personal%20Protective%20Equipment%20Training%20Sheet.pdf">Download Personal Protective Equipment Training Log</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/logs/Hazard%20Recognition%20and%20Mitigation%20Taining%20Log.pdf">Download Hazard Recognition Training Log</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/logs/Hand%20and%20Power%20Tool%20Training%20Log.pdf">Download Hand and Power Tool Training Log</a>
+                    </div>
+                </div>
+                
+                </br>
+                <button id="button3" class="SafetyButton">Show/Hide MSDS Documents</button>
+                <div id="wrapper3">
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/MSDS_ProX_ver2-2.docx">Download ProX Rocket Motor Reload Kits and Fuel Grains MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/MSDS_Profire_ver2-01.docx">Download ProFire Igniter MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/824%20Hardener.docx">Download 824 Hardner MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/820%20Resin.docx">Download 820 Resin MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/Lead_soldersMSDS.docx">Download Lead Solder MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/mg_ferric_chloride.docx">Download Ferric Chloride MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/acetone.docx">Download Acetone MSDS</a>
+                    </div>
+                    <div class="Doc">
+                        <a class="SafetyDocDownload" target="_blank" href="./docs/safety/msds/lj_q2612a-ac-ad-af-l_us_eng_v16.docx">Download HP LaserJet Q2612A-AC-AD-AF-L Print Cartridge MSDS</a>
+                    </div>
+                    
                 </div>
             </div>
+
+            <script>
+                var wrapper1 = document.getElementById("wrapper1");
+                var wrapper2 = document.getElementById("wrapper2");
+                var wrapper3 = document.getElementById("wrapper3");
+                
+                wrapper1.style.display='none';
+                wrapper2.style.display='none';
+                wrapper3.style.display='none';
+                
+                $('#button1').click(function(){
+                    $('#wrapper1').toggle();
+                })
+                $('#button2').click(function(){
+                    $('#wrapper2').toggle();
+                })
+                $('#button3').click(function(){
+                    $('#wrapper3').toggle();
+                })
+                
+            </script>
         </div>
         
         <a name="Contact" id="Contact" class="Anchor"></a>
@@ -308,9 +388,6 @@
         			echo $_SESSION["message"];
         			unset($_SESSION["message"]);
         		}
-                else{
-                    echo "";   
-                }
         	?>        
             </textarea>
             <br/>
