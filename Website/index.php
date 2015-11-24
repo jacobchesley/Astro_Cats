@@ -13,8 +13,9 @@
     <title>UC Astro Cats</title>
     <link href="./ucrocketry.css" rel="stylesheet" type="text/css" />
     <script src="./jquery/jquery.min.js"></script>
+
+    <meta name="google-site-verification" content="PFdi1MNuZ7Qu5EhlW9y1joiWEYESw8PsnSQ_jSGSmXg" />
     
-    <! ICONS >
     <link rel="apple-touch-icon" sizes="57x57" href="./images/icons/favicons/apple-icon-57x57.png">
     <link rel="apple-touch-icon" sizes="60x60" href="./images/icons/favicons/apple-icon-60x60.png">
     <link rel="apple-touch-icon" sizes="72x72" href="./images/icons/favicons/apple-icon-72x72.png">
@@ -226,13 +227,19 @@
             <div class="DocSection">
                 Proposal Documents
                 <div class="Doc">
-                    <a class="DocDownload" target="_blank" href="./Docs/University of Cincinnati NASA SLI Proposal 2016.pdf">Download Proposal</a>
+                    <a class="DocDownload" target="_blank" href="./docs/proposal/University of Cincinnati NASA SLI Proposal 2016.pdf">Download Proposal</a>
                 </div>
             </div>
             <div class="DocSection">
                 Preliminary Design Review Documents
-                <div class="NoDoc">
-                    PDR Documents will be available by November 6, 2015 at 8:00 AM Central Time
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%202016.pdf">Download Preliminary Design Review</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%20Presentation%202016.pdf">Download Preliminary Design Review Presentation</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%20Flysheet.pdf">Download Milestone Review Flysheet</a>
                 </div>
             </div>
             <div class="DocSection">
@@ -416,11 +423,14 @@
         </form>
     
     <div class="FooterBlock">
+        <a class="PhotoLink" href="http://www.facebook.com/UCAstrocats">
+            <img class="SocialMediaLogo" src="./images/icons/FacebookLogo.png"/>
+        </a>
         <a class="PhotoLink" href="http://www.twitter.com/UCAstrocats">
             <img class="SocialMediaLogo" src="./images/icons/TwitterLogo.png"/>
         </a>
-        <a class="PhotoLink" href="http://www.facebook.com/UCAstrocats">
-            <img class="SocialMediaLogo" src="./images/icons/FacebookLogo.png"/>
+        <a class="PhotoLink" href="http://www.youtube.com/channel/UCt1g0heSd5HSnuIS1gwwzdA">
+            <img class="SocialMediaLogo" src="./images/icons/YouTubeLogo.png"/>
         </a>
         <div class="Copyright">
             Copyright 2015.  University of Cincinnati Astro Cats.  All rights reserved.
