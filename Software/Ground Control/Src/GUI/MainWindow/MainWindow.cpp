@@ -35,7 +35,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	this->SetIcon(wxIcon("IDI_ICON1"));
 
-	//serialController = new SerialController("\\\\.\\COM3", "baud=9600 parity=N data=8 stop=1");
+	serialController = new SerialController();
 	
 	radioSignalAndDataSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
 	radioSignalAndDataSplitter->SetSashGravity(0.5);
@@ -64,6 +64,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSerialConnection, this, MainWindow::MenuBar::ID_CONNECT_SERIAL);
 
+	hexToJpeg = new HexToJpeg();
+
 	uiUpdater = new UIUpdateThread(this);
 }
 
@@ -80,19 +82,31 @@ void MainWindow::UpdateData(int dataParameter, int dataValue){
 	}
 }
 
-void MainWindow::ReciveSerialData(char * serialData, int length) {
-	dataWindow->AppendText(wxString(serialData));
+void MainWindow::ReciveSerialData(wxString serialData){
+
+	dataWindow->AppendText(serialData);
+
+	if (serialData == "END") {
+		hexToJpeg->WriteJpegFile("C:\\Development\\UC Rocketry\\Nasa SLI\\Software\\Ground Control\\Build\\Release\\Test.jpeg");
+		OutputDebugStringA("Wrote to file");
+		return;
+	}
+
+	char jpegData[16384];
+	for (int i = 0; i < serialData.size(); i++) {
+		jpegData[i] = serialData[i];
+	}
+	hexToJpeg->AppendHex(jpegData, serialData.size());
 }
 
+SerialController * MainWindow::GetSerialController() {
+	return serialController;
+}
 
 void MainWindow::ShowSerialConnection(wxCommandEvent& WXUNUSED(event)) {
-	serialPortConnection = new SerialPortConnection(this);
+	serialPortConnection = new SerialPortConnection(this, serialController);
 	serialPortConnection->Show();
 }
-
-
-
-
 
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){
@@ -103,13 +117,29 @@ UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED
 wxThread::ExitCode UIUpdateThread::Entry(){
 
 	int i = 0;
+	int dataLen = 0;
 	while (true) {
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL, i%8);
 		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING, i%8);
 
-		mainWindow->ReciveSerialData("Test", 4);
+		// Data has been aquired
+		if (mainWindow->GetSerialController()->GetAllData().size() > 0) {
+
+			dataLen += mainWindow->GetSerialController()->GetAllData().size();
+			wxVector<char> incomingData = mainWindow->GetSerialController()->GetDataStartingAtIndex();
+
+			if (incomingData.size() < 1) {
+				this->Sleep(100);
+				continue;
+			}
+			wxString append = "";
+			for (int i = 0; i < incomingData.size(); i++) {
+				append += incomingData[i];
+			}
+			mainWindow->ReciveSerialData(append);
+		}
 
 		i += 1;
-		this->Sleep(800);
+		this->Sleep(10);
 	}
 }

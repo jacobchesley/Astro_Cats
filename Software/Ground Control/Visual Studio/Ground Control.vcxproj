@@ -41,6 +41,7 @@
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.cpp" />
     <ClCompile Include="..\Src\GUI\MainWindow\MainWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp" />
+    <ClCompile Include="..\Src\HexToJpeg\Interpreter.cpp" />
     <ClCompile Include="..\Src\Serial\SerialController.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +51,7 @@
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
     <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h" />
+    <ClInclude Include="..\Src\HexToJpeg\Interpreter.h" />
     <ClInclude Include="..\Src\Serial\SerialController.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>

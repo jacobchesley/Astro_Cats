@@ -1,26 +1,32 @@
 #include "SerialController.h"
 
-SerialController::SerialController() : wxThread(wxTHREAD_DETACHED){}
+SerialController::SerialController() : wxThread(wxTHREAD_DETACHED){
+	isConnected = false;
+	currentIndex = 0;
+}
 
 SerialController::SerialController(std::string portName, std::string hardwareInfo) : wxThread(wxTHREAD_DETACHED){
+	isConnected = false;
+	this->Connect(portName, hardwareInfo);
+	currentIndex = 0;
+	this->Run();
+}
 
+void SerialController::Connect(std::string portName, std::string hardwareInfo) {
+	CloseHandle(serialPort);
 	std::wstring serialName(portName.length(), L' ');
 	std::copy(portName.begin(), portName.end(), serialName.begin());
 
 	std::wstring dcbWideStr(hardwareInfo.length(), L' ');
 	std::copy(hardwareInfo.begin(), hardwareInfo.end(), dcbWideStr.begin());
-	
+
 	// Open the serial port
 	serialPort = ::CreateFile(serialName.c_str(), GENERIC_READ | GENERIC_WRITE,
 		0, 0, OPEN_EXISTING, NULL, 0);
-	
-	if (serialPort == INVALID_HANDLE_VALUE){
-		const DWORD error = GetLastError();
-		OutputDebugStringA("Serial Port Failed Connecting");
+
+	if (serialPort == INVALID_HANDLE_VALUE) {
+		isConnected = false;
 		return;
-	}
-	else {
-		OutputDebugStringA("Serial Port Connected!");
 	}
 
 	shutdownEvent = NULL;
@@ -28,7 +34,6 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 		ResetEvent(shutdownEvent);
 	}
 	shutdownEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	
 
 	// set the timeout values
 	timeouts.ReadIntervalTimeout = 1;
@@ -39,7 +44,7 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 
 	// configure
 	DWORD dwCommEvents;
-	if(!SetCommTimeouts(serialPort, &timeouts)) {
+	if (!SetCommTimeouts(serialPort, &timeouts)) {
 		OutputDebugStringA("Set Comm Timeout Fail");
 		return;
 	}
@@ -50,6 +55,8 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 	}
 
 	//dcb.fRtsControl = RTS_CONTROL_ENABLE;		// set RTS bit high!
+	memset(&dcb, 0, sizeof(dcb));
+	dcb.DCBlength = sizeof(dcb);
 	if (!BuildCommDCB(dcbWideStr.c_str(), &dcb)) {
 		OutputDebugStringA("Build Comm DCB Failed");
 		return;
@@ -64,8 +71,8 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 		OutputDebugStringA("Get Comm State Failed");
 		return;
 	}
-	
-	OutputDebugStringA("Done configuring");
+
+	isConnected = true;
 
 	// Notify us when the serial port finishes sending data, or when data is recieved
 	//SetCommMask(serialPort, EV_TXEMPTY | EV_RXCHAR);
@@ -74,7 +81,6 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 	PurgeComm(serialPort, PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_RXABORT | PURGE_TXABORT);
 	this->Run();
 }
-
 wxThread::ExitCode SerialController::Entry() {
 
 	// Clear the serial port
@@ -90,7 +96,10 @@ wxThread::ExitCode SerialController::Entry() {
 
 	while (true) {
 
-		OutputDebugStringA("Wating on serial event...");
+		if (isConnected = false) {
+			this->Sleep(100);
+			continue;
+		}
 		BOOL waitResult = WaitCommEvent(serialPort, &resultType, NULL);
 
 		if (waitResult) {
@@ -110,22 +119,42 @@ wxThread::ExitCode SerialController::Entry() {
 	}
 }
 
+wxVector<char> SerialController::GetDataStartingAtIndex() {
+
+	wxVector<char> output;
+	int endIndex = allData.size();
+	for (int i = currentIndex; i < allData.size(); i++) {
+		output.push_back(allData[i]);
+	}
+	currentIndex = endIndex;
+	return output;
+}
+
+
 wxVector<char> SerialController::GetAllData(){
 	return wxVector<char>(allData);
+}
+
+void SerialController::ClearAllData(){
+	allData.clear();
 }
 
 void SerialController::ReadBuffer(COMSTAT status){
 
 	DWORD bytesToRead = status.cbInQue;
 	char buffer[1024] = { 0 };
+	memset(buffer, 0, 1024);
 	DWORD bytesRead = 0;
 
-	if (ReadFile(serialPort, &buffer, bytesToRead, &bytesRead, NULL)) {
+	if (ReadFile(serialPort, buffer, bytesToRead, &bytesRead, NULL)) {
+
+		//memset(buffer + bytesRead, 0, sizeof(buffer) - bytesRead);
+
+		OutputDebugStringA(std::string(buffer).c_str());
 
 		for (int i = 0; i < bytesRead; i++) {
 			allData.push_back(buffer[i]);
 		}
-		//OutputDebugStringA(std::string(buffer).c_str());
 	}
 
 }

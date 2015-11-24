@@ -1,14 +1,70 @@
 #include "SerialPortConnection.h"
 
-SerialPortConnection::SerialPortConnection(wxWindow * parent) : wxFrame(parent, -1, "Serial Port Connection") {
+SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController * controller) : wxFrame(parent, -1, "Serial Port Connection") {
+
+	serialController = controller;
+
 	this->SetBackgroundColour(wxColor(45, 45, 45));
 
 	serialBox = new wxComboBox(this, -1);
+
+	// Create baud rate combo box and append choices.
+	baudBox = new wxComboBox(this, -1);
+	baudBox->AppendString(_T("110"));
+	baudBox->AppendString(_T("300"));
+	baudBox->AppendString(_T("600"));
+	baudBox->AppendString(_T("1200"));
+	baudBox->AppendString(_T("2400"));
+	baudBox->AppendString(_T("4800"));
+	baudBox->AppendString(_T("9600"));
+	baudBox->AppendString(_T("14400"));
+	baudBox->AppendString(_T("19200"));
+	baudBox->AppendString(_T("38400"));
+	baudBox->AppendString(_T("57600"));
+	baudBox->AppendString(_T("115200"));
+	baudBox->AppendString(_T("128000"));
+	baudBox->AppendString(_T("256000"));
+	baudBox->SetValue(_T("115200"));
+
+	// Create parity bit combo box and append choices.
+	parityBox = new wxComboBox(this, -1);
+	parityBox->AppendString(_T("none"));
+	parityBox->AppendString(_T("even"));
+	parityBox->AppendString(_T("odd"));
+	parityBox->AppendString(_T("mark"));
+	parityBox->AppendString(_T("space"));
+	parityBox->SetValue(_T("none"));
+
+	// Create byte size box
+	dataBox = new wxComboBox(this, -1);
+	dataBox->AppendString(_T("7"));
+	dataBox->AppendString(_T("8"));
+	dataBox->SetValue(_T("8"));
+
+	// Create stop bit box
+	stopBox = new wxComboBox(this, -1);
+	stopBox->AppendString(_T("1"));
+	stopBox->AppendString(_T("2"));
+	stopBox->SetValue(_T("1"));
+
+	connectButton = new wxButton(this, SerialPortConnection::Actions::ID_CONNECT, _T("Connect"));
+
 	layout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(layout);
 
 	this->GetSizer()->Add(serialBox);
+	this->GetSizer()->Add(baudBox);
+	this->GetSizer()->Add(parityBox);
+	this->GetSizer()->Add(dataBox);
+	this->GetSizer()->Add(stopBox);
+	this->GetSizer()->Add(connectButton);
+
 	serialWatcher = new SerialWatcherThread(this);
+	isSafeToClose = false;
+
+	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SerialPortConnection::Connect, this, SerialPortConnection::Actions::ID_CONNECT);
+
+	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&SerialPortConnection::OnClose, this);
 }
 
 void SerialPortConnection::GetAvailableSerialPorts() {
@@ -94,17 +150,42 @@ void SerialPortConnection::UpdateAvailableSerialPortsCombo() {
 	}
 }
 
+void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
+
+	std::string baud = baudBox->GetValue().ToStdString();
+	std::string parity = parityBox->GetValue().ToStdString();
+	std::string data = dataBox->GetValue().ToStdString();
+	std::string stop = stopBox->GetValue().ToStdString();
+
+	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop;
+	OutputDebugStringA(hardwareInfo.c_str());
+	serialController->Connect(std::string(serialBox->GetValue().ToStdString()), hardwareInfo);
+}
+
+void SerialPortConnection::OnClose(wxCloseEvent& closeEvent){
+
+	// Send signal to stop thread, and wait for the thread to notify window it is safe to close.
+	serialWatcher->StopThread();
+
+	closeEvent.Skip();
+	this->Destroy();
+}
 
 SerialWatcherThread::SerialWatcherThread(SerialPortConnection * window) : wxThread(wxTHREAD_DETACHED) {
 	serialWindow = window;
 	this->Run();
+	continueWatching = true;
 }
 
+void SerialWatcherThread::StopThread() {
+	continueWatching = false;
+}
 wxThread::ExitCode SerialWatcherThread::Entry() {
 
-	while (true) {
+	while (continueWatching) {
 		serialWindow->GetAvailableSerialPorts();
 		serialWindow->UpdateAvailableSerialPortsCombo();
-		this->Sleep(500);
+		this->Sleep(100);
 	}
+	return 0;
 }

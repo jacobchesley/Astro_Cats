@@ -25,7 +25,7 @@ private:
 	
 	wxString allText;
 
-
+	long numLines;
 };
 
 #endif

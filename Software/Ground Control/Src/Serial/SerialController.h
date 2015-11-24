@@ -14,8 +14,11 @@ class SerialController : wxThread{
 	public:
 		SerialController();
 		SerialController(std::string portName, std::string hardwareInfo);
+		void Connect(std::string portName, std::string hardwareInfo);
 
+		wxVector<char> GetDataStartingAtIndex();
 		wxVector<char> GetAllData();
+		void ClearAllData();
 
 		void StopSerial();
 
@@ -39,6 +42,9 @@ class SerialController : wxThread{
 		HANDLE shutdownEvent;
 		HANDLE  events[3];
 		
+		bool isConnected;
+
+		long int currentIndex;
 };
 
 #endif

@@ -15,6 +15,7 @@
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
 #include "GUI\Serial Port Connection\SerialPortConnection.h"
+#include "HexToJpeg\HexToJpeg.h"
 
 class UIUpdateThread;
 
@@ -29,7 +30,8 @@ class MainWindow : public wxFrame {
 		*/
 		MainWindow();
 		void UpdateData(int dataParameter, int dataValue);
-		void ReciveSerialData(char * serialData, int length);
+		void ReciveSerialData(wxString serialData);
+		SerialController * GetSerialController();
 
 		enum DataParam {
 			DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL,
@@ -54,6 +56,7 @@ class MainWindow : public wxFrame {
 		// Serial Port Connection window
 		SerialPortConnection * serialPortConnection;
 
+		HexToJpeg * hexToJpeg;
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;

@@ -9,11 +9,13 @@
 #include "wx/wx.h"
 #endif
 
+#include "Serial\SerialController.h"
+
 class SerialWatcherThread;
 
 class SerialPortConnection : public wxFrame {
 public:
-	SerialPortConnection(wxWindow * parent);
+	SerialPortConnection(wxWindow * parent, SerialController * controller);
 	void GetAvailableSerialPorts();
 	void UpdateAvailableSerialPortsCombo();
 
@@ -21,12 +23,27 @@ private:
 	bool TestPort(std::string portName);
 	bool CheckIfPortInList(std::string portName);
 	int GetIndexOfPort(std::string portName);
+	void OnClose(wxCloseEvent& closeEvent);
+	void Connect(wxCommandEvent& WXUNUSED(event));
 	wxVector<std::string> allSerialPort;
 
 	wxBoxSizer * layout;
+
 	wxComboBox * serialBox;
+	wxComboBox * baudBox;
+	wxComboBox * parityBox;
+	wxComboBox * dataBox;
+	wxComboBox * stopBox;
+
+	wxButton * connectButton;
 
 	SerialWatcherThread * serialWatcher;
+	SerialController * serialController;
+	bool isSafeToClose;
+
+	enum Actions {
+		ID_CONNECT
+	};
 };
 
 // Thread to keep checking on serial ports
@@ -34,11 +51,13 @@ class SerialWatcherThread : wxThread {
 
 public:
 	SerialWatcherThread(SerialPortConnection * window);
+	void StopThread();
 
 protected:
 	virtual ExitCode Entry();
 
 private:
+	bool continueWatching;
 	SerialPortConnection * serialWindow;
 
 };

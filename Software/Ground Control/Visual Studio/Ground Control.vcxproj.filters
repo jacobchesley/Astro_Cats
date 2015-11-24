@@ -35,6 +35,9 @@
     <Filter Include="Source Files\GUI\Serial Port Connection">
       <UniqueIdentifier>{009e7922-68a6-401d-8bb5-ae6db74e146c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Interpreter">
+      <UniqueIdentifier>{235bae8e-06e4-4612-a638-f2735382e36f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -57,6 +60,9 @@
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp">
       <Filter>Source Files\GUI\Serial Port Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\HexToJpeg\Interpreter.cpp">
+      <Filter>Source Files\Interpreter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -83,6 +89,9 @@
     </ClInclude>
     <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h">
       <Filter>Source Files\GUI\Serial Port Connection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\HexToJpeg\Interpreter.h">
+      <Filter>Source Files\Interpreter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
