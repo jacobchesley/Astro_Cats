@@ -1,36 +1,31 @@
-int i;
+#include<Radio.h>
+
+Radio * radio;
+
 void setup() {
   Serial.begin(9600);
-  i = 0;
+  Serial1.begin(9600);
+  radio = new Radio(&Serial1, 53);
+  
+  delay(2000);
+  radio->EnableHighSpeedRadio();
+  delay(1000);
+  radio->ChangeBaseUnits(Radio::default_base_units);
 }
 
 void loop() {
-  if(Serial.available() > 0){
-    int messageSize = 0;
-    char * message = readPCMessage(messageSize);
-    Serial.println(sizeof(message)
-  }
+  int numBytes = radio->CheckIncomingMessages();
+  char tempBuff[100];
+  radio->CopyMessage(tempBuff, numBytes);
+  for(int i = 0; i < numBytes; i++){
+    Serial.print(tempBuff[i]);
 
-  delay(200);
-}
-
-char * readPCMessage(int * messageSize){
-
-  char tempBuffer[1024];
-  int currentIndex = 0;
-
-  // Read all bytes of data available
-  while(Serial.available > 0){
-    tempBuffer[currentIndex] = Serial.read();
-    currentIndex += 1;
+    if(i == numBytes - 1){
+      Serial.print("   ");
+      radio->GetLastSignalStrength();
+      Serial.println(" ");
+    }
   }
   
-  *messageSize = currentIndex;
-  return message;
+  delay(100);
 }
-
-bool compareString(char * str1, char * str2, int len){
-
-  
-}
-
