@@ -7,6 +7,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	wxMenu * menuFile = new wxMenu;
 	wxMenu * menuSerial = new wxMenu;
 	wxMenu * menuPIL = new wxMenu;
+	wxMenu * menuView = new wxMenu;
 	wxMenu * menuHelp = new wxMenu;
 
 	// Serial Menu
@@ -17,6 +18,11 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuPIL->AppendSeparator();
 	menuPIL->Append(MainWindow::MenuBar::ID_READ_PIL_STATUS, _("Get PIL Status"));
 
+	// View Menu
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_PILSTRENGTH, _("PIL Signal Strength"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH, _("Rocket Signal Strength"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_TEMP, _("Temperature"));
+
 	// Help Menu
 	menuHelp->Append(MainWindow::MenuBar::ID_DOC, _("Documentation"));
 	menuHelp->Append(MainWindow::MenuBar::ID_ABOUT, _("About"));
@@ -25,6 +31,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuBar->Append(menuFile, _("&File"));
 	menuBar->Append(menuSerial, _("&Serial Connections"));
 	menuBar->Append(menuPIL, _("&PIL"));
+	menuBar->Append(menuView, _("&View"));
 	menuBar->Append(menuHelp, _("&Help"));
 
 	// Set the menu bar
@@ -37,66 +44,73 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	serialController = new SerialController();
 	
-	radioSignalAndDataSplitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
-	radioSignalAndDataSplitter->SetSashGravity(0.5);
-	radioSignalAndDataSplitter->SetMinimumPaneSize(50);
-
-	// Set up radio signal strength panels in their own splitter window
-	radioSplitter = new wxSplitterWindow(radioSignalAndDataSplitter, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
-	radioSplitter->SetSashGravity(0.5);
-	radioSplitter->SetMinimumPaneSize(20);
-
-	radioSignalStrengthPil = new RadioSignalStrength(radioSplitter, "Signal From PIL");
-	radioSignalStrengthRocket = new RadioSignalStrength(radioSplitter, "Signal From Rocket");
-	radioSplitter->SplitVertically(radioSignalStrengthPil, radioSignalStrengthRocket);
-
-	dataWindow = new IncomingDataStream(radioSignalAndDataSplitter, "Radio Data");
-	radioSignalAndDataSplitter->SplitHorizontally(radioSplitter, dataWindow);
+	dataWindow = new IncomingDataStream(this, "Radio Data");
 
 	// Set main layout
 	mainLayout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(mainLayout);
 
 	// Add items to main layout
-	this->GetSizer()->Add(radioSignalAndDataSplitter, 1, wxEXPAND, 0);
+	this->GetSizer()->Add(dataWindow, 1, wxEXPAND, 0);
 	this->GetSizer()->Layout();
 
-
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSerialConnection, this, MainWindow::MenuBar::ID_CONNECT_SERIAL);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPilSignalStrength, this, MainWindow::MenuBar::ID_VIEW_PILSTRENGTH);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowRocketSignalStrength, this, MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
 
-	hexToJpeg = new HexToJpeg();
+	//hexToJpeg = new HexToJpeg();
 
 	uiUpdater = new UIUpdateThread(this);
+
+	pilRadioStrength = new RadioSignalStrengthWindow(this, "PIL Radio Strength");
+	rocketRadioStrength = new RadioSignalStrengthWindow(this, "Rocket Radio Strength");
+	temperatureWindow = new LinearWindow(this, "Temperature", -10.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
 }
 
 void MainWindow::UpdateData(int dataParameter, int dataValue){
 
-	switch (dataParameter) {
-		case MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL:
-			radioSignalStrengthPil->SetRadioSignalStrength(dataValue);
-			break;
-
-		case MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING:
-			radioSignalStrengthRocket->SetRadioSignalStrength(dataValue);
-			break;
-	}
 }
 
 void MainWindow::ReciveSerialData(wxString serialData){
 
 	dataWindow->AppendText(serialData);
+	tempJsonData += serialData;
+
+	wxVector<wxString> allJsonData;
+	wxString fullJsonData;
+
+	// Extract all COMPLETE JSON strings from the temporary json data.
+	while(tempJsonData.Contains("}")){
+
+		fullJsonData = tempJsonData.BeforeFirst('}');
+		fullJsonData += "}";
+		allJsonData.push_back(fullJsonData);
+		tempJsonData = tempJsonData.AfterFirst('}');
+	}
+
+	// Iterate through all complete JSON strings
+	for (int i = 0; i < allJsonData.size(); i++) {
+
+		// Parse the current JSON string
+		fullJsonData = allJsonData[i];
+		std::string jsonString = std::string(fullJsonData);
+		auto jsonData = nlohmann::json::parse(jsonString);
+
+		// Update the UI based on the latest JSON data
+		temperatureWindow->SetValue(jsonData["Temp"]);
+	}
 
 	if (serialData == "END") {
-		hexToJpeg->WriteJpegFile("C:\\Development\\UC Rocketry\\Nasa SLI\\Software\\Ground Control\\Build\\Release\\Test.jpeg");
+		//hexToJpeg->WriteJpegFile("C:\\Development\\UC Rocketry\\Nasa SLI\\Software\\Ground Control\\Build\\Release\\Test.jpeg");
 		OutputDebugStringA("Wrote to file");
 		return;
 	}
 
-	char jpegData[16384];
-	for (int i = 0; i < serialData.size(); i++) {
-		jpegData[i] = serialData[i];
-	}
-	hexToJpeg->AppendHex(jpegData, serialData.size());
+	//char jpegData[16384];
+	//for (int i = 0; i < serialData.size(); i++) {
+	//	jpegData[i] = serialData[i];
+	//}
 }
 
 SerialController * MainWindow::GetSerialController() {
@@ -108,6 +122,16 @@ void MainWindow::ShowSerialConnection(wxCommandEvent& WXUNUSED(event)) {
 	serialPortConnection->Show();
 }
 
+void MainWindow::ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event)) {
+	rocketRadioStrength->Show();
+}
+void MainWindow::ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event)) {
+	pilRadioStrength->Show();
+}
+
+void MainWindow::ShowTemperature(wxCommandEvent& WXUNUSED(event)) {
+	temperatureWindow->Show();
+}
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){
 	mainWindow = window;
@@ -116,17 +140,13 @@ UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED
 
 wxThread::ExitCode UIUpdateThread::Entry(){
 
-	int i = 0;
-	int dataLen = 0;
 	while (true) {
-		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_PIL, i%8);
-		mainWindow->UpdateData(MainWindow::DataParam::DATA_RADIO_SIGNAL_STRENGTH_FROM_TRACKING, i%8);
 
 		// Data has been aquired
 		if (mainWindow->GetSerialController()->GetAllData().size() > 0) {
 
-			dataLen += mainWindow->GetSerialController()->GetAllData().size();
 			wxVector<char> incomingData = mainWindow->GetSerialController()->GetDataStartingAtIndex();
+			mainWindow->GetSerialController()->ClearReadData();
 
 			if (incomingData.size() < 1) {
 				this->Sleep(100);
@@ -139,7 +159,6 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 			mainWindow->ReciveSerialData(append);
 		}
 
-		i += 1;
 		this->Sleep(10);
 	}
 }

@@ -17,7 +17,7 @@
    version="1.1"
    inkscape:version="0.91 r13725"
    sodipodi:docname="subscale1_text.svg"
-   inkscape:export-filename="C:\Development\UC Rocketry\Nasa SLI\Graphics\Logo\text_1920_1080\astrocats_text_1920_1080.png"
+   inkscape:export-filename="C:\Development\UC Rocketry\Nasa SLI\Graphics\Video Texts\Subscale 1 Video Text\subscale1_text.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -141,11 +141,13 @@
        sodipodi:linespacing="125%"
        inkscape:transform-center-x="-38.379291"
        inkscape:transform-center-y="412.52608"
-       transform="scale(0.98307915,1.0172121)"><tspan
+       transform="scale(0.98307915,1.0172121)"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90"><tspan
          sodipodi:role="line"
          x="83.445404"
          y="803.80627"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:112.49998474px;line-height:125%;font-family:'Myanmar Text';-inkscape-font-specification:'Myanmar Text, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1"
-         id="tspan4225">Cedaville Ohio</tspan></text>
+         id="tspan4225">Cedarville Ohio</tspan></text>
   </g>
 </svg>

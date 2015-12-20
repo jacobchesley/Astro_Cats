@@ -43,4 +43,14 @@ class RadioSignalStrengthBar : public IndicatorPanel {
 		void Render(wxDC& dc);
 };
 
+class RadioSignalStrengthWindow : public wxFrame {
+	public:
+		RadioSignalStrengthWindow(wxWindow * parent, wxString name);
+		void SetNumBars(int numBars);
+
+	private:
+		RadioSignalStrength * inside;
+		wxBoxSizer * layout;
+		void OnClose(wxCloseEvent& evt);
+};
 #endif

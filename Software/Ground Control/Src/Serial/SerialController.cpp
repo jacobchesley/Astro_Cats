@@ -13,7 +13,10 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 }
 
 void SerialController::Connect(std::string portName, std::string hardwareInfo) {
-	CloseHandle(serialPort);
+	if (isConnected) {
+		CloseHandle(serialPort);
+	}
+
 	std::wstring serialName(portName.length(), L' ');
 	std::copy(portName.begin(), portName.end(), serialName.begin());
 
@@ -28,7 +31,7 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 		isConnected = false;
 		return;
 	}
-
+	isConnected = true;
 	shutdownEvent = NULL;
 	if (shutdownEvent != NULL) {
 		ResetEvent(shutdownEvent);
@@ -139,6 +142,11 @@ void SerialController::ClearAllData(){
 	allData.clear();
 }
 
+void SerialController::ClearReadData() {
+	allData.erase(allData.begin(), allData.begin() + currentIndex);
+	currentIndex = 0;
+}
+
 void SerialController::ReadBuffer(COMSTAT status){
 
 	DWORD bytesToRead = status.cbInQue;
@@ -147,10 +155,6 @@ void SerialController::ReadBuffer(COMSTAT status){
 	DWORD bytesRead = 0;
 
 	if (ReadFile(serialPort, buffer, bytesToRead, &bytesRead, NULL)) {
-
-		//memset(buffer + bytesRead, 0, sizeof(buffer) - bytesRead);
-
-		OutputDebugStringA(std::string(buffer).c_str());
 
 		for (int i = 0; i < bytesRead; i++) {
 			allData.push_back(buffer[i]);

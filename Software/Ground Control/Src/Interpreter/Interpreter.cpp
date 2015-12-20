@@ -3,12 +3,12 @@
 Interpreter::Interpreter(){}
 
 void Interpreter::PushData(wxString data) {
-	switch (this->CheckForFlag(data)) {
+	//switch (this->CheckForFlag(data)) {
 
-	}
+	//}
 }
 
-void HexToJpeg::WriteJpegFile(wxString fileName) {
+void Interpreter::WriteJpegFile(wxString fileName) {
 
 	wxFile jpegFile;
 	jpegFile.Create(fileName, true);
@@ -19,7 +19,7 @@ void HexToJpeg::WriteJpegFile(wxString fileName) {
 	jpegFile.Close();
 }
 
-void HexToJpeg::AppendHex(char * inputHex, int length) {
+void Interpreter::AppendHex(char * inputHex, int length) {
 
 	for (int i = 0; i < length; i++) {
 		hexData.push_back(inputHex[i]);
@@ -27,5 +27,5 @@ void HexToJpeg::AppendHex(char * inputHex, int length) {
 }
 
 wxString Interpreter::CheckForFlag(wxString inString) {
-
+	return "";
 }

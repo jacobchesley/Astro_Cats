@@ -156,7 +156,14 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 	else {
 
 		// Draw outside of the circle that is red.  A full red circle is drawn
-		int circleRadius = width / 2;
+		int circleRadius = 0;
+		if (width < height) {
+			circleRadius = width / 2;
+		}
+		else {
+			circleRadius = height / 2;
+		}
+		
 		int circleX = width / 2;
 		int circleY = height / 2;
 
@@ -188,4 +195,19 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 		dc.SetPen(linePen);
 		dc.DrawLine(startX, startY, endX, endY);
 	}
+}
+
+RadioSignalStrengthWindow::RadioSignalStrengthWindow(wxWindow * parent, wxString name) :wxFrame(parent, -1, name){
+
+	inside = new RadioSignalStrength(this, name);
+	this->SetIcon(wxIcon("IDI_ICON1"));
+	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&RadioSignalStrengthWindow::OnClose, this);
+}
+
+void RadioSignalStrengthWindow::SetNumBars(int numBars) {
+	inside->SetRadioSignalStrength(numBars);
+}
+
+void RadioSignalStrengthWindow::OnClose(wxCloseEvent& evt) {
+	this->Hide();
 }

@@ -38,6 +38,12 @@
     <Filter Include="Source Files\Interpreter">
       <UniqueIdentifier>{235bae8e-06e4-4612-a638-f2735382e36f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\JSON">
+      <UniqueIdentifier>{2f054be9-1088-4e61-a9af-a0cb4afc7a30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Temperature">
+      <UniqueIdentifier>{d2749dd4-3448-4aff-8b42-bb188875f37e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -61,8 +67,11 @@
     <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp">
       <Filter>Source Files\GUI\Serial Port Connection</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\HexToJpeg\Interpreter.cpp">
+    <ClCompile Include="..\Src\Interpreter\Interpreter.cpp">
       <Filter>Source Files\Interpreter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Temperature\Temperature.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Temperature</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -90,8 +99,14 @@
     <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h">
       <Filter>Source Files\GUI\Serial Port Connection</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\HexToJpeg\Interpreter.h">
+    <ClInclude Include="..\Src\Interpreter\Interpreter.h">
       <Filter>Source Files\Interpreter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\JSON\json.cpp">
+      <Filter>Source Files\JSON</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Temperature\Temperature.h">
+      <Filter>Source Files\GUI\Indicator Panels\Temperature</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -17,6 +17,7 @@ class SerialController : wxThread{
 		void Connect(std::string portName, std::string hardwareInfo);
 
 		wxVector<char> GetDataStartingAtIndex();
+		void ClearReadData();
 		wxVector<char> GetAllData();
 		void ClearAllData();
 

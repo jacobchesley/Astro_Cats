@@ -14,8 +14,10 @@
 #include "Serial\SerialController.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
+#include "GUI\Indicator Panels\Temperature\Temperature.h"
 #include "GUI\Serial Port Connection\SerialPortConnection.h"
-#include "HexToJpeg\HexToJpeg.h"
+#include "Interpreter\Interpreter.h"
+#include "JSON\json.cpp"
 
 class UIUpdateThread;
 
@@ -23,7 +25,7 @@ class UIUpdateThread;
 	Main Window is the main window of the Ground Control.
 */
 class MainWindow : public wxFrame {
-
+	
 	public:
 		/**
 			Constructor for the main window.
@@ -41,22 +43,24 @@ class MainWindow : public wxFrame {
 	private:
 
 		void ShowSerialConnection(wxCommandEvent& WXUNUSED(event));
+		void ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event));
+		void ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event));
+		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
 
 		SerialController * serialController;
 		UIUpdateThread * uiUpdater;
 
-		// Radio Signal Strength Panels
-		wxSplitterWindow * radioSplitter;
-		RadioSignalStrength * radioSignalStrengthPil;
-		RadioSignalStrength * radioSignalStrengthRocket;
-
-		wxSplitterWindow * radioSignalAndDataSplitter;
 		IncomingDataStream * dataWindow;
+		wxString tempJsonData;
 
 		// Serial Port Connection window
 		SerialPortConnection * serialPortConnection;
 
-		HexToJpeg * hexToJpeg;
+
+		// Data display windows
+		RadioSignalStrengthWindow * pilRadioStrength;
+		RadioSignalStrengthWindow * rocketRadioStrength;
+		LinearWindow * temperatureWindow;
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;
@@ -65,10 +69,12 @@ class MainWindow : public wxFrame {
 			ID_SEND_PIL_COMMAND,
 			ID_READ_PIL_STATUS,
 			ID_DOC,
-			ID_ABOUT
+			ID_ABOUT,
+			ID_VIEW_PILSTRENGTH,
+			ID_VIEW_ROCKETSTRENGTH,
+			ID_VIEW_TEMP
 		};
 };
-
 
 // TESTING THREAD
 class UIUpdateThread : wxThread {
