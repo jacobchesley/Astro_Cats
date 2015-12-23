@@ -15,8 +15,6 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	// Pil Menu
 	menuPIL->Append(MainWindow::MenuBar::ID_SEND_PIL_COMMAND, _("Send Commands to the PIL"));
-	menuPIL->AppendSeparator();
-	menuPIL->Append(MainWindow::MenuBar::ID_READ_PIL_STATUS, _("Get PIL Status"));
 
 	// View Menu
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PILSTRENGTH, _("PIL Signal Strength"));
@@ -84,10 +82,6 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 }
 
-void MainWindow::UpdateData(int dataParameter, int dataValue){
-
-}
-
 void MainWindow::ReciveSerialData(wxString serialData){
 
 	dataWindow->AppendText(serialData);
@@ -106,7 +100,7 @@ void MainWindow::ReciveSerialData(wxString serialData){
 	}
 
 	// Iterate through all complete JSON strings
-	for (int i = 0; i < allJsonData.size(); i++) {
+	for (int i = 0; i < (int)allJsonData.size(); i++) {
 
 		// Parse the current JSON string
 		try {
@@ -220,7 +214,7 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 				continue;
 			}
 			wxString append = "";
-			for (int i = 0; i < incomingData.size(); i++) {
+			for (int i = 0; i < (int)incomingData.size(); i++) {
 				append += incomingData[i];
 			}
 			mainWindow->ReciveSerialData(append);

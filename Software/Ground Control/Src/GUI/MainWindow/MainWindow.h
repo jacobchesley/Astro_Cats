@@ -31,7 +31,6 @@ class MainWindow : public wxFrame {
 			Constructor for the main window.
 		*/
 		MainWindow();
-		void UpdateData(int dataParameter, int dataValue);
 		void ReciveSerialData(wxString serialData);
 		SerialController * GetSerialController();
 
@@ -84,7 +83,6 @@ class MainWindow : public wxFrame {
 		enum MenuBar{
 			ID_CONNECT_SERIAL,
 			ID_SEND_PIL_COMMAND,
-			ID_READ_PIL_STATUS,
 			ID_DOC,
 			ID_ABOUT,
 			ID_VIEW_PILSTRENGTH,
