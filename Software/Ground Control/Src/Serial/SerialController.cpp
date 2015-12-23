@@ -60,8 +60,6 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 		timeouts.WriteTotalTimeoutMultiplier = 0;
 		timeouts.WriteTotalTimeoutConstant = 0;
 
-		// configure
-		DWORD dwCommEvents;
 		if (!SetCommTimeouts(serialPort, &timeouts)) {
 			OutputDebugStringA("Set Comm Timeout Fail");
 			return;
@@ -166,7 +164,6 @@ wxThread::ExitCode SerialController::Entry() {
 	#ifdef _WIN32
 
 		DWORD resultType = 0;
-		DWORD eventType = 0;
 		DWORD errorCode = 0;
 		COMSTAT status = {0};
 		memset(&status, 0, sizeof(COMSTAT));
@@ -177,7 +174,7 @@ wxThread::ExitCode SerialController::Entry() {
 
 	while (true) {
 
-		if (isConnected = false) {
+		if (isConnected == false) {
 			this->Sleep(100);
 			continue;
 		}
@@ -209,7 +206,7 @@ wxVector<char> SerialController::GetDataStartingAtIndex() {
 
 	wxVector<char> output;
 	int endIndex = allData.size();
-	for (int i = currentIndex; i < allData.size(); i++) {
+	for (int i = currentIndex; i < (int)allData.size(); i++) {
 		output.push_back(allData[i]);
 	}
 	currentIndex = endIndex;
@@ -245,7 +242,7 @@ void SerialController::ReadBuffer(COMSTAT status){
 		if (ReadFile(serialPort, buffer, bytesToRead, &bytesRead, NULL)) {
 
 			// Push data onto vector
-			for (int i = 0; i < bytesRead; i++) {
+			for (int i = 0; i < (int)bytesRead; i++) {
 				allData.push_back(buffer[i]);
 			}
 		}
@@ -280,7 +277,7 @@ int SerialController::WriteBuffer(char * dataToWrite) {
 	#elif __APPLE__
 
 	#endif
-
+	return 0;
 }
 
 void SerialController::StopSerial() {
