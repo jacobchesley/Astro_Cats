@@ -41,7 +41,7 @@
     <Filter Include="Source Files\JSON">
       <UniqueIdentifier>{2f054be9-1088-4e61-a9af-a0cb4afc7a30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\GUI\Indicator Panels\Temperature">
+    <Filter Include="Source Files\GUI\Indicator Panels\LinearGuage">
       <UniqueIdentifier>{d2749dd4-3448-4aff-8b42-bb188875f37e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -70,8 +70,8 @@
     <ClCompile Include="..\Src\Interpreter\Interpreter.cpp">
       <Filter>Source Files\Interpreter</Filter>
     </ClCompile>
-    <ClCompile Include="..\Src\GUI\Indicator Panels\Temperature\Temperature.cpp">
-      <Filter>Source Files\GUI\Indicator Panels\Temperature</Filter>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\LinearGuage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -105,8 +105,8 @@
     <ClInclude Include="..\Src\JSON\json.cpp">
       <Filter>Source Files\JSON</Filter>
     </ClInclude>
-    <ClInclude Include="..\Src\GUI\Indicator Panels\Temperature\Temperature.h">
-      <Filter>Source Files\GUI\Indicator Panels\Temperature</Filter>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.h">
+      <Filter>Source Files\GUI\Indicator Panels\LinearGuage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
