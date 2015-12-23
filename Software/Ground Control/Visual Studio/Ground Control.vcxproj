@@ -157,8 +157,8 @@
     <TargetName>AstroCatsGroundControl</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\Build\Release</OutDir>
-    <IntDir>..\Build\Release\tmp</IntDir>
+    <OutDir>..\Build\Release\</OutDir>
+    <IntDir>..\Build\Release\tmp\</IntDir>
     <LinkIncremental>false</LinkIncremental>
     <GenerateManifest>true</GenerateManifest>
     <TargetName>AstroCatsGroundControl</TargetName>
