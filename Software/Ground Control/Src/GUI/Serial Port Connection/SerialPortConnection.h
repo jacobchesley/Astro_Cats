@@ -29,10 +29,24 @@ private:
 
 	wxBoxSizer * layout;
 
+	wxBoxSizer * serialBoxLayout;
+	wxStaticText * serialBoxLabel;
 	wxComboBox * serialBox;
+
+	wxBoxSizer * baudBoxLayout;
+	wxStaticText * baudBoxLabel;
 	wxComboBox * baudBox;
+
+	wxBoxSizer * parityBoxLayout;
+	wxStaticText * parityBoxLabel;
 	wxComboBox * parityBox;
+
+	wxBoxSizer * dataBoxLayout;
+	wxStaticText * dataBoxLabel;
 	wxComboBox * dataBox;
+
+	wxBoxSizer * stopBoxLayout;
+	wxStaticText * stopBoxLabel;
 	wxComboBox * stopBox;
 
 	wxButton * connectButton;

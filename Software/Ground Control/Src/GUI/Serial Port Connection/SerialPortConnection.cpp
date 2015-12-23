@@ -6,7 +6,22 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 
 	this->SetBackgroundColour(wxColor(45, 45, 45));
 
+	// Create serial port selection row
+	serialBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	serialBoxLabel = new wxStaticText(this, -1, _("Available Serial Ports "));
+	serialBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	serialBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
 	serialBox = new wxComboBox(this, -1);
+	serialBoxLayout->Add(serialBoxLabel);
+	serialBoxLayout->Add(serialBox);
+
+	int maxWidth = serialBoxLabel->GetSize().GetWidth();
+
+	// Create baud rate selection row
+	baudBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	baudBoxLabel = new wxStaticText(this, -1, _("Baud Rate"));
+	baudBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	baudBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
 
 	// Create baud rate combo box and append choices.
 	baudBox = new wxComboBox(this, -1);
@@ -26,7 +41,18 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	baudBox->AppendString(_T("256000"));
 	baudBox->SetValue(_T("115200"));
 
-	// Create parity bit combo box and append choices.
+	baudBoxLayout->Add(baudBoxLabel);
+	int space = maxWidth - baudBoxLabel->GetSize().GetWidth();
+	baudBoxLayout->AddSpacer(space);
+	baudBoxLayout->Add(baudBox);
+
+	// Create parity bit selection row
+	parityBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	parityBoxLabel = new wxStaticText(this, -1, _("Parity"));
+	parityBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	parityBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
+
+	// Create parity bit combo box and append choices
 	parityBox = new wxComboBox(this, -1);
 	parityBox->AppendString(_T("none"));
 	parityBox->AppendString(_T("even"));
@@ -35,11 +61,33 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	parityBox->AppendString(_T("space"));
 	parityBox->SetValue(_T("none"));
 
+	parityBoxLayout->Add(parityBoxLabel);
+	space = maxWidth - parityBoxLabel->GetSize().GetWidth();
+	parityBoxLayout->AddSpacer(space);
+	parityBoxLayout->Add(parityBox);
+
+	// Create byte size selection row
+	dataBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	dataBoxLabel = new wxStaticText(this, -1, _("Byte Size"));
+	dataBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	dataBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
+
 	// Create byte size box
 	dataBox = new wxComboBox(this, -1);
 	dataBox->AppendString(_T("7"));
 	dataBox->AppendString(_T("8"));
 	dataBox->SetValue(_T("8"));
+
+	dataBoxLayout->Add(dataBoxLabel);
+	space = maxWidth - dataBoxLabel->GetSize().GetWidth();
+	dataBoxLayout->AddSpacer(space);
+	dataBoxLayout->Add(dataBox);
+
+	// Create stop bits selection row
+	stopBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	stopBoxLabel = new wxStaticText(this, -1, _("Stop Bits"));
+	stopBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	stopBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
 
 	// Create stop bit box
 	stopBox = new wxComboBox(this, -1);
@@ -47,16 +95,27 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	stopBox->AppendString(_T("2"));
 	stopBox->SetValue(_T("1"));
 
+	stopBoxLayout->Add(stopBoxLabel);
+	space = maxWidth - stopBoxLabel->GetSize().GetWidth();
+	stopBoxLayout->AddSpacer(space);
+	stopBoxLayout->Add(stopBox);
+
 	connectButton = new wxButton(this, SerialPortConnection::Actions::ID_CONNECT, _T("Connect"));
 
 	layout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(layout);
 
-	this->GetSizer()->Add(serialBox);
-	this->GetSizer()->Add(baudBox);
-	this->GetSizer()->Add(parityBox);
-	this->GetSizer()->Add(dataBox);
-	this->GetSizer()->Add(stopBox);
+	// Add all of the layouts created above to the window
+	this->GetSizer()->Add(serialBoxLayout);
+	this->GetSizer()->AddSpacer(10);
+	this->GetSizer()->Add(baudBoxLayout);
+	this->GetSizer()->AddSpacer(10);
+	this->GetSizer()->Add(parityBoxLayout);
+	this->GetSizer()->AddSpacer(10);
+	this->GetSizer()->Add(dataBoxLayout);
+	this->GetSizer()->AddSpacer(10);
+	this->GetSizer()->Add(stopBoxLayout);
+	this->GetSizer()->AddSpacer(30);
 	this->GetSizer()->Add(connectButton);
 
 	serialWatcher = new SerialWatcherThread(this);
@@ -65,6 +124,8 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SerialPortConnection::Connect, this, SerialPortConnection::Actions::ID_CONNECT);
 
 	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&SerialPortConnection::OnClose, this);
+
+	this->SetIcon(wxIcon("IDI_ICON1"));
 }
 
 void SerialPortConnection::GetAvailableSerialPorts() {
@@ -158,7 +219,6 @@ void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
 	std::string stop = stopBox->GetValue().ToStdString();
 
 	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop;
-	OutputDebugStringA(hardwareInfo.c_str());
 	serialController->Connect(std::string(serialBox->GetValue().ToStdString()), hardwareInfo);
 }
 
