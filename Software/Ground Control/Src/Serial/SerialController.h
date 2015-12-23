@@ -31,20 +31,21 @@ class SerialController : wxThread{
 		void ReadBuffer(COMSTAT comstat);
 		int WriteBuffer(char * dataToWrite);
 
-		HANDLE serialPort;
+		#ifdef _WIN32
+			HANDLE serialPort;
+			DCB dcb;
+			COMMTIMEOUTS timeouts;
+			DWORD commEvents;
+			HANDLE shutdownEvent;
+
+		#elif __APPLE__
+			int serialPort;
+			std::string GetStringAfterComma(std::string inString, int numCommas);
+		#endif
+
 		wxVector<char> allData;
-
-		DCB dcb;
-		COMMTIMEOUTS timeouts;
-		DWORD commEvents;
-
-		// events that fire the wait for multiple objects
-		HANDLE writeEvent;
-		HANDLE shutdownEvent;
-		HANDLE  events[3];
 		
 		bool isConnected;
-
 		long int currentIndex;
 };
 
