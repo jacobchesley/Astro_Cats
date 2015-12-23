@@ -26,6 +26,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_HUMID, _("Humidity"));
 	menuView->AppendSeparator();
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_ALL, _("Show All"));
+	menuView->Append(MainWindow::MenuBar::ID_HIDE_ALL, _("Hide All"));
+	menuView->Append(MainWindow::MenuBar::ID_REPO_ALL, _("Reposition All"));
 
 	// Help Menu
 	menuHelp->Append(MainWindow::MenuBar::ID_DOC, _("Documentation"));
@@ -64,7 +66,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowHumidity, this, MainWindow::MenuBar::ID_VIEW_HUMID);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowAll, this, MainWindow::MenuBar::ID_VIEW_ALL);
-
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::HideAll, this, MainWindow::MenuBar::ID_HIDE_ALL);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::RepositionAll, this, MainWindow::MenuBar::ID_REPO_ALL);
 	//hexToJpeg = new HexToJpeg();
 
 	uiUpdater = new UIUpdateThread(this);
@@ -74,32 +77,10 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	temperatureWindow = new LinearWindow(this, "Temperature", -20.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
 	humidityWindow = new LinearWindow(this, "Humidity", 0.0f, 100.0f, wxColor(0, 0, 255), true, false, "%", "", 10);
 
-	int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
-	int screenHeight = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
-
-	// Size and position the PIL Radio Strength
-	pilRadioPos = wxPoint(0, 0);
-	pilRadioSize = wxSize(screenWidth / 7.0f, screenHeight / 8.0f);
-	pilRadioStrength->SetPosition(pilRadioPos);
-	pilRadioStrength->SetSize(pilRadioSize);
-
-	// Size and position the Rocket Radio Strength (to the right of PIL Radio Strength)
-	rocketRadioPos = wxPoint(pilRadioStrength->GetSize().GetWidth(), 0);
-	rocketRadioSize = pilRadioSize;
-	rocketRadioStrength->SetPosition(rocketRadioPos);
-	rocketRadioStrength->SetSize(rocketRadioSize);
-	
-	// Size and position Temperature Guage (below PIL Radio Strength)
-	tempPos = wxPoint(0, pilRadioStrength->GetSize().GetHeight());
-	tempSize = wxSize(pilRadioStrength->GetSize().GetWidth(), pilRadioStrength->GetSize().GetHeight() * 2);
-	temperatureWindow->SetPosition(tempPos);
-	temperatureWindow->SetSize(tempSize);
-
-	// Size and position Temperature Guage (below PIL Radio Strength)
-	humidPos = wxPoint(temperatureWindow->GetSize().GetWidth(), rocketRadioStrength->GetSize().GetHeight());
-	humidSize = tempSize;
-	humidityWindow->SetPosition(humidPos);
-	humidityWindow->SetSize(humidSize);
+	// Fire a reposition event so the windows are positioned correctly from the start
+	wxCommandEvent repositionEvent(wxEVT_COMMAND_MENU_SELECTED, MainWindow::MenuBar::ID_REPO_ALL);
+	repositionEvent.SetEventObject(this);
+	this->GetEventHandler()->ProcessEvent(repositionEvent);
 
 }
 
@@ -183,6 +164,40 @@ void MainWindow::ShowAll(wxCommandEvent& WXUNUSED(event)) {
 	pilRadioStrength->Show();
 	temperatureWindow->Show();
 	humidityWindow->Show();
+}
+void MainWindow::HideAll(wxCommandEvent& WXUNUSED(event)) {
+	rocketRadioStrength->Hide();
+	pilRadioStrength->Hide();
+	temperatureWindow->Hide();
+	humidityWindow->Hide();
+}
+void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
+	int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+	int screenHeight = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+
+	// Size and position the PIL Radio Strength
+	pilRadioPos = wxPoint(0, 0);
+	pilRadioSize = wxSize(screenWidth / 7.0f, screenHeight / 8.0f);
+	pilRadioStrength->SetPosition(pilRadioPos);
+	pilRadioStrength->SetSize(pilRadioSize);
+
+	// Size and position the Rocket Radio Strength (to the right of PIL Radio Strength)
+	rocketRadioPos = wxPoint(pilRadioStrength->GetSize().GetWidth(), 0);
+	rocketRadioSize = pilRadioSize;
+	rocketRadioStrength->SetPosition(rocketRadioPos);
+	rocketRadioStrength->SetSize(rocketRadioSize);
+
+	// Size and position Temperature Guage (below PIL Radio Strength)
+	tempPos = wxPoint(0, pilRadioStrength->GetSize().GetHeight());
+	tempSize = wxSize(pilRadioStrength->GetSize().GetWidth(), pilRadioStrength->GetSize().GetHeight() * 2);
+	temperatureWindow->SetPosition(tempPos);
+	temperatureWindow->SetSize(tempSize);
+
+	// Size and position Temperature Guage (below PIL Radio Strength)
+	humidPos = wxPoint(temperatureWindow->GetSize().GetWidth(), rocketRadioStrength->GetSize().GetHeight());
+	humidSize = tempSize;
+	humidityWindow->SetPosition(humidPos);
+	humidityWindow->SetSize(humidSize);
 }
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){

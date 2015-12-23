@@ -48,6 +48,8 @@ class MainWindow : public wxFrame {
 		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
 		void ShowHumidity(wxCommandEvent& WXUNUSED(event));
 		void ShowAll(wxCommandEvent& WXUNUSED(event));
+		void HideAll(wxCommandEvent& WXUNUSED(event));
+		void RepositionAll(wxCommandEvent& WXUNUSED(event));
 
 		SerialController * serialController;
 		UIUpdateThread * uiUpdater;
@@ -89,7 +91,9 @@ class MainWindow : public wxFrame {
 			ID_VIEW_ROCKETSTRENGTH,
 			ID_VIEW_TEMP,
 			ID_VIEW_HUMID,
-			ID_VIEW_ALL
+			ID_VIEW_ALL,
+			ID_HIDE_ALL,
+			ID_REPO_ALL
 		};
 };
 
