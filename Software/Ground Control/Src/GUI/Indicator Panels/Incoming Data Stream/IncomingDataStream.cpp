@@ -37,16 +37,16 @@ void IncomingDataStream::AppendText(wxString appendedText) {
 	wxArrayString lines = wxSplit(allText, '\n');
 	wxString newString;
 
-	if (lines.size() < maxLineNum) {
+	if ((int)lines.size() < maxLineNum) {
 
-		for (int i = 0; i < lines.size(); i++) {
+		for (int i = 0; i < (int)lines.size(); i++) {
 			newString += lines[i];
 		}
 		dataText->SetValue(newString);
 		dataText->ScrollLines(lines.size());
 	}
 	else {
-		for (int i = lines.size() - maxLineNum; i < lines.size(); i++) {
+		for (int i = lines.size() - maxLineNum; i < (int)lines.size(); i++) {
 			newString += lines[i];
 		}
 		dataText->SetValue(newString);
