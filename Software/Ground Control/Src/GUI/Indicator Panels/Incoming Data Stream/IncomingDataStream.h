@@ -13,7 +13,7 @@
 class IncomingDataStream : public wxPanel {
 
 public:
-	IncomingDataStream(wxWindow * parent, wxString title);
+	IncomingDataStream(wxWindow * parent, wxString title, int maxLines = 50);
 	void AppendText(wxString appendedText);
 	void ClearText();
 
@@ -24,6 +24,9 @@ private:
 	wxTextCtrl * dataText;
 	
 	wxString allText;
+	wxVector<wxString> allLines;
+
+	int maxLineNum;
 
 	long numLines;
 };

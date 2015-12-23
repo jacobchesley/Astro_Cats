@@ -1,6 +1,6 @@
 #include "IncomingDataStream.h"
 
-IncomingDataStream::IncomingDataStream(wxWindow * parent, wxString title) : wxPanel(parent){
+IncomingDataStream::IncomingDataStream(wxWindow * parent, wxString title, int maxLines) : wxPanel(parent){
 
 	allText = "";
 
@@ -27,13 +27,31 @@ IncomingDataStream::IncomingDataStream(wxWindow * parent, wxString title) : wxPa
 
 	this->GetSizer()->Layout();
 	numLines = 0;
+	maxLineNum = maxLines + 1;
+
 }
 
 void IncomingDataStream::AppendText(wxString appendedText) {
+
 	allText += appendedText;
-	dataText->SetValue(allText);
-	numLines += 1;
-	dataText->ScrollLines(numLines);
+	wxArrayString lines = wxSplit(allText, '\n');
+	wxString newString;
+
+	if (lines.size() < maxLineNum) {
+
+		for (int i = 0; i < lines.size(); i++) {
+			newString += lines[i];
+		}
+		dataText->SetValue(newString);
+		dataText->ScrollLines(lines.size());
+	}
+	else {
+		for (int i = lines.size() - maxLineNum; i < lines.size(); i++) {
+			newString += lines[i];
+		}
+		dataText->SetValue(newString);
+		dataText->ScrollLines(maxLineNum);
+	}
 }
 
 void IncomingDataStream::ClearText() {
