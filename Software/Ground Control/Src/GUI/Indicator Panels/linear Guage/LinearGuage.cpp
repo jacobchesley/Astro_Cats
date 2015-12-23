@@ -188,4 +188,5 @@ void LinearWindow::SetValue(float newValue) {
 
 void LinearWindow::OnClose(wxCloseEvent& evt){
 	this->Hide();
+	evt.Skip();
 }
