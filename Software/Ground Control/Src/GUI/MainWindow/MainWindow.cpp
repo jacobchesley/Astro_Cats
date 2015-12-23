@@ -21,7 +21,11 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	// View Menu
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PILSTRENGTH, _("PIL Signal Strength"));
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH, _("Rocket Signal Strength"));
+	menuView->AppendSeparator();
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_TEMP, _("Temperature"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_HUMID, _("Humidity"));
+	menuView->AppendSeparator();
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_ALL, _("Show All"));
 
 	// Help Menu
 	menuHelp->Append(MainWindow::MenuBar::ID_DOC, _("Documentation"));
@@ -44,7 +48,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	serialController = new SerialController();
 	
-	dataWindow = new IncomingDataStream(this, "Radio Data");
+	dataWindow = new IncomingDataStream(this, "Radio Data", 20);
 
 	// Set main layout
 	mainLayout = new wxBoxSizer(wxVERTICAL);
@@ -58,6 +62,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPilSignalStrength, this, MainWindow::MenuBar::ID_VIEW_PILSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowRocketSignalStrength, this, MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowHumidity, this, MainWindow::MenuBar::ID_VIEW_HUMID);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowAll, this, MainWindow::MenuBar::ID_VIEW_ALL);
 
 	//hexToJpeg = new HexToJpeg();
 
@@ -65,7 +71,36 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	pilRadioStrength = new RadioSignalStrengthWindow(this, "PIL Radio Strength");
 	rocketRadioStrength = new RadioSignalStrengthWindow(this, "Rocket Radio Strength");
-	temperatureWindow = new LinearWindow(this, "Temperature", -10.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
+	temperatureWindow = new LinearWindow(this, "Temperature", -20.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
+	humidityWindow = new LinearWindow(this, "Humidity", 0.0f, 100.0f, wxColor(0, 0, 255), true, false, "%", "", 10);
+
+	int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+	int screenHeight = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
+
+	// Size and position the PIL Radio Strength
+	pilRadioPos = wxPoint(0, 0);
+	pilRadioSize = wxSize(screenWidth / 7.0f, screenHeight / 8.0f);
+	pilRadioStrength->SetPosition(pilRadioPos);
+	pilRadioStrength->SetSize(pilRadioSize);
+
+	// Size and position the Rocket Radio Strength (to the right of PIL Radio Strength)
+	rocketRadioPos = wxPoint(pilRadioStrength->GetSize().GetWidth(), 0);
+	rocketRadioSize = pilRadioSize;
+	rocketRadioStrength->SetPosition(rocketRadioPos);
+	rocketRadioStrength->SetSize(rocketRadioSize);
+	
+	// Size and position Temperature Guage (below PIL Radio Strength)
+	tempPos = wxPoint(0, pilRadioStrength->GetSize().GetHeight());
+	tempSize = wxSize(pilRadioStrength->GetSize().GetWidth(), pilRadioStrength->GetSize().GetHeight() * 2);
+	temperatureWindow->SetPosition(tempPos);
+	temperatureWindow->SetSize(tempSize);
+
+	// Size and position Temperature Guage (below PIL Radio Strength)
+	humidPos = wxPoint(temperatureWindow->GetSize().GetWidth(), rocketRadioStrength->GetSize().GetHeight());
+	humidSize = tempSize;
+	humidityWindow->SetPosition(humidPos);
+	humidityWindow->SetSize(humidSize);
+
 }
 
 void MainWindow::UpdateData(int dataParameter, int dataValue){
@@ -93,12 +128,18 @@ void MainWindow::ReciveSerialData(wxString serialData){
 	for (int i = 0; i < allJsonData.size(); i++) {
 
 		// Parse the current JSON string
-		fullJsonData = allJsonData[i];
-		std::string jsonString = std::string(fullJsonData);
-		auto jsonData = nlohmann::json::parse(jsonString);
+		try {
+			fullJsonData = allJsonData[i];
+			std::string jsonString = std::string(fullJsonData);
+			auto jsonData = nlohmann::json::parse(jsonString);
 
-		// Update the UI based on the latest JSON data
-		temperatureWindow->SetValue(jsonData["Temp"]);
+			// Update the UI based on the latest JSON data
+			temperatureWindow->SetValue(jsonData["Temp"]);
+			humidityWindow->SetValue(jsonData["Humidity"]);
+		}
+		catch (...) {
+
+		}
 	}
 
 	if (serialData == "END") {
@@ -131,6 +172,17 @@ void MainWindow::ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event)) {
 
 void MainWindow::ShowTemperature(wxCommandEvent& WXUNUSED(event)) {
 	temperatureWindow->Show();
+}
+
+void MainWindow::ShowHumidity(wxCommandEvent& WXUNUSED(event)) {
+	humidityWindow->Show();
+}
+
+void MainWindow::ShowAll(wxCommandEvent& WXUNUSED(event)) {
+	rocketRadioStrength->Show();
+	pilRadioStrength->Show();
+	temperatureWindow->Show();
+	humidityWindow->Show();
 }
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){

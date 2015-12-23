@@ -14,7 +14,7 @@
 #include "Serial\SerialController.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
-#include "GUI\Indicator Panels\Temperature\Temperature.h"
+#include "GUI\Indicator Panels\Linear Guage\LinearGuage.h"
 #include "GUI\Serial Port Connection\SerialPortConnection.h"
 #include "Interpreter\Interpreter.h"
 #include "JSON\json.cpp"
@@ -46,6 +46,8 @@ class MainWindow : public wxFrame {
 		void ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
+		void ShowHumidity(wxCommandEvent& WXUNUSED(event));
+		void ShowAll(wxCommandEvent& WXUNUSED(event));
 
 		SerialController * serialController;
 		UIUpdateThread * uiUpdater;
@@ -56,14 +58,27 @@ class MainWindow : public wxFrame {
 		// Serial Port Connection window
 		SerialPortConnection * serialPortConnection;
 
-
 		// Data display windows
 		RadioSignalStrengthWindow * pilRadioStrength;
 		RadioSignalStrengthWindow * rocketRadioStrength;
 		LinearWindow * temperatureWindow;
+		LinearWindow * humidityWindow;
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;
+
+		wxPoint pilRadioPos;
+		wxSize pilRadioSize;
+
+		wxPoint rocketRadioPos;
+		wxSize rocketRadioSize;
+
+		wxPoint tempPos;
+		wxSize tempSize;
+
+		wxPoint humidPos;
+		wxSize humidSize;
+
 		enum MenuBar{
 			ID_CONNECT_SERIAL,
 			ID_SEND_PIL_COMMAND,
@@ -72,7 +87,9 @@ class MainWindow : public wxFrame {
 			ID_ABOUT,
 			ID_VIEW_PILSTRENGTH,
 			ID_VIEW_ROCKETSTRENGTH,
-			ID_VIEW_TEMP
+			ID_VIEW_TEMP,
+			ID_VIEW_HUMID,
+			ID_VIEW_ALL
 		};
 };
 
