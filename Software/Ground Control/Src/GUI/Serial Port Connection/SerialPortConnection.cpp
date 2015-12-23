@@ -177,7 +177,7 @@ bool SerialPortConnection::TestPort(std::string portName) {
 }
 
 bool SerialPortConnection::CheckIfPortInList(std::string portName) {
-	for (int i = 0; i < allSerialPort.size(); i++) {
+	for (int i = 0; i < (int)allSerialPort.size(); i++) {
 		if (portName == allSerialPort[i]){
 			return true;
 		}
@@ -186,7 +186,7 @@ bool SerialPortConnection::CheckIfPortInList(std::string portName) {
 }
 
 int SerialPortConnection::GetIndexOfPort(std::string portName) {
-	for (int i = 0; i < allSerialPort.size(); i++) {
+	for (int i = 0; i < (int)allSerialPort.size(); i++) {
 		if (portName == allSerialPort[i]) {
 			return i;
 		}
@@ -197,14 +197,14 @@ int SerialPortConnection::GetIndexOfPort(std::string portName) {
 void SerialPortConnection::UpdateAvailableSerialPortsCombo() {
 
 	// Add all serial ports not yet in the combo box, to the combo box
-	for (int i = 0; i < allSerialPort.size(); i++) {
+	for (int i = 0; i < (int)allSerialPort.size(); i++) {
 		if (wxNOT_FOUND == serialBox->FindString(wxString(allSerialPort[i]))) {
 			serialBox->AppendString(wxString(allSerialPort[i]));
 		}
 	}
 
 	// If port is in combo box but no longer in the actual list, remove it from list
-	for (int i = 0; i <serialBox->GetCount(); i++) {
+	for (int i = 0; i < (int)serialBox->GetCount(); i++) {
 		if (!CheckIfPortInList(std::string(serialBox->GetString(i)))) {
 			serialBox->Delete(i);
 		}
