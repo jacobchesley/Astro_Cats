@@ -171,7 +171,7 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 
 		// Draw a black circle that is smaller in radious, to give the effect of a red outline circle.
 		dc.SetBrush(wxBrush(wxColor(0, 0, 0)));
-		dc.DrawCircle(circleX, circleY, circleRadius-8);
+		dc.DrawCircle(circleX, circleY, circleRadius - 5);
 
 		// Set color of drawing back to original color, red.
 		dc.SetBrush(wxBrush(barColor));
@@ -191,7 +191,7 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 		endY += circleY;
 
 		wxPen linePen(barColor);
-		linePen.SetWidth(8);
+		linePen.SetWidth(5);
 		dc.SetPen(linePen);
 		dc.DrawLine(startX, startY, endX, endY);
 	}
