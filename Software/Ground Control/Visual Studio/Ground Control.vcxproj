@@ -39,6 +39,7 @@
     <ClCompile Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.cpp" />
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.cpp" />
     <ClCompile Include="..\Src\GUI\MainWindow\MainWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.h" />
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
     <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h" />

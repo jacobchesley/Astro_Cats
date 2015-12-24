@@ -41,7 +41,10 @@
     <Filter Include="Source Files\JSON">
       <UniqueIdentifier>{2f054be9-1088-4e61-a9af-a0cb4afc7a30}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\GUI\Indicator Panels\LinearGuage">
+    <Filter Include="Source Files\GUI\Indicator Panels\Radial Guage">
+      <UniqueIdentifier>{dcd54049-07b8-4558-9475-8d09c9e29380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Linear Guage">
       <UniqueIdentifier>{d2749dd4-3448-4aff-8b42-bb188875f37e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -71,7 +74,10 @@
       <Filter>Source Files\Interpreter</Filter>
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.cpp">
-      <Filter>Source Files\GUI\Indicator Panels\LinearGuage</Filter>
+      <Filter>Source Files\GUI\Indicator Panels\Linear Guage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Radial Guage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -106,7 +112,10 @@
       <Filter>Source Files\JSON</Filter>
     </ClInclude>
     <ClInclude Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.h">
-      <Filter>Source Files\GUI\Indicator Panels\LinearGuage</Filter>
+      <Filter>Source Files\GUI\Indicator Panels\Linear Guage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.h">
+      <Filter>Source Files\GUI\Indicator Panels\Radial Guage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
