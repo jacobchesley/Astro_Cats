@@ -15,6 +15,7 @@
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
 #include "GUI\Indicator Panels\Linear Guage\LinearGuage.h"
+#include "GUI\Indicator Panels\Radial Guage\RadialGuage.h"
 #include "GUI\Serial Port Connection\SerialPortConnection.h"
 #include "Interpreter\Interpreter.h"
 #include "JSON\json.cpp"
@@ -46,6 +47,8 @@ class MainWindow : public wxFrame {
 		void ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
 		void ShowHumidity(wxCommandEvent& WXUNUSED(event));
+		void ShowUV(wxCommandEvent& WXUNUSED(event));
+		void ShowSolar(wxCommandEvent& WXUNUSED(event));
 		void ShowAll(wxCommandEvent& WXUNUSED(event));
 		void HideAll(wxCommandEvent& WXUNUSED(event));
 		void RepositionAll(wxCommandEvent& WXUNUSED(event));
@@ -64,6 +67,8 @@ class MainWindow : public wxFrame {
 		RadioSignalStrengthWindow * rocketRadioStrength;
 		LinearWindow * temperatureWindow;
 		LinearWindow * humidityWindow;
+		RadialWindow * uvWindow;
+		RadialWindow * solarWindow;
 
 		// Layout for this main window
 		wxBoxSizer * mainLayout;
@@ -80,6 +85,12 @@ class MainWindow : public wxFrame {
 		wxPoint humidPos;
 		wxSize humidSize;
 
+		wxPoint uvPos;
+		wxSize uvSize;
+
+		wxPoint solarPos;
+		wxSize solarSize;
+
 		enum MenuBar{
 			ID_CONNECT_SERIAL,
 			ID_SEND_PIL_COMMAND,
@@ -89,6 +100,8 @@ class MainWindow : public wxFrame {
 			ID_VIEW_ROCKETSTRENGTH,
 			ID_VIEW_TEMP,
 			ID_VIEW_HUMID,
+			ID_VIEW_UV,
+			ID_VIEW_SOLAR,
 			ID_VIEW_ALL,
 			ID_HIDE_ALL,
 			ID_REPO_ALL

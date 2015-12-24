@@ -22,6 +22,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuView->AppendSeparator();
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_TEMP, _("Temperature"));
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_HUMID, _("Humidity"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_UV, _("UV Intensity"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_SOLAR, _("Solar Irradiance"));
 	menuView->AppendSeparator();
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_ALL, _("Show All"));
 	menuView->Append(MainWindow::MenuBar::ID_HIDE_ALL, _("Hide All"));
@@ -63,6 +65,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowRocketSignalStrength, this, MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowHumidity, this, MainWindow::MenuBar::ID_VIEW_HUMID);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowUV, this, MainWindow::MenuBar::ID_VIEW_UV);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSolar, this, MainWindow::MenuBar::ID_VIEW_SOLAR);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowAll, this, MainWindow::MenuBar::ID_VIEW_ALL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::HideAll, this, MainWindow::MenuBar::ID_HIDE_ALL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::RepositionAll, this, MainWindow::MenuBar::ID_REPO_ALL);
@@ -74,6 +78,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	rocketRadioStrength = new RadioSignalStrengthWindow(this, "Rocket Radio Strength");
 	temperatureWindow = new LinearWindow(this, "Temperature", -20.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
 	humidityWindow = new LinearWindow(this, "Humidity", 0.0f, 100.0f, wxColor(0, 0, 255), true, false, "%", "", 10);
+	uvWindow = new RadialWindow(this, "UV Intensity", 0.0f, 150.0f, wxColor(150, 0, 255), " W/M2", 10);
+	solarWindow = new RadialWindow(this, "Solar Irradiance", 0.0f, 1250.0f, wxColor(255, 255, 0), " W/M2", 10);
 
 	// Fire a reposition event so the windows are positioned correctly from the start
 	wxCommandEvent repositionEvent(wxEVT_COMMAND_MENU_SELECTED, MainWindow::MenuBar::ID_REPO_ALL);
@@ -111,6 +117,9 @@ void MainWindow::ReciveSerialData(wxString serialData){
 			// Update the UI based on the latest JSON data
 			temperatureWindow->SetValue(jsonData["Temp"]);
 			humidityWindow->SetValue(jsonData["Humidity"]);
+			float uv = jsonData["UV"];
+			uv *= 10.0f;
+			uvWindow->SetValue(uv);
 		}
 		catch (...) {
 
@@ -153,17 +162,29 @@ void MainWindow::ShowHumidity(wxCommandEvent& WXUNUSED(event)) {
 	humidityWindow->Show();
 }
 
+void MainWindow::ShowUV(wxCommandEvent& WXUNUSED(event)) {
+	uvWindow->Show();
+}
+
+void MainWindow::ShowSolar(wxCommandEvent& WXUNUSED(event)) {
+	solarWindow->Show();
+}
+
 void MainWindow::ShowAll(wxCommandEvent& WXUNUSED(event)) {
 	rocketRadioStrength->Show();
 	pilRadioStrength->Show();
 	temperatureWindow->Show();
 	humidityWindow->Show();
+	uvWindow->Show();
+	solarWindow->Show();
 }
 void MainWindow::HideAll(wxCommandEvent& WXUNUSED(event)) {
 	rocketRadioStrength->Hide();
 	pilRadioStrength->Hide();
 	temperatureWindow->Hide();
 	humidityWindow->Hide();
+	uvWindow->Hide();
+	solarWindow->Hide();
 }
 void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
 	int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
@@ -192,6 +213,18 @@ void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
 	humidSize = tempSize;
 	humidityWindow->SetPosition(humidPos);
 	humidityWindow->SetSize(humidSize);
+
+	// Size and position UV Guage (below Temp Guage)
+	uvPos = wxPoint(0, rocketRadioStrength->GetSize().GetHeight() + temperatureWindow->GetSize().GetHeight());
+	uvSize = rocketRadioSize;
+	uvWindow->SetPosition(uvPos);
+	uvWindow->SetSize(uvSize);
+
+	// Size and position Solar Guage (below Humidity Guage)
+	solarPos = wxPoint(uvWindow->GetSize().GetWidth(), pilRadioStrength->GetSize().GetHeight() + humidityWindow->GetSize().GetHeight());
+	solarSize = rocketRadioSize;
+	solarWindow->SetPosition(solarPos);
+	solarWindow->SetSize(solarSize);
 }
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){
