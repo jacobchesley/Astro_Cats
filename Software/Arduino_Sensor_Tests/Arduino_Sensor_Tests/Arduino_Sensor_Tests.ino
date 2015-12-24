@@ -33,6 +33,7 @@ void loop() {
   pil->UpdateAll();
   pil->SendJsonPilDataSerial(&Serial);
   Serial.println("");
+  delay(300);
  
 /*  
   Serial.print("Temp: ");
