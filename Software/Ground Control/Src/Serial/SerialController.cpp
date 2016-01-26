@@ -14,6 +14,7 @@ SerialController::SerialController(std::string portName, std::string hardwareInf
 
 void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 
+	stop = false;
 	// Close current connection if it exists
 	if (isConnected) {
 
@@ -202,6 +203,10 @@ wxThread::ExitCode SerialController::Entry() {
 	}
 }
 
+bool SerialController::IsConnected() {
+	return isConnected;
+}
+
 wxVector<char> SerialController::GetDataStartingAtIndex() {
 
 	wxVector<char> output;
@@ -283,6 +288,10 @@ int SerialController::WriteBuffer(char * dataToWrite) {
 void SerialController::StopSerial() {
 
 	SetEvent(shutdownEvent);
+}
+
+void SerialController::Stop() {
+	stop = true;
 }
 
 #ifdef __APPLE__

@@ -22,6 +22,8 @@ class SerialController : wxThread{
 		void ClearAllData();
 
 		void StopSerial();
+		void Stop();
+		bool IsConnected();
 
 	protected:
 		virtual ExitCode Entry();
@@ -47,6 +49,7 @@ class SerialController : wxThread{
 		
 		bool isConnected;
 		long int currentIndex;
+		bool stop;
 };
 
 #endif
