@@ -29,15 +29,14 @@ LIBS:atmel
 LIBS:contrib
 LIBS:valves
 LIBS:Shared
-LIBS:ground-cache
 EELAYER 25 0
 EELAYER END
 $Descr User 8500 6500
 encoding utf-8
 Sheet 1 1
 Title "Ground Electronics"
-Date "2015-10-31"
-Rev "1"
+Date "2016-01-14"
+Rev "2"
 Comp "UC Astro Cats"
 Comment1 ""
 Comment2 ""
@@ -171,4 +170,10 @@ Text Notes 4250 3800 0    60   ~ 0
 +5.1V
 Text Notes 4450 4000 0    60   ~ 0
 Radio Voltage Regulation Circuit
+Wire Wire Line
+	4750 1900 3850 1900
+Wire Wire Line
+	3850 1900 3850 2200
+Wire Wire Line
+	3850 2200 3650 2200
 $EndSCHEMATC

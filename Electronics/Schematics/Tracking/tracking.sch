@@ -37,7 +37,7 @@ encoding utf-8
 Sheet 1 1
 Title "Rocket Tracking"
 Date "2015-10-31"
-Rev "1"
+Rev "2"
 Comp "UC Astro Cats"
 Comment1 ""
 Comment2 ""
@@ -80,9 +80,7 @@ $EndComp
 Wire Wire Line
 	1650 2100 1050 2100
 Wire Wire Line
-	1050 700  1050 2100
-Wire Wire Line
-	1050 2100 1050 5550
+	1050 700  1050 5550
 Wire Wire Line
 	1050 700  5400 700 
 Wire Wire Line
@@ -140,9 +138,7 @@ Wire Wire Line
 Wire Wire Line
 	5000 3000 5400 3000
 Wire Wire Line
-	5000 4950 5350 4950
-Wire Wire Line
-	5350 4950 5450 4950
+	5000 4950 5450 4950
 $Comp
 L R R1
 U 1 1 562FB501
@@ -173,9 +169,7 @@ F 3 "" H 6000 4550 30  0000 C CNN
 	0    1    -1   0   
 $EndComp
 Wire Wire Line
-	6150 4550 6850 4550
-Wire Wire Line
-	6850 4550 7550 4550
+	6150 4550 7550 4550
 $Comp
 L Battery BT1
 U 1 1 562FB986
@@ -210,4 +204,10 @@ Text Notes 4700 4950 0    60   ~ 0
 +5.1V
 Text Notes 4650 5250 0    60   ~ 0
 Radio Voltage Regulation Circuit
+Wire Wire Line
+	5400 3500 4250 3500
+Wire Wire Line
+	4250 3500 4250 2650
+Wire Wire Line
+	4250 2650 3850 2650
 $EndSCHEMATC

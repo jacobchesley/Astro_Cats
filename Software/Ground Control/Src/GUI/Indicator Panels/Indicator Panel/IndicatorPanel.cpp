@@ -12,14 +12,15 @@ void IndicatorPanel::PaintNow() {
 
 	// Get the drawing context, then the buffered drawing context.
 	// Paint with buffered drawing context to avoid flicker.
-	wxClientDC dc(this);
 
-	// Make sure the client dc is okay, if not, return
-	if (!dc.IsOk()) {
-		return;
+	if (this->IsShown()) {
+		wxClientDC dc(this);
+		// Make sure the client dc is okay, if not, return
+		if (!dc.IsOk()) {
+			return;
+		}
+		Render(dc);
 	}
-
-	Render(dc);
 }
 
 void IndicatorPanel::OnPaint(wxPaintEvent& paintEvent) {
@@ -30,7 +31,7 @@ void IndicatorPanel::OnPaint(wxPaintEvent& paintEvent) {
 
 	// Make sure the dc is okay, if not, return
 	if(!dcBuf.IsOk()) {
-	
+		return;
 	}
 	Render(dcBuf);
 	paintEvent.Skip();
