@@ -209,6 +209,7 @@ void SerialPortConnection::UpdateAvailableSerialPortsCombo() {
 			serialBox->Delete(i);
 		}
 	}
+	serialBox->SetSelection(serialBox->GetCount());
 }
 
 void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
@@ -223,12 +224,15 @@ void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void SerialPortConnection::OnClose(wxCloseEvent& closeEvent){
+	this->Hide();
+	closeEvent.Veto();
+}
+
+void SerialPortConnection::StopThread() {
 
 	// Send signal to stop thread, and wait for the thread to notify window it is safe to close.
 	serialWatcher->StopThread();
 
-	closeEvent.Skip();
-	this->Destroy();
 }
 
 SerialWatcherThread::SerialWatcherThread(SerialPortConnection * window) : wxThread(wxTHREAD_DETACHED) {

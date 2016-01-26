@@ -37,7 +37,7 @@ void LinearDisplay::SetValue(float newValue) {
 	wxString rightString = wxNumberFormatter::ToString(bar->GetRight(), 2);
 
 	if (bar->LeftEnabled() && bar->RightEnabled()) {
-		bottomText->SetValue(leftString + bar->GetLeftUnits() + "   " + rightString + bar->GetRightUnits());
+		bottomText->SetValue(leftString + bar->GetLeftUnits() + "  ,  " + rightString + bar->GetRightUnits());
 	}
 	if (bar->LeftEnabled() && !bar->RightEnabled()) {
 		bottomText->SetValue(leftString + bar->GetLeftUnits());
@@ -188,5 +188,5 @@ void LinearWindow::SetValue(float newValue) {
 
 void LinearWindow::OnClose(wxCloseEvent& evt){
 	this->Hide();
-	evt.Skip();
+	evt.Veto();
 }

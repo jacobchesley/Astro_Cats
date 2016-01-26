@@ -210,5 +210,5 @@ void RadioSignalStrengthWindow::SetNumBars(int numBars) {
 
 void RadioSignalStrengthWindow::OnClose(wxCloseEvent& evt) {
 	this->Hide();
-	evt.Skip();
+	evt.Veto();
 }

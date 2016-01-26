@@ -1,6 +1,5 @@
 #include "RadialGuage.h"
 
-// Radio Signal Strength Class
 RadialDisplay::RadialDisplay(wxWindow * parent, wxString title, float minValue, float maxValue, wxColor barColor, wxString unit, int numMarks) : wxPanel(parent) {
 
 	this->SetBackgroundColour(parent->GetBackgroundColour());
@@ -52,6 +51,7 @@ RadialBar::RadialBar(wxWindow * parent, float minValue, float maxValue, wxColor 
 	barCol = barColor;
 	backColor = parent->GetBackgroundColour();
 	numMarkers = numMarks;
+	unit = unitIn;
 	this->PaintNow();
 }
 
@@ -168,5 +168,5 @@ void RadialWindow::SetValue(float newValue) {
 
 void RadialWindow::OnClose(wxCloseEvent& evt){
 	this->Hide();
-	evt.Skip();
+	evt.Veto();
 }
