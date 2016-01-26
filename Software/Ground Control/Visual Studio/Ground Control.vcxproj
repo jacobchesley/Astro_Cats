@@ -36,27 +36,39 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp" />
+    <ClCompile Include="..\Src\GUI\Help Windows\About Window\AboutWindow.cpp" />
+    <ClCompile Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.cpp" />
+    <ClCompile Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.cpp" />
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Pitch Roll Display\PitchRoll.cpp" />
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Pressure Altitude Guage\PressureAltitude.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.cpp" />
     <ClCompile Include="..\Src\GUI\MainWindow\MainWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.cpp" />
     <ClCompile Include="..\Src\Interpreter\Interpreter.cpp" />
+    <ClCompile Include="..\Src\Logger\logger.cpp" />
     <ClCompile Include="..\Src\Serial\SerialController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
+    <ClInclude Include="..\Src\GUI\Help Windows\About Window\AboutWindow.h" />
+    <ClInclude Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.h" />
+    <ClInclude Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Indicator Panel\IndicatorPanel.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\linear Guage\LinearGuage.h" />
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Pitch Roll Display\PitchRoll.h" />
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Pressure Altitude Guage\PressureAltitude.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h" />
     <ClInclude Include="..\Src\GUI\MainWindow\MainWindow.h" />
     <ClInclude Include="..\Src\GUI\Serial Port Connection\SerialPortConnection.h" />
     <ClInclude Include="..\Src\Interpreter\Interpreter.h" />
     <ClInclude Include="..\Src\JSON\json.cpp" />
+    <ClInclude Include="..\Src\Logger\Logger.h" />
     <ClInclude Include="..\Src\Serial\SerialController.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -228,7 +240,7 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_lib\mswud;.\..\..\include;.;.\..\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw30ud_core.lib;wxbase30ud.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30ud_core.lib;wxbase30ud.lib;wxbase30ud_net.lib;wxmsw30ud_gl.lib;wxmsw30ud_webview.lib;wxmsw30ud_adv.lib;wxmsw30ud_html.lib;wxtiffd.lib;wxjpegd.lib;wxpngd.lib;wxzlibd.lib;wxregexud.lib;wxexpatd.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Build\Debug\AstroCatsGroundControl.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(wxWidgets)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -269,7 +281,7 @@
       <AdditionalIncludeDirectories>.\..\..\lib\vc_lib\mswu;.\..\..\include;.;.\..\..\samples;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>wxmsw30u_core.lib;wxbase30u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxmsw30u_core.lib;wxbase30u.lib;wxbase30u_net.lib;wxmsw30u_gl.lib;wxmsw30u_webview.lib;wxmsw30u_adv.lib;wxmsw30u_html.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;kernel32.lib;user32.lib;gdi32.lib;comdlg32.lib;winspool.lib;winmm.lib;shell32.lib;comctl32.lib;ole32.lib;oleaut32.lib;uuid.lib;rpcrt4.lib;advapi32.lib;wsock32.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>..\Build\Release\AstroCatsGroundControl.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(wxWidgets)\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

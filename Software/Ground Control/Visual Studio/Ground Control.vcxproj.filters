@@ -47,6 +47,27 @@
     <Filter Include="Source Files\GUI\Indicator Panels\Linear Guage">
       <UniqueIdentifier>{d2749dd4-3448-4aff-8b42-bb188875f37e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Pressure Altitude Guage">
+      <UniqueIdentifier>{98dc34ff-05a1-4760-900e-6fbf724fba25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\Pitch Roll Display">
+      <UniqueIdentifier>{a6886ec2-e027-4a52-90be-812949e6facb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logger">
+      <UniqueIdentifier>{a504fa0d-6cf0-4c9b-9f8d-b7135c35359c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Indicator Panels\GPS View">
+      <UniqueIdentifier>{cae27710-797f-4689-a63b-351f3d5f9e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Help Windows">
+      <UniqueIdentifier>{78de3c72-ec85-4835-a727-0224e585ba03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Help Windows\About Window">
+      <UniqueIdentifier>{6877b575-61a8-47d6-80c3-7de51f28c674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Help Windows\Documentation Window">
+      <UniqueIdentifier>{7611b465-2ef7-417e-9e89-a0de2b5b4787}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -78,6 +99,24 @@
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.cpp">
       <Filter>Source Files\GUI\Indicator Panels\Radial Guage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Pressure Altitude Guage\PressureAltitude.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Pressure Altitude Guage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\Pitch Roll Display\PitchRoll.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\Pitch Roll Display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Logger\logger.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.cpp">
+      <Filter>Source Files\GUI\Indicator Panels\GPS View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Help Windows\About Window\AboutWindow.cpp">
+      <Filter>Source Files\GUI\Help Windows\About Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.cpp">
+      <Filter>Source Files\GUI\Help Windows\Documentation Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,6 +155,24 @@
     </ClInclude>
     <ClInclude Include="..\Src\GUI\Indicator Panels\Radial Guage\RadialGuage.h">
       <Filter>Source Files\GUI\Indicator Panels\Radial Guage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Pressure Altitude Guage\PressureAltitude.h">
+      <Filter>Source Files\GUI\Indicator Panels\Pressure Altitude Guage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\Pitch Roll Display\PitchRoll.h">
+      <Filter>Source Files\GUI\Indicator Panels\Pitch Roll Display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\Logger\Logger.h">
+      <Filter>Source Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.h">
+      <Filter>Source Files\GUI\Indicator Panels\GPS View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Help Windows\About Window\AboutWindow.h">
+      <Filter>Source Files\GUI\Help Windows\About Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.h">
+      <Filter>Source Files\GUI\Help Windows\Documentation Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
