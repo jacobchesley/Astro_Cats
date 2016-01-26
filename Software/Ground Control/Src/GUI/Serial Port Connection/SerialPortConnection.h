@@ -18,6 +18,7 @@ public:
 	SerialPortConnection(wxWindow * parent, SerialController * controller);
 	void GetAvailableSerialPorts();
 	void UpdateAvailableSerialPortsCombo();
+	void StopThread();
 
 private:
 	bool TestPort(std::string portName);
