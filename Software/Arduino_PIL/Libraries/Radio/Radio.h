@@ -105,6 +105,7 @@ private:
 
 	bool CheckOK();
 	bool WaitAndCheckOK();
+	bool useATCommads;
 	int guardTime;
 
 	HardwareSerial * hardwareSerial;

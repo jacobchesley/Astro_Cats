@@ -3,6 +3,7 @@
 Radio::Radio(HardwareSerial * serial){
 	hardwareSerial = serial;
 	guardTime = 1000;
+	useATCommands = false;
 }
 
 Radio::Radio(HardwareSerial * serial, int shutdownPin){
@@ -118,84 +119,86 @@ bool Radio::UpdateSerialBaudRate(int baudRate, bool saveToEPROM){
 		hardwareSerial->read();
 	}
 
-	// enter command mode
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
+	if(useATCommands)
+		// enter command mode
+		delay(guardTime);
+		hardwareSerial->print("+++");
+		delay(guardTime);
 
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){
-		return false;
-	}
-	
-	// Enter the baud rate change command
-	long serialBaud = 9600;
-	switch(baudRate){
-		case baud_1200:
-			hardwareSerial->println("ATBD0");
-			serialBaud = 1200;
-			break;
-
-		case baud_2400:
-			hardwareSerial->println("ATBD1");
-			serialBaud = 2400;
-			break;
-
-		case baud_4800:
-			hardwareSerial->println("ATBD2");
-			serialBaud = 4800;
-			break;
-
-		case baud_9600:
-			hardwareSerial->println("ATBD3");
-			serialBaud = 9600;
-			break;
-
-		case baud_19200:
-			hardwareSerial->println("ATBD4");
-			serialBaud = 19200;
-			break;
-
-		case baud_38400:
-			hardwareSerial->println("ATBD5");
-			serialBaud = 38400;
-			break;
-
-		case baud_57600:
-			hardwareSerial->println("ATBD6");
-			serialBaud = 57600;
-			break;
-
-		case baud_115200:
-			hardwareSerial->println("ATBD7");
-			serialBaud = 115200;
-			break;
-
-		case baud_230400:
-			hardwareSerial->println("ATBD8");
-			serialBaud = 230400;
-			break;
-	}
-	// Wait and check if baud change is successful
-	if(!this->WaitAndCheckOK()){
-		return false;
-	}
-
-	// Save to EPROM if enabled
-	if(saveToEPROM){
-		hardwareSerial->println("ATWR");
-
-		// Wait and check if save to EPROM is successful
+		// Wait and check if command mode is successful
 		if(!this->WaitAndCheckOK()){
 			return false;
-		}	
-	}
+		}
+		
+		// Enter the baud rate change command
+		long serialBaud = 9600;
+		switch(baudRate){
+			case baud_1200:
+				hardwareSerial->println("ATBD0");
+				serialBaud = 1200;
+				break;
 
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	// Wait and check if exit command mode is successful
-	if(!this->WaitAndCheckOK()){
-		return false;
+			case baud_2400:
+				hardwareSerial->println("ATBD1");
+				serialBaud = 2400;
+				break;
+
+			case baud_4800:
+				hardwareSerial->println("ATBD2");
+				serialBaud = 4800;
+				break;
+
+			case baud_9600:
+				hardwareSerial->println("ATBD3");
+				serialBaud = 9600;
+				break;
+
+			case baud_19200:
+				hardwareSerial->println("ATBD4");
+				serialBaud = 19200;
+				break;
+
+			case baud_38400:
+				hardwareSerial->println("ATBD5");
+				serialBaud = 38400;
+				break;
+
+			case baud_57600:
+				hardwareSerial->println("ATBD6");
+				serialBaud = 57600;
+				break;
+
+			case baud_115200:
+				hardwareSerial->println("ATBD7");
+				serialBaud = 115200;
+				break;
+
+			case baud_230400:
+				hardwareSerial->println("ATBD8");
+				serialBaud = 230400;
+				break;
+		}
+		// Wait and check if baud change is successful
+		if(!this->WaitAndCheckOK()){
+			return false;
+		}
+
+		// Save to EPROM if enabled
+		if(saveToEPROM){
+			hardwareSerial->println("ATWR");
+
+			// Wait and check if save to EPROM is successful
+			if(!this->WaitAndCheckOK()){
+				return false;
+			}	
+		}
+
+		// Exit command mode
+		hardwareSerial->println("ATCN");
+		// Wait and check if exit command mode is successful
+		if(!this->WaitAndCheckOK()){
+			return false;
+		}
 	}
 	return true;
 }
@@ -257,7 +260,6 @@ int Radio::GetLastSignalStrength(){
 	int length = 0;
 	for(int i = 0; i < 5; i++){
 		signalStrengthRaw[i] = hardwareSerial->read();
-		Serial.print(signalStrengthRaw[i]);
 		if(signalStrengthRaw[i] == 13){
 			break;
 		}
@@ -273,13 +275,14 @@ int Radio::GetLastSignalStrength(){
 	}
 
 	// Copy only the signal strength part of the returned data
-	char signalStrengthHex[4] = {0};
+	String signalStrengthHex;
 	for(int i = 0; i < length; i++){
-		signalStrengthHex[i] = signalStrengthRaw[i];
+		signalStrengthHex += signalStrengthRaw[i];
 	}
 
 	// Convert hex char array to signal strength int
-	int signalStrength = (int)strtol(signalStrengthHex, NULL, 16);
+	int signalStrength = (int)strtol(signalStrengthHex.c_str(), NULL, 16);
+	signalStrength *= -1;
 	return signalStrength;
 }
 
