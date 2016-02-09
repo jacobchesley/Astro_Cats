@@ -161,4 +161,15 @@ void PIL::SendJsonPilDataSerial(HardwareSerial * serial){
 	pilDataObject["HDOP"] = pilData.gpsData.HDOP;
 
 	pilDataObject.printTo(Serial);
+
+	sdFile = SD.open("Test.astrocat", FILE_WRITE);
+	if(sdFile){
+		char sdOutput[200];
+		pilDataObject.printTo(sdOutput, sizeof(sdOutput));
+		sdFile.println(sdOutput);
+	}
+	else{
+		Serial.println("sd failure");
+	}
+	sdFile.close();
 }

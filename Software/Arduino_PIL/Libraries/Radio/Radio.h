@@ -43,6 +43,8 @@ public:
 	*/
 	void SendMessage(char * message, int length);
 
+	void SendMessage(String message);
+
 	/**
 	* Returns number of bytes of data is available.
 	*/
@@ -74,12 +76,13 @@ public:
 	*/
 	bool UpdateSerialBaudRate(int baudRate, bool saveToEPROM = false);
 
-	void EnableHighSpeedRadio();
+	bool EnableHighSpeedRadio();
 
 	int GetLastSignalStrength();
 
 	int ChangeBaseUnits(int baseUnit);
 
+	bool SetGuardTime(int millisecondsHundred);
 	enum {
 		default_base_units,
 		hex_no_units,
@@ -101,6 +104,8 @@ public:
 private:
 
 	bool CheckOK();
+	bool WaitAndCheckOK();
+	int guardTime;
 
 	HardwareSerial * hardwareSerial;
 	int shutdownP;

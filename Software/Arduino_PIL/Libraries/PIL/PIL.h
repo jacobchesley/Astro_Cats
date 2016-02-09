@@ -1,4 +1,5 @@
 #include <arduino.h>
+#include <SD.h>
 
 #include "../DHTLib/dht.h"
 #include "../BMP180/SFE_BMP180.h"
@@ -53,4 +54,5 @@ private:
 	Venus638 * gps;
 
 	PILData pilData;
+	File sdFile;
 };
