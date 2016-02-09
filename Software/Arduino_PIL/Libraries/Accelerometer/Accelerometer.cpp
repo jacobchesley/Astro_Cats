@@ -34,6 +34,10 @@ Accelerometer::~Accelerometer(){
 
 void Accelerometer::Configure(){
 
+	//Set up the Chip Select pin to be an output from the Arduino.
+  	pinMode(CS, OUTPUT);
+  	//Before communication starts, the Chip Select pin needs to be set high.
+  	digitalWrite(CS, HIGH);
 	//Put the ADXL345 into +/- 16G range by writing the value 0x0B to the dataFormat register.
 	WriteTo(dataFormat, 0x0B);
 

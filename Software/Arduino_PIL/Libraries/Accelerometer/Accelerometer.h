@@ -8,7 +8,7 @@
 
 #include <arduino.h>
 #include <Wire.h>
-
+#include <SPI.h>
 /**
 *	
 *	This reads accelerometer data from the ADXL345.
