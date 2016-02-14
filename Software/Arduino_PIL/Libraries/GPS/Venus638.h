@@ -71,6 +71,9 @@ private:
 	void UpdateTime();
 	int UpdateSpecificData(char * input, int len);
 	bool Compare(char * comp1, char * comp2, int len);
+	bool Compare(String comp1, char * comp2, int len);
+	bool Compare(char * comp1, String comp2, int len);
+	bool Compare(String comp1, String comp2, int len);
 	String GetDataAfterComma(char * data, int maxDataLen, int numCommas);
 	byte ComputeChecksum(byte * payload, int len);
 

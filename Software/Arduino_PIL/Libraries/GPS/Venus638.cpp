@@ -274,12 +274,12 @@ void Venus638::SetUpdateRate(int updateRate){
 
 int Venus638::UpdateSpecificData(char * input, int len){
 
-	char * ggaTest = "$GPGGA";
-	char * gllTest = "$GPGLL";	
-	char * gsaTest = "$GPGSA";
-	char * gsvTest = "$GPGSV";
-	char * rmcTest = "$GPRMC";
-	char * vtgTest = "$GPVTG";
+	String ggaTest = "$GPGGA";
+	String gllTest = "$GPGLL";	
+	String gsaTest = "$GPGSA";
+	String gsvTest = "$GPGSV";
+	String rmcTest = "$GPRMC";
+	String vtgTest = "$GPVTG";
 
 	// copy the data to gga
 	if(this->Compare(ggaTest, input, 6)){
@@ -339,6 +339,33 @@ int Venus638::UpdateSpecificData(char * input, int len){
 }
 
 bool Venus638::Compare(char * comp1, char * comp2, int len){
+	for(int i = 0; i < len; i++){
+		if(!(comp1[i] == comp2[i])){
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Venus638::Compare(String comp1, char * comp2, int len){
+	for(int i = 0; i < len; i++){
+		if(!(comp1[i] == comp2[i])){
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Venus638::Compare(char * comp1, String comp2, int len){
+	for(int i = 0; i < len; i++){
+		if(!(comp1[i] == comp2[i])){
+			return false;
+		}
+	}
+	return true;
+}
+
+bool Venus638::Compare(String comp1, String comp2, int len){
 	for(int i = 0; i < len; i++){
 		if(!(comp1[i] == comp2[i])){
 			return false;
