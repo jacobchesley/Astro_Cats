@@ -16,6 +16,8 @@ struct GPSData{
 	int Quality;
 	int NumSatellites;
 	float HDOP;
+	float VDOP;
+	float PDOP;
 	float Altitude;
 	int StationID;
 };
@@ -32,12 +34,15 @@ public:
 	String GetTime();
 	int GetQuality();
 	int GetNumSatellites();
-	float GetHDOP();
 	float GetAltitude();
 	int GetStationID();
+	float GetPDOP();
+	float GetHDOP();
+	float GetVDOP();
 
 	void Update();
 	void FillInGPSData(GPSData * data);
+	void InitGPSData(GPSData * data);
 
 	void SetBaudRate(int baud);
 	void SetUpdateRate(int updateRate);
@@ -64,7 +69,7 @@ public:
 private:
 
 	void UpdateTime();
-	bool UpdateSpecificData(char * input, int len);
+	int UpdateSpecificData(char * input, int len);
 	bool Compare(char * comp1, char * comp2, int len);
 	String GetDataAfterComma(char * data, int maxDataLen, int numCommas);
 	byte ComputeChecksum(byte * payload, int len);

@@ -42,10 +42,22 @@ int Venus638::GetNumSatellites(){
 	return GetDataAfterComma(gga, ggaLen, 7).toInt();
 }
 
+float Venus638::GetPDOP(){
+	char PDOP[8] = {' '};
+	GetDataAfterComma(gsa, gsaLen, 4).toCharArray(PDOP, sizeof(PDOP));
+	return atof(PDOP);
+}
+
 float Venus638::GetHDOP(){
 	char HDOP[8] = {' '};
 	GetDataAfterComma(gga, ggaLen, 8).toCharArray(HDOP, sizeof(HDOP));
 	return atof(HDOP);
+}
+
+float Venus638::GetVDOP(){
+	char VDOP[8] = {' '};
+	GetDataAfterComma(gsa, gsaLen, 6).toCharArray(VDOP, sizeof(VDOP));
+	return atof(VDOP);
 }
 
 float Venus638::GetAltitude(){
@@ -67,15 +79,33 @@ void Venus638::FillInGPSData(GPSData * data){
 	data->Time = this->GetTime();
 	data->Quality = this->GetQuality();
 	data->NumSatellites = this->GetNumSatellites();
-	data->HDOP = this->GetHDOP();
 	data->Altitude = this->GetAltitude();
 	data->StationID = this->GetStationID();
+	//data->PDOP = this->GetPDOP();
+	data->HDOP = this->GetHDOP();
+	//data->VDOP = this->GetVDOP();
+}
+
+void Venus638::InitGPSData(GPSData * data){
+	
+	data->Latitude = "";
+	data->Longitude = "";
+	data->NorthSouth = ' ';
+	data->EastWest = ' ';
+	data->Time = "";
+	data->Quality = 0;
+	data->NumSatellites = 0;
+	data->HDOP = 0.0f;
+	data->Altitude = 0.0f;
+	data->StationID = 0;
 }
 
 void Venus638::Update(){
 
 	bool stopAll = false;
 	char tempChar = ' ';
+
+	bool fieldsFound[6] = {false};
 
 	// Flush buffer
 	while(gpsSerial->available()){
@@ -96,28 +126,19 @@ void Venus638::Update(){
 
 		// If last character received is a newline, check if we have data we need
 		if(currentData[currentDataIndex - 1] == '\n'){
+			
+			fieldsFound[this->UpdateSpecificData(currentData, currentDataIndex)] = true;
 
-			// If we have data we need
-			if(this->UpdateSpecificData(currentData, currentDataIndex)){
-
-				// Reset the currentData
+			// We have all the fields we are looking for!
+			if(fieldsFound[0]){
 				stopAll = true;
-				for(int i = 0; i < currentDataIndex; i++){
-					currentData[i] = ' ';
-				}
-				currentDataIndex = 0;
+			}
 
-				//while(gpsSerial->available()){
-				//	gpsSerial->read();
-				//}
-				return;
+			// Reset the currentData
+			for(int i = 0; i < currentDataIndex; i++){
+				currentData[i] = ' ';
 			}
-			else{
-				for(int i = 0; i < currentDataIndex; i++){
-					currentData[i] = ' ';
-				}
-				currentDataIndex = 0;
-			}
+			currentDataIndex = 0;
 		}
 	}
 }
@@ -251,7 +272,7 @@ void Venus638::SetUpdateRate(int updateRate){
 	}
 }
 
-bool Venus638::UpdateSpecificData(char * input, int len){
+int Venus638::UpdateSpecificData(char * input, int len){
 
 	char * ggaTest = "$GPGGA";
 	char * gllTest = "$GPGLL";	
@@ -265,7 +286,8 @@ bool Venus638::UpdateSpecificData(char * input, int len){
 		for(int i = 0; i < len; i++){
 			gga[i] = input[i];
 		}
-		return true;
+		ggaLen = len;
+		return 0;
 	}
 
 	// copy the data to gll
@@ -274,16 +296,17 @@ bool Venus638::UpdateSpecificData(char * input, int len){
 			gll[i] = input[i];
 		}
 		gllLen = len;
-		return false;
+		return 1;
 	}
 
 	// copy the data to gsa
 	if(this->Compare(gsaTest, input, 6)){
 		for(int i = 0; i < len; i++){
 			gsa[i] = input[i];
+			Serial.print(gsa[i]);
 		}
 		gsaLen = len;
-		return false;
+		return 2;
 	}
 
 	// copy the data to gsv
@@ -292,7 +315,7 @@ bool Venus638::UpdateSpecificData(char * input, int len){
 			gsv[i] = input[i];
 		}
 		gsvLen = len;
-		return false;
+		return 3;
 	}
 
 	// copy the data to rmc
@@ -301,7 +324,7 @@ bool Venus638::UpdateSpecificData(char * input, int len){
 			rmc[i] = input[i];
 		}
 		rmcLen = len;
-		return false;
+		return 4;
 	}
 
 	// copy the data to vtg
@@ -310,7 +333,7 @@ bool Venus638::UpdateSpecificData(char * input, int len){
 			vtg[i] = input[i];
 		}
 		vtgLen = len;
-		return false;
+		return 5;
 	}
 	return false;
 }
@@ -336,7 +359,6 @@ String Venus638::GetDataAfterComma(char * data, int maxDataLen, int numCommas){
 
 			// Found a comma, increment comma number
 			commaNum += 1;
-
 			// Found first comma looking for, start the position of result here.
 			if(commaNum == numCommas){
 				beginPos = i + 1;
@@ -345,11 +367,10 @@ String Venus638::GetDataAfterComma(char * data, int maxDataLen, int numCommas){
 			// Found another comma after first comma.
 			if(beginPos > 0 && (commaNum == numCommas + 1)){
 				endPos = i;
-				//break;
+				break;
 			}
 		}
 	}
-
 	String result = "";
 	for(int i = beginPos; i < endPos; i++){
 		result += data[i];
