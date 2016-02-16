@@ -31,7 +31,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_SOLAR, _("Solar Irradiance"));
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PRESSURE_ALTITUDE, _("Air Pressure & Altitude"));
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PITCH_ROLL, _("Pitch & Roll"));
-	menuView->Append(MainWindow::MenuBar::ID_VIEW_GPS, _("Rocket and PIL GPS"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_GPS_ROCKET, _("Rocket GPS"));
+	menuView->Append(MainWindow::MenuBar::ID_VIEW_GPS_PIL, _("PIL GPS"));
 	menuView->AppendSeparator();
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_ALL, _("Show All"));
 	menuView->Append(MainWindow::MenuBar::ID_HIDE_ALL, _("Hide All"));
@@ -80,7 +81,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSolar, this, MainWindow::MenuBar::ID_VIEW_SOLAR);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPressureAltitude, this, MainWindow::MenuBar::ID_VIEW_PRESSURE_ALTITUDE);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPitchRoll, this, MainWindow::MenuBar::ID_VIEW_PITCH_ROLL);
-	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowGPS, this, MainWindow::MenuBar::ID_VIEW_GPS);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowGPSRocket, this, MainWindow::MenuBar::ID_VIEW_GPS_ROCKET);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowGPSPIL, this, MainWindow::MenuBar::ID_VIEW_GPS_PIL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowAll, this, MainWindow::MenuBar::ID_VIEW_ALL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::HideAll, this, MainWindow::MenuBar::ID_HIDE_ALL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::RepositionAll, this, MainWindow::MenuBar::ID_REPO_ALL);
@@ -101,7 +103,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	solarWindow = new RadialWindow(this, "Solar Irradiance", 0.0f, 1250.0f, wxColor(255, 255, 0), " W/M2", 10);
 	pressureAltitudeWindow = new PressureAltitudeWindow(this, "Air Pressure & Altitude", 600.0f, 1100.0f, 10, 0, 5500, 10);
 	pitchRollWindow = new PitchRollWindow(this, "Pitch & Roll");
-	gpsView = new GPSView(this, "Rocket and PIL GPS");
+	gpsViewRocket = new GPSViewWindow(this, "Rocket GPS");
+	gpsViewPIL= new GPSViewWindow(this, "PIL GPS");
 	playbackWindow = new PlaybackWindow(this, this);
 	docWindow = new DocumentationWindow(this);
 	aboutWindow = new AboutWindow(this);
@@ -204,6 +207,29 @@ void MainWindow::ReciveSerialData(wxString serialData){
 			std::string jsonString = std::string(fullJsonData);
 			auto jsonData = nlohmann::json::parse(jsonString);
 
+			wxString source = jsonData["Source"];
+			wxString messageType = jsonData["MessageType"];
+
+			// If we are receving GPS Data from the rocket...
+			if(source == "Rocket" && messageType == "Data") {
+
+				// Update coordinates of Rocket GPS
+				GPSCoord rocketCoord;
+				rocketCoord.Lat = (float)jsonData["Lat"];
+				rocketCoord.Lon = (float)jsonData["Lon"];
+				rocketCoord.NS = (wxString)jsonData["NS"];
+				rocketCoord.EW = (wxString)jsonData["EW"];
+				gpsViewRocket->UpdateGPSPos(rocketCoord);
+				
+				gpsViewRocket->UpdateAltitude((float)jsonData["Altitude"]);
+				gpsViewRocket->UpdateQuality((int)jsonData["Quality"]);
+				gpsViewRocket->UpdateNumSat((int)jsonData["NumSat"]);
+				gpsViewRocket->UpdatePDOP((float)jsonData["PDOP"]);
+				gpsViewRocket->UpdateHDOP((float)jsonData["HDOP"]);
+				gpsViewRocket->UpdateVDOP((float)jsonData["VDOP"]);
+				gpsViewRocket->UpdateSatList((wxString)jsonData["SatList"]);
+			}
+
 			// Update the UI based on the latest JSON data
 			temperatureWindow->SetValue(jsonData["Temp"]);
 			humidityWindow->SetValue(jsonData["Humidity"]);
@@ -289,8 +315,12 @@ void MainWindow::ShowPitchRoll(wxCommandEvent& WXUNUSED(event)) {
 	pitchRollWindow->Show();
 }
 
-void MainWindow::ShowGPS(wxCommandEvent& WXUNUSED(event)) {
-	//gpsView->Show();
+void MainWindow::ShowGPSPIL(wxCommandEvent& WXUNUSED(event)) {
+	gpsViewPIL->Show();
+}
+
+void MainWindow::ShowGPSRocket(wxCommandEvent& WXUNUSED(event)) {
+	gpsViewRocket->Show();
 }
 
 void MainWindow::ShowAbout(wxCommandEvent& WXUNUSED(event)) {
@@ -310,7 +340,8 @@ void MainWindow::ShowAll(wxCommandEvent& WXUNUSED(event)) {
 	solarWindow->Show();
 	pressureAltitudeWindow->Show();
 	pitchRollWindow->Show();
-	//gpsView->Show();
+	//gpsViewRocket->Show();
+	//gpsViewPIL->Show();
 }
 
 void MainWindow::HideAll(wxCommandEvent& WXUNUSED(event)) {
@@ -322,7 +353,8 @@ void MainWindow::HideAll(wxCommandEvent& WXUNUSED(event)) {
 	solarWindow->Hide();
 	pressureAltitudeWindow->Hide();
 	pitchRollWindow->Hide();
-	gpsView->Hide();
+	gpsViewRocket->Hide();
+	gpsViewPIL->Hide();
 }
 
 void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {

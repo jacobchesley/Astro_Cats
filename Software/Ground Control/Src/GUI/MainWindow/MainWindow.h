@@ -10,6 +10,7 @@
 #endif
 
 #include "wx/splitter.h"
+#include "wx/sstream.h"
 #include "wx/url.h"
 
 #include "Serial\SerialController.h"
@@ -69,7 +70,8 @@ class MainWindow : public wxFrame {
 		void ShowSolar(wxCommandEvent& WXUNUSED(event));
 		void ShowPressureAltitude(wxCommandEvent& WXUNUSED(event));
 		void ShowPitchRoll(wxCommandEvent& WXUNUSED(event));
-		void ShowGPS(wxCommandEvent& WXUNUSED(event));
+		void ShowGPSRocket(wxCommandEvent& WXUNUSED(event));
+		void ShowGPSPIL(wxCommandEvent& WXUNUSED(event));
 
 		void ShowAll(wxCommandEvent& WXUNUSED(event));
 		void HideAll(wxCommandEvent& WXUNUSED(event));
@@ -102,7 +104,8 @@ class MainWindow : public wxFrame {
 		RadialWindow * solarWindow;
 		PressureAltitudeWindow * pressureAltitudeWindow;
 		PitchRollWindow * pitchRollWindow;
-		GPSView * gpsView;
+		GPSViewWindow * gpsViewRocket;
+		GPSViewWindow * gpsViewPIL;
 
 		// Help Menu Windows
 		DocumentationWindow * docWindow;
@@ -149,7 +152,8 @@ class MainWindow : public wxFrame {
 			ID_VIEW_SOLAR,
 			ID_VIEW_PRESSURE_ALTITUDE,
 			ID_VIEW_PITCH_ROLL,
-			ID_VIEW_GPS,
+			ID_VIEW_GPS_ROCKET,
+			ID_VIEW_GPS_PIL,
 			ID_VIEW_ALL,
 			ID_HIDE_ALL,
 			ID_REPO_ALL,
