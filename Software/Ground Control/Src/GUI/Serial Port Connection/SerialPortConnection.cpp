@@ -134,7 +134,7 @@ void SerialPortConnection::GetAvailableSerialPorts() {
 	for (int i = 0; i < 50; i++) {
 
 		// Generate serial port name
-		std::string portName = "COM" + std::to_string(i);
+		std::string portName = "\\\\.\\COM" + std::to_string(i);
 
 		// This is a good serial port
 		if (this->TestPort(portName)){
