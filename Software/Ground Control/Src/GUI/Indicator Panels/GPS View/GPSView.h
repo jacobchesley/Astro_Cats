@@ -9,20 +9,87 @@
 #include "wx/wx.h"
 #endif
 
-#include "wx/webview.h"
-#include "wx/filename.h"
-#include "wx/stdpaths.h"
+struct GPSCoord {
+	float Lat;
+	float Lon;
+	wxString NS;
+	wxString EW;
+};
 
-class GPSView : public wxFrame {
+class GPSInfoPanel : public wxPanel {
+
 public:
-	GPSView(wxWindow * parent, wxString title);
-	void UpdateGPSPos();
+	GPSInfoPanel(wxWindow * parent);
+	void UpdateGPSPos(GPSCoord pos);
+	void UpdateAltitude(float altitude);
+	void UpdateQuality(int quality);
+	void UpdateNumSat(int numSat);
+	void UpdateSatList(wxString satList);
+	void UpdatePDOP(float hdop);
+	void UpdateHDOP(float hdop);
+	void UpdateVDOP(float hdop);
 
 private:
-	void CreateHTML();
+	wxGridSizer * layout;
+
+	wxStaticText * lonLatLabel;
+	wxTextCtrl * lonLatText;
+
+	wxStaticText * altitudeLabel;
+	wxTextCtrl * altitudeText;
+
+	wxStaticText * qualityLabel;
+	wxTextCtrl * qualityText;
+
+	wxStaticText * numSatLabel;
+	wxTextCtrl * numSatText;
+
+	wxStaticText * pdopLabel;
+	wxTextCtrl * pdopText;
+
+	wxStaticText * hdopLabel;
+	wxTextCtrl * hdopText;
+
+	wxStaticText * vdopLabel;
+	wxTextCtrl * vdopText;
+
+	wxStaticText * satListLabel;
+	wxTextCtrl * satListText;
+};
+
+class GPSView : public wxPanel {
+public:
+	GPSView(wxWindow * parent);
+	void UpdateGPSPos(GPSCoord pos);
+	void UpdateAltitude(float altitude);
+	void UpdateQuality(int quality);
+	void UpdateNumSat(int numSat);
+	void UpdateSatList(wxString satList);
+	void UpdatePDOP(float hdop);
+	void UpdateHDOP(float hdop);
+	void UpdateVDOP(float hdop);
+
+private:
 	wxBoxSizer * layout;
-	wxTextCtrl * titleText;
-	wxWebView * web;
-	wxString htmlText;
+	GPSInfoPanel * info;
+};
+
+class GPSViewWindow : public wxFrame {
+public:
+	GPSViewWindow(wxWindow * parent, wxString title);
+	void UpdateGPSPos(GPSCoord pos);
+	void UpdateAltitude(float altitude);
+	void UpdateQuality(int quality);
+	void UpdateNumSat(int numSat);
+	void UpdateSatList(wxString satList);
+	void UpdatePDOP(float hdop);
+	void UpdateHDOP(float hdop);
+	void UpdateVDOP(float hdop);
+
+private:
+	void OnClose(wxCloseEvent& evt);
+
+	wxBoxSizer * layout;
+	GPSView * view;
 };
 #endif
