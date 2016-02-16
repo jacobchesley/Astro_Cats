@@ -15,6 +15,7 @@ struct GPSData{
 	String Time;
 	int Quality;
 	int NumSatellites;
+	String SatelliteList;
 	float HDOP;
 	float VDOP;
 	float PDOP;
@@ -34,6 +35,7 @@ public:
 	String GetTime();
 	int GetQuality();
 	int GetNumSatellites();
+	String GetSatelliteList();
 	float GetAltitude();
 	int GetStationID();
 	float GetPDOP();
@@ -46,6 +48,7 @@ public:
 
 	void SetBaudRate(int baud);
 	void SetUpdateRate(int updateRate);
+	float DMSToDecimal(String DMS);
 
 	enum {
 		baud_4800,
@@ -75,6 +78,8 @@ private:
 	bool Compare(char * comp1, String comp2, int len);
 	bool Compare(String comp1, String comp2, int len);
 	String GetDataAfterComma(char * data, int maxDataLen, int numCommas);
+	String GetDataAfterComma(String data, int maxDataLen, int numCommas);
+	String GetDataAfterCommaGSA(char * data, int maxDataLen, int numCommas);
 	byte ComputeChecksum(byte * payload, int len);
 
 	char currentData[80];

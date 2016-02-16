@@ -11,6 +11,10 @@ Venus638::Venus638(HardwareSerial * serialIn){
 	memset(gsv, ' ', 80);
 	memset(rmc, ' ', 80);
 	memset(vtg, ' ', 80);
+
+	while(gpsSerial->available()){
+		gpsSerial->read();
+	}
 }
 
 String Venus638::GetTime(){
@@ -42,21 +46,26 @@ int Venus638::GetNumSatellites(){
 	return GetDataAfterComma(gga, ggaLen, 7).toInt();
 }
 
+String Venus638::GetSatelliteList(){
+	
+	return GetDataAfterCommaGSA(gsa, gsaLen, 3);
+}
+
 float Venus638::GetPDOP(){
 	char PDOP[8] = {' '};
-	GetDataAfterComma(gsa, gsaLen, 4).toCharArray(PDOP, sizeof(PDOP));
+	GetDataAfterCommaGSA(gsa, gsaLen, 4).toCharArray(PDOP, sizeof(PDOP));
 	return atof(PDOP);
 }
 
 float Venus638::GetHDOP(){
 	char HDOP[8] = {' '};
-	GetDataAfterComma(gga, ggaLen, 8).toCharArray(HDOP, sizeof(HDOP));
+	GetDataAfterCommaGSA(gsa, gsaLen, 5).toCharArray(HDOP, sizeof(HDOP));
 	return atof(HDOP);
 }
 
 float Venus638::GetVDOP(){
 	char VDOP[8] = {' '};
-	GetDataAfterComma(gsa, gsaLen, 6).toCharArray(VDOP, sizeof(VDOP));
+	GetDataAfterCommaGSA(gsa, gsaLen, 6).toCharArray(VDOP, sizeof(VDOP));
 	return atof(VDOP);
 }
 
@@ -81,9 +90,10 @@ void Venus638::FillInGPSData(GPSData * data){
 	data->NumSatellites = this->GetNumSatellites();
 	data->Altitude = this->GetAltitude();
 	data->StationID = this->GetStationID();
-	//data->PDOP = this->GetPDOP();
+	data->PDOP = this->GetPDOP();
 	data->HDOP = this->GetHDOP();
-	//data->VDOP = this->GetVDOP();
+	data->VDOP = this->GetVDOP();
+	data->SatelliteList = this->GetSatelliteList();
 }
 
 void Venus638::InitGPSData(GPSData * data){
@@ -107,13 +117,28 @@ void Venus638::Update(){
 
 	bool fieldsFound[6] = {false};
 
-	// Flush buffer
+	int tempCurrentDataIndex = 0;
+	char tempCurrentData[80];
+	
+	// Update the slower fields with slightly older data to save time
 	while(gpsSerial->available()){
-		gpsSerial->read();
-	}
+		tempChar = gpsSerial->read();
+		tempCurrentData[tempCurrentDataIndex] = tempChar;
+		tempCurrentDataIndex += 1;
 
-	// Wait for latest and greaetest data
-	while(!gpsSerial->available()){}
+		// If last character received is a newline, check if we have data we need
+		if(tempCurrentData[tempCurrentDataIndex - 1] == '\n'){
+
+			if(this->UpdateSpecificData(tempCurrentData, tempCurrentDataIndex) > 0){
+
+				// Reset the temp currentData
+				for(int i = 0; i < tempCurrentDataIndex; i++){
+					tempCurrentData[i] = ' ';
+				}
+				tempCurrentDataIndex = 0;
+			}
+		}
+	}
 
 	while(!stopAll){
 
@@ -142,7 +167,6 @@ void Venus638::Update(){
 		}
 	}
 }
-
 void Venus638::SetBaudRate(int baudRate){
 
 	while(gpsSerial->available()){
@@ -303,7 +327,6 @@ int Venus638::UpdateSpecificData(char * input, int len){
 	if(this->Compare(gsaTest, input, 6)){
 		for(int i = 0; i < len; i++){
 			gsa[i] = input[i];
-			Serial.print(gsa[i]);
 		}
 		gsaLen = len;
 		return 2;
@@ -336,6 +359,35 @@ int Venus638::UpdateSpecificData(char * input, int len){
 		return 5;
 	}
 	return false;
+}
+
+float Venus638::DMSToDecimal(String DMS){
+
+	// Latitude
+	if(DMS.length() == 9){
+		String degrees = DMS.substring(0, 2);
+		String minutes = DMS.substring(2, 7);
+
+		float degreesFloat = atof(degrees.c_str());
+		float minutesFloat = atof(minutes.c_str()) / 60.0f;
+		float decimalFloat = degreesFloat + minutesFloat;
+		return decimalFloat;
+	}
+
+	// Longitude
+	else if(DMS.length() == 10){
+		String degrees = DMS.substring(0, 3);
+		String minutes = DMS.substring(3, 7);
+
+		float degreesFloat = atof(degrees.c_str());
+		float minutesFloat = atof(minutes.c_str()) / 60.0f;
+		float decimalFloat = degreesFloat + minutesFloat;
+		return decimalFloat;
+
+	}
+	else{
+		return 0.0f;
+	}
 }
 
 bool Venus638::Compare(char * comp1, char * comp2, int len){
@@ -403,6 +455,112 @@ String Venus638::GetDataAfterComma(char * data, int maxDataLen, int numCommas){
 		result += data[i];
 	}
 	return result;
+}
+
+String Venus638::GetDataAfterComma(String data, int maxDataLen, int numCommas){
+
+	int beginPos = 0;
+	int endPos = 0;
+	int commaNum = 0;
+
+	if(numCommas == 0){
+		for(int i = 0; i < maxDataLen; i++){
+			if(data[i] == ',' || data[i] == '*'){
+				endPos = i;
+				break;
+			}
+		}
+		String result = "";
+		for(int i = beginPos; i < endPos; i++){
+			result += data[i];
+		}
+		return result;
+	}
+
+	// Iterate through all data, looking for commas
+	for(int i = 0; i < maxDataLen; i++){
+		if(data[i] == ',' || data[i] == '*'){
+
+			// Found a comma, increment comma number
+			commaNum += 1;
+			// Found first comma looking for, start the position of result here.
+			if(commaNum == numCommas){
+				beginPos = i + 1;
+			}
+
+			// Found another comma after first comma.
+			if(beginPos > 0 && (commaNum == numCommas + 1)){
+				endPos = i;
+				break;
+			}
+		}
+	}
+	String result = "";
+	for(int i = beginPos; i < endPos; i++){
+		result += data[i];
+	}
+	return result;
+}
+
+String Venus638::GetDataAfterCommaGSA(char * data, int maxDataLen, int numCommas){
+
+	int doubleCommaPos = 0;
+
+	// Find double comma.
+	for(int i = 0; i < maxDataLen; i++){
+		if(data[i] == ',' && data[i+1] == ','){
+			doubleCommaPos = i + 1;
+			break;
+		}
+	}
+
+	if(numCommas < 3){
+		return this->GetDataAfterComma(data, maxDataLen, numCommas);
+	}
+	if(numCommas == 3){
+
+		int commaNum = 0;
+		int beginPos = 0;
+
+		// Iterate through all data, looking for commas
+		for(int i = 0; i < maxDataLen; i++){
+			if(data[i] == ',' || data[i] == '*'){
+
+				// Found a comma, increment comma number
+				commaNum += 1;
+				// Found first comma looking for, start the position of result here.
+				if(commaNum == numCommas){
+					beginPos = i + 1;
+					break;
+				}
+			}
+		}
+		String result = "";
+		for(int i = beginPos; i < doubleCommaPos - 1; i++){
+			result += data[i];
+		}
+		return result;
+	}
+
+	if(numCommas > 3){
+		String dataString = "";
+		for(int i = 0; i < maxDataLen; i++){
+			dataString += data[i];
+		}
+
+		String afterDoubleComma = dataString.substring(doubleCommaPos, maxDataLen);
+
+		// Remove leading commas
+		int finalBegin = 0;
+		for(int i = 0; i < afterDoubleComma.length(); i++){
+			if(afterDoubleComma[i] != ','){
+				finalBegin = i;
+				break;
+			}
+		}
+		String removedLeadingCommas = afterDoubleComma.substring(finalBegin, afterDoubleComma.length());
+		return this->GetDataAfterComma(removedLeadingCommas, removedLeadingCommas.length(), numCommas - 4);
+	}
 }
 
 byte Venus638::ComputeChecksum(byte * payload, int len){
