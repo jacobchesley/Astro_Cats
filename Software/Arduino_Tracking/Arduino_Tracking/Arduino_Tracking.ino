@@ -39,24 +39,27 @@ void loop() {
 void sendJSONDataSerial(HardwareSerial * serial){
 
   // Create JSON Buffer
-  StaticJsonBuffer<200> jsonBuffer;
+  StaticJsonBuffer<500> jsonBuffer;
   JsonObject& trackingDataObject = jsonBuffer.createObject();
   
   // Set GPS Data
   trackingDataObject["Source"] = "Rocket";
+  trackingDataObject["MessageType"] = "Data";
   trackingDataObject["Time"] = gpsData.Time;
-  trackingDataObject["Lat"] = gpsData.Latitude;
+  trackingDataObject["Lat"].set(gps->DMSToDecimal(gpsData.Latitude), 5);
   trackingDataObject["NS"] = (String)gpsData.NorthSouth;
-  trackingDataObject["Lon"] = gpsData.Longitude;
+  trackingDataObject["Lon"].set(gps->DMSToDecimal(gpsData.Longitude), 5);
   trackingDataObject["EW"] = (String)gpsData.EastWest;
   trackingDataObject["Altitude"] = gpsData.Altitude;
   trackingDataObject["Quality"] = gpsData.Quality;
-  trackingDataObject["NumSat"] = gpsData.NumSatellites;
-  //trackingDataObject["PDOP"] = gpsData.PDOP;
+  trackingDataObject["PDOP"] = gpsData.PDOP;
   trackingDataObject["HDOP"] = gpsData.HDOP;
-  //trackingDataObject["VDOP"] = gpsData.VDOP;
+  trackingDataObject["VDOP"] = gpsData.VDOP;
+  trackingDataObject["NumSat"] = gpsData.NumSatellites;
+  trackingDataObject["SatList"] = gpsData.SatelliteList;
   
   // Send GPS Data
   trackingDataObject.printTo(*serial);
+  
 }
 
