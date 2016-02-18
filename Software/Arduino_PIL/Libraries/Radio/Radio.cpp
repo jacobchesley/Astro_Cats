@@ -3,16 +3,30 @@
 Radio::Radio(HardwareSerial * serial){
 	hardwareSerial = serial;
 	guardTime = 1000;
-	useATCommands = false;
+	binaryCommands = false;
 }
 
 Radio::Radio(HardwareSerial * serial, int shutdownPin){
 	hardwareSerial = serial;
 
 	pinMode(shutdownPin, OUTPUT);
-  	digitalWrite(shutdownPin, HIGH);
+	digitalWrite(shutdownPin, HIGH);
 	shutdownP = shutdownPin;
 	guardTime = 1000;
+	binaryCommands = false;
+}
+
+Radio::Radio(HardwareSerial * serial, int shutdownPin, int binaryPin){
+	hardwareSerial = serial;
+
+	pinMode(shutdownPin, OUTPUT);
+	pinMode(binaryPin, OUTPUT);
+	digitalWrite(shutdownPin, HIGH);
+	digitalWrite(binaryPin, LOW);
+	shutdownP = shutdownPin;
+	binaryP = binaryPin;
+	guardTime = 1000;
+	binaryCommands = false;
 }
 
 void Radio::SendMessage(char * message, int len){
@@ -24,9 +38,11 @@ void Radio::SendMessage(char * message, int len){
 
 void Radio::SendMessage(String message){
 
-	for(int i = 0; i < message.length(); i++){
-		hardwareSerial->print(message.charAt(i));
-	}
+	hardwareSerial->print(message);
+	//for(int i = 0; i < message.length(); i++){
+	//	hardwareSerial->print(message.charAt(i));
+	//}
+	//hardwareSerial->print('\0');
 }
 
 int Radio::CheckIncomingMessages(){
@@ -69,6 +85,58 @@ bool Radio::Test(){
 	}
 }
 
+bool Radio::EnableBinaryCommands(){
+	// enter command mode
+	delay(guardTime);
+	hardwareSerial->print("+++");
+	delay(guardTime);
+
+	// Wait and check if command mode is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+
+	hardwareSerial->print("ATRT1\r");
+	// Wait and check if rf data rate change is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+
+	hardwareSerial->print("ATCN\r");
+	// Wait and check if exit command mode is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+	binaryCommands = true;
+	return true;
+}
+
+bool Radio::DisableBinaryCommands(){
+	// enter command mode
+	delay(guardTime);
+	hardwareSerial->print("+++");
+	delay(guardTime);
+
+	// Wait and check if command mode is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+
+	hardwareSerial->print("ATRT0\r");
+	// Wait and check if rf data rate change is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+
+	hardwareSerial->print("ATCN\r");
+	// Wait and check if exit command mode is successful
+	if(!this->WaitAndCheckOK()){
+		return false;
+	}
+	binaryCommands = false;
+	return true;
+}
+
 bool Radio::SetGuardTime(int millisecondsHundred){
 
 	// Clear all data in buffer
@@ -89,14 +157,12 @@ bool Radio::SetGuardTime(int millisecondsHundred){
 
 	// Wait and check if guard time command is successful
 	if(!this->WaitAndCheckOK()){
-		Serial.println("NOT OK - ATAT");
 		return false;
 	}
 
 	hardwareSerial->println("ATBT0x01");
 	// Wait and check if guard time command is successful
 	if(!this->WaitAndCheckOK()){
-		Serial.println("NOT OK - ATBT");
 		return false;
 	}
 
@@ -112,98 +178,7 @@ bool Radio::SetGuardTime(int millisecondsHundred){
 
 
 }
-bool Radio::UpdateSerialBaudRate(int baudRate, bool saveToEPROM){
-
-	// Clear all data in buffer
-	while(hardwareSerial->available()){
-		hardwareSerial->read();
-	}
-
-	if(useATCommands)
-		// enter command mode
-		delay(guardTime);
-		hardwareSerial->print("+++");
-		delay(guardTime);
-
-		// Wait and check if command mode is successful
-		if(!this->WaitAndCheckOK()){
-			return false;
-		}
-		
-		// Enter the baud rate change command
-		long serialBaud = 9600;
-		switch(baudRate){
-			case baud_1200:
-				hardwareSerial->println("ATBD0");
-				serialBaud = 1200;
-				break;
-
-			case baud_2400:
-				hardwareSerial->println("ATBD1");
-				serialBaud = 2400;
-				break;
-
-			case baud_4800:
-				hardwareSerial->println("ATBD2");
-				serialBaud = 4800;
-				break;
-
-			case baud_9600:
-				hardwareSerial->println("ATBD3");
-				serialBaud = 9600;
-				break;
-
-			case baud_19200:
-				hardwareSerial->println("ATBD4");
-				serialBaud = 19200;
-				break;
-
-			case baud_38400:
-				hardwareSerial->println("ATBD5");
-				serialBaud = 38400;
-				break;
-
-			case baud_57600:
-				hardwareSerial->println("ATBD6");
-				serialBaud = 57600;
-				break;
-
-			case baud_115200:
-				hardwareSerial->println("ATBD7");
-				serialBaud = 115200;
-				break;
-
-			case baud_230400:
-				hardwareSerial->println("ATBD8");
-				serialBaud = 230400;
-				break;
-		}
-		// Wait and check if baud change is successful
-		if(!this->WaitAndCheckOK()){
-			return false;
-		}
-
-		// Save to EPROM if enabled
-		if(saveToEPROM){
-			hardwareSerial->println("ATWR");
-
-			// Wait and check if save to EPROM is successful
-			if(!this->WaitAndCheckOK()){
-				return false;
-			}	
-		}
-
-		// Exit command mode
-		hardwareSerial->println("ATCN");
-		// Wait and check if exit command mode is successful
-		if(!this->WaitAndCheckOK()){
-			return false;
-		}
-	}
-	return true;
-}
-
-bool Radio::EnableHighSpeedRadio(){
+bool Radio::UpdateSerialBaudRate(int baudRate){
 
 	// Clear all data in buffer
 	while(hardwareSerial->available()){
@@ -219,17 +194,106 @@ bool Radio::EnableHighSpeedRadio(){
 	if(!this->WaitAndCheckOK()){
 		return false;
 	}
+	
+	// Enter the baud rate change command
+	long serialBaud = 9600;
+	switch(baudRate){
+		case baud_1200:
+			hardwareSerial->println("ATBD0");
+			serialBaud = 1200;
+			break;
 
-	hardwareSerial->print("ATBR1\r");
-	// Wait and check if rf data rate change is successful
+		case baud_2400:
+			hardwareSerial->println("ATBD1");
+			serialBaud = 2400;
+			break;
+
+		case baud_4800:
+			hardwareSerial->println("ATBD2");
+			serialBaud = 4800;
+			break;
+
+		case baud_9600:
+			hardwareSerial->println("ATBD3");
+			serialBaud = 9600;
+			break;
+
+		case baud_19200:
+			hardwareSerial->println("ATBD4");
+			serialBaud = 19200;
+			break;
+
+		case baud_38400:
+			hardwareSerial->println("ATBD5");
+			serialBaud = 38400;
+			break;
+
+		case baud_57600:
+			hardwareSerial->println("ATBD6");
+			serialBaud = 57600;
+			break;
+
+		case baud_115200:
+			hardwareSerial->println("ATBD7");
+			serialBaud = 115200;
+			break;
+
+		case baud_230400:
+			hardwareSerial->println("ATBD8");
+			serialBaud = 230400;
+			break;
+	}
+	// Wait and check if baud change is successful
 	if(!this->WaitAndCheckOK()){
 		return false;
 	}
 
-	hardwareSerial->print("ATCN\r");
+	// Exit command mode
+	hardwareSerial->println("ATCN");
 	// Wait and check if exit command mode is successful
 	if(!this->WaitAndCheckOK()){
 		return false;
+	}
+
+	return true;
+}
+
+bool Radio::EnableHighSpeedRadio(){
+
+	// Clear all data in buffer
+	while(hardwareSerial->available()){
+		hardwareSerial->read();
+	}
+	if(binaryCommands){
+		digitalWrite(binaryP, HIGH);
+		hardwareSerial->write(0x39);
+		hardwareSerial->write(0x01);
+		hardwareSerial->write(0x00);
+		delayMicroseconds(100);
+		digitalWrite(binaryP, LOW);
+	}
+	else{
+		// enter command mode
+		delay(guardTime);
+		hardwareSerial->print("+++");
+		delay(guardTime);
+
+		// Wait and check if command mode is successful
+		if(!this->WaitAndCheckOK()){
+			return false;
+		}
+
+		hardwareSerial->print("ATBR1\r");
+		// Wait and check if rf data rate change is successful
+		if(!this->WaitAndCheckOK()){
+			return false;
+		}
+
+		hardwareSerial->print("ATCN\r");
+		// Wait and check if exit command mode is successful
+		if(!this->WaitAndCheckOK()){
+			return false;
+		}
 	}
 	return true;
 }
@@ -240,50 +304,69 @@ int Radio::GetLastSignalStrength(){
 		hardwareSerial->read();
 	}
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-	
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){
-		Serial.println("Command mode failed");
-		return -1;
-	}
+	if(binaryCommands){
+		digitalWrite(binaryP, HIGH);
+		byte query = 0x36| 0x80;
+		hardwareSerial->write(query);
+		delayMicroseconds(100);
+		digitalWrite(binaryP, LOW);
 
-	hardwareSerial->print("ATDB\r");
-	// Wait for signal strength data
-	while(!hardwareSerial->available()){}
+		// Wait for signal strength data
+		while(!hardwareSerial->available()){}
 
-	delay(10);
-	// Copy next 5 values from serial, 4 are each hex returned, followed by a carrige return
-	char signalStrengthRaw[5] = {0};
-	int length = 0;
-	for(int i = 0; i < 5; i++){
-		signalStrengthRaw[i] = hardwareSerial->read();
-		if(signalStrengthRaw[i] == 13){
-			break;
+		byte signalStrengthRaw[2] = {0};
+		delay(1);
+		for(int i = 0; i < 2; i++){
+			signalStrengthRaw[i] = hardwareSerial->read();
 		}
-		length += 1;
+		return signalStrengthRaw[0] | signalStrengthRaw[1] << 8;
 	}
+
+	else{
+		
+		delay(guardTime);
+		hardwareSerial->print("+++");
+		delay(guardTime);
+		
+		// Wait and check if command mode is successful
+		if(!this->WaitAndCheckOK()){
+			return -1;
+		}
+
+		hardwareSerial->print("ATDB\r");
+		// Wait for signal strength data
+		while(!hardwareSerial->available()){}
+
+		delay(10);
+		char signalStrengthRaw[5] = {0};
+		int length = 0;
+		// Copy next 5 values from serial, 4 are each hex returned, followed by a carrige return
+		for(int i = 0; i < 5; i++){
+			signalStrengthRaw[i] = hardwareSerial->read();
+			if(signalStrengthRaw[i] == 13){
+				break;
+			}
+			length += 1;
+		}
+		
+
+		hardwareSerial->print("ATCN\r");
+		// Wait and check if exit command mode is successful
+		if(!this->WaitAndCheckOK()){
+			return -1;
+		}
 	
 
-	hardwareSerial->print("ATCN\r");
-	// Wait and check if exit command mode is successful
-	if(!this->WaitAndCheckOK()){
-		Serial.println("Exit command mode failed");
-		return -1;
-	}
+		// Copy only the signal strength part of the returned data
+		char signalStrengthHex[4] = {0};
+		for(int i = 0; i < length; i++){
+			signalStrengthHex[i] = signalStrengthRaw[i];
+		}
 
-	// Copy only the signal strength part of the returned data
-	String signalStrengthHex;
-	for(int i = 0; i < length; i++){
-		signalStrengthHex += signalStrengthRaw[i];
+		// Convert hex char array to signal strength int
+		int signalStrength = (int)strtol(signalStrengthHex, NULL, 16);
+		return signalStrength;
 	}
-
-	// Convert hex char array to signal strength int
-	int signalStrength = (int)strtol(signalStrengthHex.c_str(), NULL, 16);
-	signalStrength *= -1;
-	return signalStrength;
 }
 
 int Radio::ChangeBaseUnits(int baseUnit){
@@ -295,7 +378,6 @@ int Radio::ChangeBaseUnits(int baseUnit){
 	hardwareSerial->print("+++");
 	while(hardwareSerial->available() <= 0){ delay(10); }
 	if(!this->CheckOK()){
-		Serial.println("Failed 1");
 		return - 1;
 	}
 
@@ -319,12 +401,8 @@ int Radio::ChangeBaseUnits(int baseUnit){
 	while(hardwareSerial->available() <= 0){ delay(10); }
 	if(!this->CheckOK()){
 
-		Serial.println("Failed 2");
 		return - 1;
 	}
-
-	Serial.println("CHANGED BASE!");
-
 }
 
 bool Radio::CheckOK(){
@@ -337,7 +415,6 @@ bool Radio::CheckOK(){
 	char temp;
 	for(int i = 0; i < 3; i++){
 		if(temp = hardwareSerial->read() != ok[i]){
-			Serial.print(temp);
 			return false;
 		}
 	}

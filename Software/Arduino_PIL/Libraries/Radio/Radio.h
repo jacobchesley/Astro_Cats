@@ -30,8 +30,18 @@ public:
 	* 	Constructor for radio
 	*
 	*	@param serial - Hardware Serial used to conenct the radio
+	*	@param shutdownPin - pin used for shutdown
 	*/
 	Radio(HardwareSerial * serial, int shutdownPin);
+
+	/**
+	* 	Constructor for radio
+	*
+	*	@param serial - Hardware Serial used to conenct the radio
+	*	@param shutdownPin - pin used for shutdown
+	*	@param binaryPin - pin used to select binary command mode
+	*/
+	Radio(HardwareSerial * serial, int shutdownPin, int binaryPin);
 
 	/**
 	*	Destructor for radio
@@ -74,7 +84,7 @@ public:
 	/**
 	* Updates the serial port baud rate between device and radio
 	*/
-	bool UpdateSerialBaudRate(int baudRate, bool saveToEPROM = false);
+	bool UpdateSerialBaudRate(int baudRate);
 
 	bool EnableHighSpeedRadio();
 
@@ -83,6 +93,11 @@ public:
 	int ChangeBaseUnits(int baseUnit);
 
 	bool SetGuardTime(int millisecondsHundred);
+
+	bool EnableBinaryCommands();
+
+	bool DisableBinaryCommands();
+
 	enum {
 		default_base_units,
 		hex_no_units,
@@ -105,11 +120,12 @@ private:
 
 	bool CheckOK();
 	bool WaitAndCheckOK();
-	bool useATCommads;
 	int guardTime;
+	bool binaryCommands;
 
 	HardwareSerial * hardwareSerial;
 	int shutdownP;
+	int binaryP;
 };
 
 #endif
