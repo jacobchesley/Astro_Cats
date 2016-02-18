@@ -214,7 +214,7 @@ void MainWindow::ReciveSerialData(wxString serialData){
 			if(source == "Rocket" && messageType == "Data") {
 
 				// Update coordinates of Rocket GPS
-				GPSCoord rocketCoord;
+				GPSCoord rocketCoord; 
 				rocketCoord.Lat = (float)jsonData["Lat"];
 				rocketCoord.Lon = (float)jsonData["Lon"];
 				rocketCoord.NS = (wxString)jsonData["NS"];
