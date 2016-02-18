@@ -1,61 +1,52 @@
 #include <Radio.h>
 
 #define SHUTDOWN_PIN 22
+#define BINARY_PIN 23
 
 Radio * radio;
+
+String message;
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial1.begin(9600);
-  radio = new Radio(&Serial1, SHUTDOWN_PIN);
-  delay(1000);
-  if(radio->Test()){
-    Serial.println("Radio Connected!");
+  
+  radio = new Radio(&Serial1, SHUTDOWN_PIN, BINARY_PIN);
+  delay(500);
+  if(!radio->Test()){
+    Serial.println("Radio not connected!");
   }
   radio->SetGuardTime(1);
-  if(radio->Test()){
-    Serial.println("Guard time set correctly!");
+  if(!radio->Test()){
+    Serial.println("Set Guard time failed!");
   }
-  delay(500);
-
-  if(radio->UpdateSerialBaudRate(Radio::baud_115200,false)){
+ 
+  if(radio->UpdateSerialBaudRate(Radio::baud_115200)){
     Serial1.begin(115200);
     delay(500);
-    if(radio->Test()){
-      Serial.println("Baud rate changed!");
-      if(radio->EnableHighSpeedRadio()){
-        Serial.println("High speed radio enabled!");
+    if(!radio->Test()){
+      Serial.println("Baud rate change failed!");
+        if(!radio->EnableHighSpeedRadio()){
+          Serial.println("High speed radio failed!");
       }
     }
   }
-  Serial.println("----------------");
-  Serial.println(radio->GetLastSignalStrength());
-  Serial.println("----------------");
+
+  if(!radio->EnableBinaryCommands()){
+    Serial.println("Binary commands failed!");
+  }
+  Serial.println("Ground READY!");
 }
 
 void loop() {
-  char message[100];
-
-  int currentBytes = 0;
-  int sigStr = -8;
-  String sigStrStr;
-  if(radio->CheckIncomingMessages() > 0){
-    // Get entire message as it is being sent.
-    while(currentBytes != radio->CheckIncomingMessages()){
-      currentBytes = radio->CheckIncomingMessages();
-      delay(20);
-    }
-    radio->CopyMessage(message, currentBytes);
-    for(int i = 0; i < currentBytes; i++){
-      Serial.print(message[i]);
-    }
-
-    sigStr = radio->GetLastSignalStrength();
-    sigStrStr = String(sigStr);
-    Serial.println("Signal Strength: " + sigStrStr);
-    Serial.println(" ");
-    Serial.println(" ");
-    Serial.println(" ");
-    Serial.println(" ");
-
-  }
+  int messageSize = radio->CheckIncomingMessages();
+  char * outMessages = new char[messageSize];
+  radio->CopyMessage(outMessages, messageSize);
+  Serial.print(outMessages);
+  delete[] outMessages;
 }
+
+void SendLastSignalStrength(){
+
+}
+
+
