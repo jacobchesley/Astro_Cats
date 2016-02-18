@@ -4,17 +4,28 @@ Venus638::Venus638(HardwareSerial * serialIn){
 
 	gpsSerial = serialIn;
 	currentDataIndex = 0;
-	memset(currentData, ' ', 80);
-	memset(gga, ' ', 80);
-	memset(gll, ' ', 80);
-	memset(gsa, ' ', 80);
-	memset(gsv, ' ', 80);
-	memset(rmc, ' ', 80);
-	memset(vtg, ' ', 80);
+
+	ggaLen = 0;
+	gllLen = 0;
+	gsaLen = 0;
+	gsvLen = 0;
+	rmcLen = 0;
+	vtgLen = 0;
+
+	memset(currentData, ' ', 200);
+	memset(gga, ' ', 200);
+	memset(gll, ' ', 200);
+	memset(gsa, ' ', 200);
+	memset(gsv, ' ', 200);
+	memset(rmc, ' ', 200);
+	memset(vtg, ' ', 200);
 
 	while(gpsSerial->available()){
 		gpsSerial->read();
 	}
+
+	lastGSATime = 0;
+	firstGSA = false;
 }
 
 String Venus638::GetTime(){
@@ -116,30 +127,7 @@ void Venus638::Update(){
 	char tempChar = ' ';
 
 	bool fieldsFound[6] = {false};
-
-	int tempCurrentDataIndex = 0;
-	char tempCurrentData[80];
 	
-	// Update the slower fields with slightly older data to save time
-	while(gpsSerial->available()){
-		tempChar = gpsSerial->read();
-		tempCurrentData[tempCurrentDataIndex] = tempChar;
-		tempCurrentDataIndex += 1;
-
-		// If last character received is a newline, check if we have data we need
-		if(tempCurrentData[tempCurrentDataIndex - 1] == '\n'){
-
-			if(this->UpdateSpecificData(tempCurrentData, tempCurrentDataIndex) > 0){
-
-				// Reset the temp currentData
-				for(int i = 0; i < tempCurrentDataIndex; i++){
-					tempCurrentData[i] = ' ';
-				}
-				tempCurrentDataIndex = 0;
-			}
-		}
-	}
-
 	while(!stopAll){
 
 		// Read next character if availble and add to current data
@@ -154,11 +142,22 @@ void Venus638::Update(){
 			
 			fieldsFound[this->UpdateSpecificData(currentData, currentDataIndex)] = true;
 
+			unsigned long deltaTime = millis() - lastGSATime;
 			// We have all the fields we are looking for!
-			if(fieldsFound[0]){
+			if(fieldsFound[0] && firstGSA && (deltaTime < 5000)){
 				stopAll = true;
+
+				if(fieldsFound[2]){
+					lastGSATime = millis();
+					firstGSA = true;
+				}
 			}
 
+			else if(fieldsFound[0] && fieldsFound[2]){
+				stopAll = true;
+				lastGSATime = millis();
+				firstGSA = true;
+			}
 			// Reset the currentData
 			for(int i = 0; i < currentDataIndex; i++){
 				currentData[i] = ' ';

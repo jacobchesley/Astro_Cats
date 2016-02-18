@@ -82,14 +82,14 @@ private:
 	String GetDataAfterCommaGSA(char * data, int maxDataLen, int numCommas);
 	byte ComputeChecksum(byte * payload, int len);
 
-	char currentData[80];
+	char currentData[200];
 	int currentDataIndex;
-	char gga[80];
-	char gll[80];	
-	char gsa[80];
-	char gsv[80];
-	char rmc[80];
-	char vtg[80];
+	char gga[200];
+	char gll[200];	
+	char gsa[200];
+	char gsv[200];
+	char rmc[200];
+	char vtg[200];
 
 	int ggaLen;
 	int gllLen;	
@@ -104,6 +104,9 @@ private:
 	int milliseconds;
 
 	HardwareSerial * gpsSerial;
+
+	unsigned long lastGSATime;
+	bool firstGSA;
 };
 
 #endif
