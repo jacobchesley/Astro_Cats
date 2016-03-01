@@ -9,7 +9,7 @@ class RadioSignalStrengthBar;
 class RadioSignalStrength : public wxPanel {
 	public:
 		RadioSignalStrength(wxWindow * parent, wxString title);
-		void SetRadioSignalStrength(int signalStrength);
+		void SetSignalStrength(int signalStrength);
 		void SetTitle(wxString newTitle);
 
 private:
@@ -35,7 +35,7 @@ class RadioSignalStrengthBar : public IndicatorPanel {
 		/**
 		Set the number of bars to display.  0 - 7.
 		*/
-		void SetNumBars(int numBars);
+		void SetSignalStrength(int newSignalStrength);
 
 	private:
 
@@ -46,7 +46,7 @@ class RadioSignalStrengthBar : public IndicatorPanel {
 class RadioSignalStrengthWindow : public wxFrame {
 	public:
 		RadioSignalStrengthWindow(wxWindow * parent, wxString name);
-		void SetNumBars(int numBars);
+		void SetSignalStrength(int signalStrength);
 
 	private:
 		RadioSignalStrength * inside;

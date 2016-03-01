@@ -30,8 +30,8 @@ RadioSignalStrength::RadioSignalStrength(wxWindow * parent, wxString title) : wx
 	this->GetSizer()->Layout();
 }
 
-void RadioSignalStrength::SetRadioSignalStrength(int signalStrength) {
-	bars->SetNumBars(signalStrength);
+void RadioSignalStrength::SetSignalStrength(int signalStrength) {
+	bars->SetSignalStrength(signalStrength);
 	signalText->SetValue(std::to_string(signalStrength));
 }
 
@@ -45,16 +45,9 @@ RadioSignalStrengthBar::RadioSignalStrengthBar(wxWindow * parent) : IndicatorPan
 	this->PaintNow();
 }
 
-void RadioSignalStrengthBar::SetNumBars(int newSignalStrength){
-	if (newSignalStrength > 7) {
-		signalStrength = 7;
-	}
-	else if (newSignalStrength < 0) {
-		signalStrength = 0;
-	}
-	else {
-		signalStrength = newSignalStrength;
-	}
+void RadioSignalStrengthBar::SetSignalStrength(int newSignalStrength) {
+	
+	signalStrength = newSignalStrength;
 	this->PaintNow();
 }
 
@@ -83,51 +76,38 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 	// 6 - Mostly Green, little yellow
 	// 7 - Green
 	wxColor barColor;
-	switch (signalStrength) {
-
-		// Set strike through to red, no signal
-		case 0:
-			barColor.SetRGB(0x000000FF);
-			break;
-
-		// Set barColor to red
-		case 1:
-			barColor.SetRGB(0x000000FF);
-			break;
-
-		// Set barColor to dark orange
-		case 2:
-			barColor.SetRGB(0x000066FF);
-			break;
-
-		// Set barColor to light orange
-		case 3:
-			barColor.SetRGB(0x0000AAFF);
-			break;
-
-		// Set barColor to yellow
-		case 4:
-			barColor.SetRGB(0x0000FFFF);
-			break;
-
-		// Set barColor to yellow green
-		case 5:
-			barColor.SetRGB(0x00FFAA);
-			break;
-
-		// Set barColor to mostly green, little yellow
-		case 6:
-			barColor.SetRGB(0x0000FF66);
-			break;
-
-		// Set barColor to green
-		case 7:
-			barColor.SetRGB(0x0000FF00);
-			break;
-
-		// Blue is default to show error
-		default:
-			barColor.SetRGB(0x00FF0000);
+	int numBar = 0;
+	if (signalStrength > -100 && signalStrength <= -91) {
+		barColor.SetRGB(0x000000FF);
+		numBar = 0;
+	}
+	if (signalStrength > -91 && signalStrength <= -83) {
+		barColor.SetRGB(0x000000FF);
+		numBar = 1;
+	}
+	if (signalStrength > -83 && signalStrength <= -75) {
+		barColor.SetRGB(0x000066FF);
+		numBar = 2;
+	}
+	if (signalStrength > -75 && signalStrength <= -68) {
+		barColor.SetRGB(0x0000AAFF);
+		numBar = 3;
+	}
+	if (signalStrength > -68 && signalStrength <= -60) {
+		barColor.SetRGB(0x0000FFFF);
+		numBar = 4;
+	}
+	if (signalStrength > -60 && signalStrength <= -52) {
+		barColor.SetRGB(0x0000FFFF);
+		numBar = 5;
+	}
+	if (signalStrength > -52 && signalStrength <= -45) {
+		barColor.SetRGB(0x00FFAA);
+		numBar = 6;
+	}
+	if (signalStrength > -45) {
+		barColor.SetRGB(0x0000FF00);
+		numBar = 7;
 	}
 
 	// Set color of drawing
@@ -135,7 +115,7 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 	dc.SetBrush(wxBrush(barColor));
 
 	// If there is a signal, draw signal bars
-	if(signalStrength > 0){
+	if(signalStrength >-100){
 
 		// Determine bar width and base height
 		int barWidth = width / 10;
@@ -144,13 +124,12 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 
 		// Draw signal strength bars.  Increase hieght of bar as signal increases
 		int xOffset = 0;
-		for(int bar = 0; bar < signalStrength + 1; bar++){
+		for(int bar = 0; bar < numBar + 1; bar++){
 
 			int startX = xOffset;
 			int startY = height;
 			dc.DrawRectangle(startX, startY, barWidth, -1* baseBarHeight * (bar));
 			xOffset += barOffset;
-		
 		}
 	}
 	else {
@@ -204,8 +183,8 @@ RadioSignalStrengthWindow::RadioSignalStrengthWindow(wxWindow * parent, wxString
 	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&RadioSignalStrengthWindow::OnClose, this);
 }
 
-void RadioSignalStrengthWindow::SetNumBars(int numBars) {
-	inside->SetRadioSignalStrength(numBars);
+void RadioSignalStrengthWindow::SetSignalStrength(int signalStrength) {
+	inside->SetSignalStrength(signalStrength);
 }
 
 void RadioSignalStrengthWindow::OnClose(wxCloseEvent& evt) {
