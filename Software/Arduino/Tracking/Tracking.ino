@@ -1,26 +1,28 @@
 #include <ArduinoJson.h>
-#include <Radio.h>
+#include <RadioAPI.h>
 #include <Venus638.h>
 
 #define SHUTDOWN_PIN 22
 #define BINARY_PIN 23
 
+RadioAPI * radio;
 Venus638 * gps;
 GPSData gpsData;
 
-Radio * radio;
-
 void setup() {
+
   // Output serial
   Serial.begin(115200);
-  
+
   // Radio Serial
-  Serial1.begin(9600);
-  
+  Serial1.begin(115200);
+
   // GPS Serial
   Serial2.begin(9600);
-
-  // ********************** Create new GPS **********************
+  
+  delay(100);
+  
+  // **************** Create new GPS *****************
   gps = new Venus638(&Serial2);
   gps->InitGPSData(&gpsData);
 
@@ -28,55 +30,35 @@ void setup() {
   gps->SetBaudRate(Venus638::baud_115200);
   Serial2.begin(115200);
 
-  delay(500);
+  delay(100);
   gps->SetUpdateRate(Venus638::update_20);
-  
-  // ********************** Create new Radio **********************
-  radio = new Radio(&Serial1, SHUTDOWN_PIN, BINARY_PIN);
-  delay(500);
-  if(!radio->Test()){
-    Serial.println("Radio not connected!");
-  }
-  radio->SetGuardTime(1);
-  if(!radio->Test()){
-    Serial.println("Set Guard time failed!");
-  }
- 
-  if(radio->UpdateSerialBaudRate(Radio::baud_115200)){
-    Serial1.begin(115200);
-    delay(500);
-    if(!radio->Test()){
-      Serial.println("Baud rate change failed!");
-        if(!radio->EnableHighSpeedRadio()){
-          Serial.println("High speed radio failed!");
-      }
-    }
-  }
 
-  if(!radio->EnableBinaryCommands()){
-    Serial.println("Binary commands failed!");
-  }
+  // **************** Create new radio *****************
+  radio = new RadioAPI(&Serial1, SHUTDOWN_PIN, BINARY_PIN);
+  radio->ClearRXArray();
+  radio->ClearTXSArray();
 }
-
 
 void loop() {
-  
-  // Get latest GPS Information
-  gps->Update();
 
-  // Fill in GPS Data and send it over serial, in JSON form
+  // Get latest GPS Data and fill in gps data struct
+  gps->Update();
   gps->FillInGPSData(&gpsData);
-  sendJSONData();
-  if(gpsData.NumSatellites > 0){
-    delay(500);
-  }
-  else{
-    delay(2000);
-  }
+  
+  // Send json string over radio
+  SendJSONData();
+
+  // Delay 0.5 seconds if satellites are locked in, otherwise delay 2 seconds
+  if(gpsData.NumSatellites > 0){ delay(500); }
+  else{ delay(2000); }
+
+  radio->ClearRXArray();
+  radio->ClearTXSArray();
 }
 
-void sendJSONData(){
 
+void SendJSONData(){
+  
   // Create JSON Buffer
   StaticJsonBuffer<500> jsonBuffer;
   JsonObject& trackingDataObject = jsonBuffer.createObject();
@@ -97,19 +79,23 @@ void sendJSONData(){
   trackingDataObject["NumSat"] = gpsData.NumSatellites;
   trackingDataObject["SatList"] = gpsData.SatelliteList;
   
-  // Send GPS Data
+  // Initialize char and byte array
   int len = trackingDataObject.measureLength();
-  char * jsonCharBuffer = new char[len + 2];
+  char * jsonCharBuffer = new char[len + 4];
+  for(int i = 0; i < len+4; i++){
+    jsonCharBuffer[i] = ' ';
+  }
   trackingDataObject.printTo(jsonCharBuffer, len+1);
-
-  radio->SendMessage(jsonCharBuffer, len + 1);
-  char newline[1] = {'\n'};
-  radio->SendMessage(newline, 1);
-  //Serial.println(len);
-  //Serial.println(jsonCharBuffer);
-
-  delete[] jsonCharBuffer;
+  jsonCharBuffer[len+2] = '\r';
+  jsonCharBuffer[len+3] = '\n';
+  byte * jsonByteBuffer = (byte*)jsonCharBuffer;
   
+  RadioPacketTXR transmitPacket = radio->BuildTXRPacket(jsonByteBuffer, len+4, 4794, 0x01);
+  radio->SendTXRPacket(transmitPacket);
   
+  delete[] transmitPacket.data;
+  transmitPacket.data = NULL;
+
+  delete[]jsonCharBuffer;
+  jsonCharBuffer = NULL;
 }
-
