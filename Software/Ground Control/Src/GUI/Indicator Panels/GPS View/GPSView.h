@@ -9,6 +9,9 @@
 #include "wx/wx.h"
 #endif
 
+#include "wx/splitter.h"
+#include "wx/dcbuffer.h"
+
 struct GPSCoord {
 	float Lat;
 	float Lon;
@@ -31,7 +34,7 @@ public:
 	void UpdatePDOP(float hdop);
 	void UpdateHDOP(float hdop);
 	void UpdateVDOP(float hdop);
-	void UpdateTime(float time);
+	void UpdateTime(wxString time);
 
 private:
 
@@ -83,10 +86,16 @@ public:
 	GPSRadarPanel(wxWindow * parent);
 	void SetBaseCoord(GPSCoord coord);
 	void SetMobileCoord(GPSCoord coord);
+	void PaintNow();
 
 private:
+	void Render(wxDC& dc);
+	void OnPaint(wxPaintEvent& paintEvent);
+	void OnSize(wxSizeEvent& sizeEvent);
+
 	const float pi = 3.1415926535897932384626433832795028841971693993751;
-	float rad = 0.0f;
+	float rad;
+	float deg;
 	float CalculateDistance(GPSCoord coord1, GPSCoord coord2);
 	float CalculateAngle(GPSCoord coord1, GPSCoord coord2);
 	GPSCoord baseCoord;
@@ -112,10 +121,11 @@ public:
 	void UpdatePDOP(float hdop);
 	void UpdateHDOP(float hdop);
 	void UpdateVDOP(float hdop);
-	void UpdateTime(float time);
+	void UpdateTime(wxString time);
 
 private:
 	wxBoxSizer * layout;
+	wxSplitterWindow * splitter;
 	GPSInfoPanel * info;
 	GPSRadarPanel * radar;
 };
@@ -131,7 +141,7 @@ public:
 	void UpdatePDOP(float hdop);
 	void UpdateHDOP(float hdop);
 	void UpdateVDOP(float hdop);
-	void UpdateTime(float time);
+	void UpdateTime(wxString time);
 
 private:
 	void OnClose(wxCloseEvent& evt);

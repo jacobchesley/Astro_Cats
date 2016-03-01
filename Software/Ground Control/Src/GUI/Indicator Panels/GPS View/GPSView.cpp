@@ -149,6 +149,8 @@ void GPSInfoPanel::SetTitleText(wxString title) {
 
 void GPSInfoPanel::UpdateGPSPos(GPSCoord pos) {
 	currentCoord = pos;
+	radar->SetMobileCoord(pos);
+	radar->PaintNow();
 	lonLatText->SetValue(std::to_string(pos.Lat) + pos.NS + " , " + std::to_string(pos.Lon) + pos.EW);
 }
 
@@ -209,13 +211,21 @@ void GPSInfoPanel::UpdateVDOP(float vdop) {
 	vdopText->SetValue(std::to_string(vdop));
 }
 
-void GPSInfoPanel::UpdateTime(float time) {
-	timeText->SetValue(std::to_string(time));
+void GPSInfoPanel::UpdateTime(wxString time) {
+	wxString hours = time.SubString(0, 1);
+	wxString minutes = time.SubString(2, 3);
+	wxString seconds = time.SubString(4, 9);
+	timeText->SetValue(hours + " : " + minutes + " : " + seconds);
 }
 
 GPSRadarPanel::GPSRadarPanel(wxWindow * parent) : wxPanel(parent) {
-	this->SetBackgroundColour(wxColor(0, 255, 0));
+	this->SetBackgroundColour(wxColor(60, 130, 25));
 	rad = pi / 180.0f;
+	deg = 180.0f / pi;
+
+	units = GPSRadarPanel::Units::MILES;
+	this->Bind(wxEVT_PAINT, (wxObjectEventFunction)&GPSRadarPanel::OnPaint, this);
+	this->Bind(wxEVT_SIZE, (wxObjectEventFunction)&GPSRadarPanel::OnSize, this);
 }
 
 void GPSRadarPanel::SetBaseCoord(GPSCoord coord) {
@@ -224,6 +234,78 @@ void GPSRadarPanel::SetBaseCoord(GPSCoord coord) {
 
 void GPSRadarPanel::SetMobileCoord(GPSCoord coord) {
 	mobileCoord = coord;
+}
+
+void GPSRadarPanel::Render(wxDC& dc) {
+
+	// Make sure the dc is okay, if not, return
+	if (!dc.IsOk()) {
+		return;
+	}
+
+	wxBrush blackBrush(wxColor(60, 130, 25));
+	dc.SetBackground(blackBrush);
+	dc.Clear();
+
+	// Get size of panel to calculate drawing dimmensions
+	int width = this->GetSize().GetWidth();
+	int height = this->GetSize().GetHeight();
+
+	// Draw center point
+	dc.DrawBitmap(wxIcon("IDI_ICON1"), width / 2, height / 2);
+
+	// Determine radius of circle for outter guage
+	int circleRadius = 0;
+	if (width < height) {circleRadius = width / 2; }
+	else { circleRadius = height / 2; }
+
+	float guageLen = circleRadius * 0.80f;
+
+	int guageStartX = width / 2;
+	int guageStartY = height / 2;
+
+	int guageEndX = guageStartX;
+	int guageEndY = guageStartY;
+
+	float degreeVal = this->CalculateAngle(baseCoord, mobileCoord);
+	guageEndX += guageLen * cos(pi * (degreeVal / 180.0f));
+	guageEndY -= guageLen * sin(pi * (degreeVal / 180.0f));
+
+	// Draw mobile point
+	dc.DrawBitmap(wxIcon("IDI_ICON1"), guageEndX, guageEndY);
+	
+}
+
+void GPSRadarPanel::OnPaint(wxPaintEvent& paintEvent) {
+	// Get the the the buffered paint drawing context.
+	// Paint with buffered paint drawing context to avoid flicker.
+	wxBufferedPaintDC dcBuf(this);
+
+	// Make sure the dc is okay, if not, return
+	if (!dcBuf.IsOk()) {
+		return;
+	}
+	Render(dcBuf);
+	paintEvent.Skip();
+}
+
+void GPSRadarPanel::PaintNow() {
+	// Get the the the buffered paint drawing context.
+	// Paint with buffered paint drawing context to avoid flicker.
+	wxClientDC dcBuf(this);
+
+	// Make sure the dc is okay, if not, return
+	if (!dcBuf.IsOk()) {
+		return;
+	}
+	Render(dcBuf);
+}
+
+void GPSRadarPanel::OnSize(wxSizeEvent& sizeEvent) {
+
+	// Repaint the window when it is resized.
+	this->Refresh();
+	sizeEvent.Skip();
 }
 
 float GPSRadarPanel::CalculateDistance(GPSCoord coord1, GPSCoord coord2) {
@@ -239,7 +321,7 @@ float GPSRadarPanel::CalculateDistance(GPSCoord coord1, GPSCoord coord2) {
 	float lat2Rad = coord2.Lat * rad;
 	float a =	(sinf(deltaLat / 2.0f) * sinf(deltaLat / 2.0f)) +
 				(sinf(deltaLon / 2.0f) * sinf(deltaLon / 2.0f) * cosf(lat1Rad) * cosf(lat2Rad));
-	float c = atan2f(sqrt(a), sqrt(1.0f - a));
+	float c = 2.0f *  atan2f(sqrt(a), sqrt(1.0f - a));
 
 	switch (units) {
 		case GPSRadarPanel::Units::FEET:
@@ -264,25 +346,40 @@ float GPSRadarPanel::CalculateAngle(GPSCoord coord1, GPSCoord coord2) {
 	if (coord2.EW == "W") { coord2.Lon *= -1.0f; }
 	if (coord2.NS == "S") { coord2.Lat *= -1.0f; }
 
-	float dy = coord2.Lat - coord1.Lat;
-	float dx = cosf(pi / 180.0f * coord1.Lat) * (coord2.Lon - coord1.Lon);
-	float angle = atan2f(dy, dx);
+	float lat1Rad = coord1.Lat * rad;
+	float lat2Rad = coord2.Lat * rad;
+	float deltaLon = (coord2.Lon - coord1.Lon)*rad;
 
-	return angle;
+	float dPhi = log(tanf((lat2Rad / 2.0) + (pi / 4.0f)) / tanf((lat1Rad / 2.0) + pi / 4.0f));
+
+	if (abs(deltaLon) > pi) {
+		if (deltaLon > 0.0) {
+			deltaLon = -(2.0 * pi - deltaLon);
+		}
+		else {
+			deltaLon = (2.0 *pi + deltaLon);
+		}
+	}
+
+	return fmod((deg*(atan2f(deltaLon, dPhi)) + 360.0),  360.0f);
 }
 
 GPSView::GPSView(wxWindow * parent, wxString title) : wxPanel(parent) {
 
 	this->SetBackgroundColour(wxColor(0, 0, 0));
+
+	splitter = new wxSplitterWindow(this, -1);
 	
-	radar = new GPSRadarPanel(this);
-	info = new GPSInfoPanel(this, radar);
+	radar = new GPSRadarPanel(splitter);
+	info = new GPSInfoPanel(splitter, radar);
+	splitter->SplitVertically(info, radar);
+	splitter->SetSashGravity(0.4);
+
 	info->SetTitleText(title);
 
 	layout = new wxBoxSizer(wxHORIZONTAL);
 	this->SetSizer(layout);
-	this->GetSizer()->Add(info, 0, wxEXPAND);
-	this->GetSizer()->Add(radar, 1, wxEXPAND);
+	this->GetSizer()->Add(splitter, 1, wxEXPAND);
 }
 
 void GPSView::UpdateGPSPos(GPSCoord pos) {
@@ -319,7 +416,7 @@ void GPSView::UpdateVDOP(float vdop) {
 }
 
 
-void GPSView::UpdateTime(float time) {
+void GPSView::UpdateTime(wxString time) {
 	info->UpdateTime(time);
 }
 
@@ -369,7 +466,7 @@ void GPSViewWindow::UpdateVDOP(float vdop) {
 	view->UpdateVDOP(vdop);
 }
 
-void GPSViewWindow::UpdateTime(float time) {
+void GPSViewWindow::UpdateTime(wxString time) {
 	view->UpdateTime(time);
 }
 
