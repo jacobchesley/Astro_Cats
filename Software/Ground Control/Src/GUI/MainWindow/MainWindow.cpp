@@ -121,12 +121,6 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 
 	this->IsUpdatesAvailable();
 
-
-
-
-
-	pilRadioStrength->SetNumBars(7);
-	rocketRadioStrength->SetNumBars(5);
 }
 
 void MainWindow::OnClose(wxCloseEvent& evt) {
@@ -228,6 +222,8 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				gpsViewRocket->UpdateHDOP((float)jsonData["HDOP"]);
 				gpsViewRocket->UpdateVDOP((float)jsonData["VDOP"]);
 				gpsViewRocket->UpdateSatList((wxString)jsonData["SatList"]);
+				gpsViewRocket->UpdateTime((wxString)jsonData["Time"]);
+				rocketRadioStrength->SetSignalStrength((int)jsonData["SigStrength"]);
 			}
 
 			// Update the UI based on the latest JSON data
