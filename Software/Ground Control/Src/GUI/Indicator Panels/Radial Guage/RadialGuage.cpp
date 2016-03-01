@@ -75,7 +75,6 @@ void RadialBar::Render(wxDC& dc) {
 	if (!dc.IsOk()) {
 		return;
 	}
-
 	
 	wxBrush backgroundBrush(backColor);
 	dc.SetBackground(backgroundBrush);
