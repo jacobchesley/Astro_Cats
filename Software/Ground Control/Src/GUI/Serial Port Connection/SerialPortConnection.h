@@ -50,6 +50,10 @@ private:
 	wxStaticText * stopBoxLabel;
 	wxComboBox * stopBox;
 
+	wxBoxSizer * dtrBoxLayout;
+	wxStaticText * dtrBoxLabel;
+	wxComboBox * dtrBox;
+
 	wxButton * connectButton;
 
 	SerialWatcherThread * serialWatcher;

@@ -100,6 +100,24 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	stopBoxLayout->AddSpacer(space);
 	stopBoxLayout->Add(stopBox);
 
+	// Create Data Terminal Ready selection row
+	dtrBoxLayout = new wxBoxSizer(wxHORIZONTAL);
+	dtrBoxLabel = new wxStaticText(this, -1, _("Data-Terminal-Ready"));
+	dtrBoxLabel->SetBackgroundColour(this->GetBackgroundColour());
+	dtrBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
+
+	// Create Data Terminal Ready box
+	dtrBox = new wxComboBox(this, -1);
+	dtrBox->AppendString(_T("off"));
+	dtrBox->AppendString(_T("on"));
+	dtrBox->AppendString(_T("hs"));
+	dtrBox->SetValue(_T("on"));
+
+	dtrBoxLayout->Add(dtrBoxLabel);
+	space = maxWidth - dtrBoxLabel->GetSize().GetWidth();
+	dtrBoxLayout->AddSpacer(space);
+	dtrBoxLayout->Add(dtrBox);
+
 	connectButton = new wxButton(this, SerialPortConnection::Actions::ID_CONNECT, _T("Connect"));
 
 	layout = new wxBoxSizer(wxVERTICAL);
@@ -115,6 +133,8 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	this->GetSizer()->Add(dataBoxLayout);
 	this->GetSizer()->AddSpacer(10);
 	this->GetSizer()->Add(stopBoxLayout);
+	this->GetSizer()->AddSpacer(10);
+	this->GetSizer()->Add(dtrBoxLayout);
 	this->GetSizer()->AddSpacer(30);
 	this->GetSizer()->Add(connectButton);
 
@@ -218,8 +238,9 @@ void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
 	std::string parity = parityBox->GetValue().ToStdString();
 	std::string data = dataBox->GetValue().ToStdString();
 	std::string stop = stopBox->GetValue().ToStdString();
+	std::string dtr = dtrBox->GetValue().ToStdString();
 
-	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop;
+	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop + " dtr" + dtr;
 	serialController->Connect(std::string(serialBox->GetValue().ToStdString()), hardwareInfo);
 }
 
