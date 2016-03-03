@@ -83,6 +83,7 @@ class MainWindow : public wxFrame {
 
 		void IsUpdatesAvailable();
 		void OnClose(wxCloseEvent& evt);
+		bool isClosed;
 
 		SerialController * serialController;
 		UIUpdateThread * uiUpdater;
@@ -168,12 +169,13 @@ class UIUpdateThread : wxThread {
 
 public:
 	UIUpdateThread(MainWindow * window);
+	void StopThread();
 protected:
 	virtual ExitCode Entry();
 
 private:
 	MainWindow * mainWindow;
-
+	bool continueWatching;
 };
 
 // Thread to update user interface with recorded file data

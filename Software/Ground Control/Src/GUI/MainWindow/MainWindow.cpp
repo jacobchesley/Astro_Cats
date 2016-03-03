@@ -2,6 +2,8 @@
 
 MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefaultPosition, wxSize(800,600)){
 
+	isClosed = false;
+
 	// Create and add menu bar with menus
 	menuBar = new wxMenuBar;
 	menuFile = new wxMenu;
@@ -124,13 +126,16 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 }
 
 void MainWindow::OnClose(wxCloseEvent& evt) {
+	isClosed = true;
 
 	if (serialController->IsConnected()) {
 		serialController->StopSerial();
 		serialController->Stop();
 	}
+	uiUpdater->StopThread();
 	playbackWindow->StopThread();
 	serialPortConnection->StopThread();
+	Sleep(200);
 	this->Destroy();
 }
 
@@ -266,7 +271,9 @@ SerialController * MainWindow::GetSerialController() {
 }
 
 void MainWindow::UpdateStatusBar(wxString statusMessage) {
-	this->SetStatusText(statusMessage);
+	if (!isClosed) {
+		this->SetStatusText(statusMessage);
+	}
 }
 
 void MainWindow::ShowSetLogFile(wxCommandEvent& WXUNUSED(event)) {
@@ -423,12 +430,13 @@ void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){
 	mainWindow = window;
+	continueWatching = true;
 	this->Run();
 }
 
 wxThread::ExitCode UIUpdateThread::Entry(){
 
-	while (true) {
+	while (continueWatching) {
 
 		// Data has been aquired
 		if (mainWindow->GetSerialController()->GetAllData().size() > 0) {
@@ -454,8 +462,12 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 
 		this->Sleep(10);
 	}
+	return 0;
 }
 
+void UIUpdateThread::StopThread() {
+	continueWatching = false;
+}
 PlaybackThread::PlaybackThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED) {
 	mainWindow = window;
 	pause = false;
