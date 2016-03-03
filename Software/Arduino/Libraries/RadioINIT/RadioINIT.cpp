@@ -1,7 +1,12 @@
 #include "RadioINIT.h"
 
+
+RadioINIT::RadioINIT(){}
+
 RadioINIT::RadioINIT(HardwareSerial * serial, int shutdownPin){
 	hardwareSerial = serial;
+
+	apiRadio = new RadioAPI(serial, shutdownPin);
 
 	guardTime = 1000;	
 
@@ -22,11 +27,11 @@ bool RadioINIT::InitGround(){
 	// Default baud rate for rado is 9600 BPS
 	hardwareSerial->begin(9600); delay(100);
 
-	if(this->EnableHighSpeedRadio()){ Serial.println("High speed radio enabled"); } 
+	if(this->SetRadioSpeed(1)){ Serial.println("High speed radio enabled"); } 
 	else{ return false; }
 	if(this->SetMyAddress(GROUND_ADDRESS_HEX_STR)){ Serial.println("My address set to: " + GROUND_ADDRESS_HEX_STR); } 
 	else{ return false; }
-	if(this->SetHoppingChannel("7")){ Serial.println("Hopping Channel Set to: 7"); } 
+	if(this->SetHoppingChannel(HOPPING_CHANNEL)){ Serial.println("Hopping Channel Set to: " + HOPPING_CHANNEL); } 
 	else{ return false; }
 	if(this->SetKey(AES_KEY)){ Serial.println("Private key set"); }
 	else{ return false;}
@@ -54,11 +59,11 @@ bool RadioINIT::InitTracking(){
 	// Default baud rate for rado is 9600 BPS
 	hardwareSerial->begin(9600); delay(100);
 
-	if(this->EnableHighSpeedRadio()){ Serial.println("High speed radio enabled"); } 
+	if(this->SetRadioSpeed(1)){ Serial.println("High speed radio enabled"); } 
 	else{ return false; }
 	if(this->SetMyAddress(TRACKING_ADDRESS_HEX_STR)){ Serial.println("My address set to: " + TRACKING_ADDRESS_HEX_STR); } 
 	else{ return false; }
-	if(this->SetHoppingChannel("7")){ Serial.println("Hopping Channel Set to: 7"); } 
+	if(this->SetHoppingChannel(HOPPING_CHANNEL)){ Serial.println("Hopping Channel Set to: " + HOPPING_CHANNEL); } 
 	else{ return false; }
 	if(this->SetKey(AES_KEY)){ Serial.println("Private key set"); }
 	else{ return false;}
@@ -75,203 +80,98 @@ bool RadioINIT::InitTracking(){
 }
 
 bool RadioINIT::InitPIL(){
+	Serial.println("Initializing PIL radio..."); Serial.println("");
 
+	if(this->DisableAPI()){ Serial.println("API mode disabled"); }
+	else{ return false; }
+	if(this->Reset()){ Serial.println("Radio reset"); }
+	else{ return false; }
+
+	// Default baud rate for rado is 9600 BPS
+	hardwareSerial->begin(9600); delay(100);
+
+	if(this->SetRadioSpeed(1)){ Serial.println("High speed radio enabled"); } 
+	else{ return false; }
+	if(this->SetMyAddress(PIL_ADDRESS_HEX_STR)){ Serial.println("My address set to: " + PIL_ADDRESS_HEX_STR); } 
+	else{ return false; }
+	if(this->SetHoppingChannel(HOPPING_CHANNEL)){ Serial.println("Hopping Channel Set to: " + HOPPING_CHANNEL); } 
+	else{ return false; }
+	if(this->SetKey(AES_KEY)){ Serial.println("Private key set"); }
+	else{ return false;}
+	if(this->SetSerial115200()){ Serial.println("Radio interface baud set to: 115,200 BPS"); }
+	
+	hardwareSerial->begin(115200); delay(100);
+
+	if(this->EnableAPI()){ Serial.println("API mode enabled"); }
+	else{ return false; }
+
+	Serial.println("");
+	Serial.println("PIL radio succesfully initialized!");
+	return true;
 }
 
 bool RadioINIT::SetSerial115200(){
-	this->Flush();
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	hardwareSerial->println("ATBD7");
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	
-	return true;
+	this->SendATCommand("BD", "7", true);
 }
 
-bool RadioINIT::EnableHighSpeedRadio(){
-	this->Flush();
+bool RadioINIT::SetRadioSpeed(int speed){
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	hardwareSerial->println("ATBR1");
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	
-	return true;
+	// Send new address and save
+	if(speed == 1){ return this->SendATCommand("BR", "1", true); }
+	else{ return this->SendATCommand("BR", "0", true); }
 }
 
 bool RadioINIT::EnableAPI(){
-	this->Flush();
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	hardwareSerial->println("ATAP1");
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	return true;
+	// Send API command (non escaped characters - param 1) and save
+	return this->SendATCommand("AP", "1", true);
 }
 
 bool RadioINIT::DisableAPI(){
 	
 	this->Flush();
 
-	// Start delimiter
-	hardwareSerial->write(0x7E);
+	byte * disableAPParams = new byte[1];
+	disableAPParams[0] = 0x00;
+	RadioPacketAT disableAPIPacket = apiRadio->BuildATCommandPacket('A', 'P', disableAPParams, 1);
+	apiRadio->SendATCommandPacket(disableAPIPacket);
 
-	// Length
-	hardwareSerial->write(0x00);
-	hardwareSerial->write(0x05);
-
-	// AT Command ID, Frame ID, 
-	hardwareSerial->write(0x08);
-	hardwareSerial->write(0x01);
-
-	// First AT Command Char, Second AT Command Char
-	hardwareSerial->write('A');
-	hardwareSerial->write('P');
-	hardwareSerial->write(0x00);
-
-	byte * checksumData = new byte[5];
-	checksumData[0] = 0x08;
-	checksumData[1] = 0x01;
-	checksumData[2] = 0x41;
-	checksumData[3] = 0x50;
-	checksumData[4] = 0x00;
-
-	byte checksum = this->CalculateChecksum(checksumData, 5);
-
-	// Send checksum
-	hardwareSerial->write(checksum);
-
-	while(!hardwareSerial->available()){}
-
-	// Print out response for disabling API - debugging purposes
-	byte temp = 0x00;
-	while(hardwareSerial->available()){
-		temp = hardwareSerial->read();
-		//Serial.print(temp, HEX);
-		//Serial.print(" ");
-		delay(10);
-	}
-
-	delete[] checksumData;
+	delay(100);
+	apiRadio->Flush();
+	return true;
 }
 
 bool RadioINIT::SetMyAddress(String address){
-	this->Flush();
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	hardwareSerial->println("ATMY" + address);
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	
-	return true;
+	// Send new address and save
+	return this->SendATCommand("MY", address, true);
 }
 
 bool RadioINIT::SetHoppingChannel(String hopping){
-	this->Flush();
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Change hopping channel
-	hardwareSerial->println("ATHP" + hopping);
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	
-	return true;
+	// Send new hopping channel and save
+	return this->SendATCommand("HP", hopping, true);
 }
 
 bool RadioINIT::SetKey(String key){
-	this->Flush();
 
-	delay(guardTime);
-	hardwareSerial->print("+++");
-	delay(guardTime);
-
-	// Wait and check if command mode is successful
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Change key
-	hardwareSerial->println("ATKY" + key);
-	if(!this->WaitAndCheckOK()){ return false;}
-
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
-
-	// Exit command mode
-	hardwareSerial->println("ATCN");
-	if(!this->WaitAndCheckOK()){ return false; }
-	
-	return true;
+	// Send new key and save
+	return this->SendATCommand("KY", key, true);
 }
 
 bool RadioINIT::Reset(){
+
+	// Send reset command and save
+	return this->SendATCommand("RE", true);
+}
+
+bool RadioINIT::SendATCommand(String commandName, bool write){
+
+	// Clear serial buffer
 	this->Flush();
 
+	// Enter command mode
 	delay(guardTime);
 	hardwareSerial->print("+++");
 	delay(guardTime);
@@ -279,12 +179,15 @@ bool RadioINIT::Reset(){
 	// Wait and check if command mode is successful
 	if(!this->WaitAndCheckOK()){ return false; }
 
-	hardwareSerial->println("ATRE");
+	// Execute command
+	hardwareSerial->println("AT" + commandName);
 	if(!this->WaitAndCheckOK()){ return false;}
 
-	// Write settings to non volitale memory
-	hardwareSerial->println("ATWR");
-	if(!this->WaitAndCheckOK()){ return false; }
+	// Write settings to non volitale memory, if enabled
+	if(write){
+		hardwareSerial->println("ATWR");
+		if(!this->WaitAndCheckOK()){ return false; }
+	}
 
 	// Exit command mode
 	hardwareSerial->println("ATCN");
@@ -292,21 +195,42 @@ bool RadioINIT::Reset(){
 	
 	return true;
 }
+
+bool RadioINIT::SendATCommand(String commandName, String parameters, bool write){
+
+	// Clear serial buffer
+	this->Flush();
+
+	// Enter command mode
+	delay(guardTime);
+	hardwareSerial->print("+++");
+	delay(guardTime);
+
+	// Wait and check if command mode is successful
+	if(!this->WaitAndCheckOK()){ return false; }
+
+	// Execute command
+	hardwareSerial->println("AT" + commandName + parameters);
+	if(!this->WaitAndCheckOK()){ return false;}
+
+	// Write settings to non volitale memory, if enabled
+	if(write){
+		hardwareSerial->println("ATWR");
+		if(!this->WaitAndCheckOK()){ return false; }
+	}
+
+	// Exit command mode
+	hardwareSerial->println("ATCN");
+	if(!this->WaitAndCheckOK()){ return false; }
+	
+	return true;
+}
+
 void RadioINIT::Flush(){
 
 	while(hardwareSerial->available()){
 		hardwareSerial->read();
 	}
-}
-
-byte RadioINIT::CalculateChecksum(byte * data, int dataLength){
-	byte checksum = 0x00;
-
-	for(int i = 0; i < dataLength; i++){
-		checksum += data[i];
-	}
-
-	return 0xFF - checksum;
 }
 
 String RadioINIT::GenerateRandomKey(int keySize){
@@ -323,24 +247,12 @@ String RadioINIT::GenerateRandomKey(int keySize){
 		if(tempRandom == 0){
 			tempRandom = random(6);
 			switch(tempRandom){
-				case 0:
-					key += "A";
-					break;
-				case 1:
-					key += "B";
-					break;
-				case 2:
-					key += "C";
-					break;
-				case 3:
-					key += "D";
-					break;
-				case 4:
-					key += "E";
-					break;
-				case 5:
-					key += "F";
-					break;
+				case 0: key += "A"; break;
+				case 1: key += "B"; break;
+				case 2: key += "C"; break;
+				case 3: key += "D"; break;
+				case 4: key += "E"; break;
+				case 5: key += "F"; break;
 			}
 		}
 
@@ -363,9 +275,7 @@ bool RadioINIT::CheckOK(){
 	char temp;
 	for(int i = 0; i < 3; i++){
 		temp = hardwareSerial->read();
-		if(temp != ok[i]){
-			return false;
-		}
+		if(temp != ok[i]){ return false; }
 	}
 	return true;
 }
