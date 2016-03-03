@@ -22,7 +22,9 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 
 		// Close serial port in Windows
 		#ifdef _WIN32
-			CloseHandle(serialPort);
+			
+			return;
+			//CloseHandle(serialPort);
 
 		// Close serial port in OSX
 		#elif __APPLE__
@@ -60,16 +62,16 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 		// set the timeout values
 		timeouts.ReadIntervalTimeout = 10;
 		timeouts.ReadTotalTimeoutMultiplier = 0;
-		timeouts.ReadTotalTimeoutConstant = 50; // read all data we can in 50 ms
-		timeouts.WriteTotalTimeoutMultiplier = 0;
-		timeouts.WriteTotalTimeoutConstant = 0;
+		timeouts.ReadTotalTimeoutConstant = 10;
+		timeouts.WriteTotalTimeoutMultiplier = 1;
+		timeouts.WriteTotalTimeoutConstant = 1;
 
 		if (!SetCommTimeouts(serialPort, &timeouts)) {
 			OutputDebugStringA("Set Comm Timeout Fail");
 			return;
 		}
 
-		if (!SetCommMask(serialPort, EV_RXCHAR | EV_TXEMPTY | EV_RXFLAG)) {
+		if (!SetCommMask(serialPort, EV_RXCHAR | EV_TXEMPTY | EV_RXFLAG | EV_ERR | EV_BREAK)) {
 			OutputDebugStringA("Set Comm Mask Failed");
 			return;
 		}
@@ -161,16 +163,12 @@ void SerialController::Disconnect() {
 
 		isConnected = false;
 
-		OutputDebugStringA("Stopping Serial...");
-		this->StopSerial();
-		OutputDebugStringA("Serial Stopped!");
-
 		// Close serial port in Windows
 		#ifdef _WIN32
 
-			OutputDebugStringA("Closing Handle...");
-			//CloseHandle(serialPort);
-			OutputDebugStringA("Handle Closed!");
+			if (serialPort != INVALID_HANDLE_VALUE) {
+				CloseHandle(serialPort);
+			}
 
 		// Close serial port in OSX
 		#elif __APPLE__
@@ -212,24 +210,10 @@ wxThread::ExitCode SerialController::Entry() {
 		}
 
 		#ifdef _WIN32
-			// Wait for action in the serial port
-		OutputDebugStringA("Waiting for COM event");
-			BOOL waitResult = WaitCommEvent(serialPort, &resultType, NULL);
 
-			if (waitResult) {
-
-				OutputDebugStringA("Got a COM Event!");
-				ClearCommError(serialPort, &errorCode, &status);
-
-				// Get type of event that occured
-				DWORD eventType = 0;
-				GetCommMask(serialPort, &eventType);
-
-				// Recieved data, read the buffer
-				if (eventType & EV_RXCHAR) {
-					ReadBuffer(status);
-				}
-			}
+			ClearCommError(serialPort, &errorCode, &status);
+			ReadBuffer(status);
+				
 		#elif __APPLE__
 
 		#endif
@@ -281,7 +265,7 @@ void SerialController::ReadBuffer(COMSTAT status){
 		DWORD bytesRead = 0;
 
 		// Read all bytes
-		if (ReadFile(serialPort, buffer, bytesToRead, &bytesRead, NULL)) {
+		if (ReadFile(serialPort, buffer, 16384, &bytesRead, NULL)) {
 
 			// Push data onto vector
 			for (int i = 0; i < (int)bytesRead; i++) {

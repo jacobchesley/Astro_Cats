@@ -286,6 +286,7 @@ wxThread::ExitCode SerialWatcherThread::Entry() {
 		if (continueWatching) {
 			serialWindow->UpdateAvailableSerialPortsCombo();
 		}
+		Sleep(50);
 	}
 	return 0;
 }
