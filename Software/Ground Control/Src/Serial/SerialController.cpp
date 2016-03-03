@@ -47,6 +47,7 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 			isConnected = false;
 			return;
 		}
+		serialPortName = portName;
 		isConnected = true;
 		shutdownEvent = NULL;
 		if (shutdownEvent != NULL) {
@@ -149,6 +150,21 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 	#endif
 	this->Run();
 }
+
+void SerialController::Disconnect() {
+	// Close current connection if it exists
+	if (isConnected) {
+
+		// Close serial port in Windows
+		#ifdef _WIN32
+			CloseHandle(serialPort);
+
+		// Close serial port in OSX
+		#elif __APPLE__
+			close(serialPort)
+		#endif
+	}
+}
 wxThread::ExitCode SerialController::Entry() {
 
 	// Clear the serial port
@@ -205,6 +221,10 @@ wxThread::ExitCode SerialController::Entry() {
 
 bool SerialController::IsConnected() {
 	return isConnected;
+}
+
+wxString SerialController::GetSerialPortName() {
+	return serialPortName;
 }
 
 wxVector<char> SerialController::GetDataStartingAtIndex() {

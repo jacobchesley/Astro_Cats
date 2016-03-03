@@ -15,6 +15,9 @@ class SerialController : wxThread{
 		SerialController();
 		SerialController(std::string portName, std::string hardwareInfo);
 		void Connect(std::string portName, std::string hardwareInfo);
+		void Disconnect();
+
+		wxString GetSerialPortName();
 
 		wxVector<char> GetDataStartingAtIndex();
 		void ClearReadData();
@@ -32,6 +35,7 @@ class SerialController : wxThread{
 
 		void ReadBuffer(COMSTAT comstat);
 		int WriteBuffer(char * dataToWrite);
+		wxString serialPortName;
 
 		#ifdef _WIN32
 			HANDLE serialPort;
