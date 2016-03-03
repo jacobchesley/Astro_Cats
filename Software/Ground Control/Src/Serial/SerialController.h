@@ -54,6 +54,7 @@ class SerialController : wxThread{
 		bool isConnected;
 		long int currentIndex;
 		bool stop;
+		bool threadRunning;
 };
 
 #endif

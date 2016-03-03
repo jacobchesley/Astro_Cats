@@ -2,11 +2,13 @@
 
 SerialController::SerialController() : wxThread(wxTHREAD_DETACHED){
 	isConnected = false;
+	threadRunning = false;
 	currentIndex = 0;
 }
 
 SerialController::SerialController(std::string portName, std::string hardwareInfo) : wxThread(wxTHREAD_DETACHED){
 	isConnected = false;
+	threadRunning = false;
 	this->Connect(portName, hardwareInfo);
 	currentIndex = 0;
 	this->Run();
@@ -148,16 +150,27 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 		tcsetattr(serialPort, TCSANOW, &options);
 
 	#endif
-	this->Run();
+	if (!threadRunning) {
+		this->Run();
+	}
 }
 
 void SerialController::Disconnect() {
 	// Close current connection if it exists
 	if (isConnected) {
 
+		isConnected = false;
+
+		OutputDebugStringA("Stopping Serial...");
+		this->StopSerial();
+		OutputDebugStringA("Serial Stopped!");
+
 		// Close serial port in Windows
 		#ifdef _WIN32
-			CloseHandle(serialPort);
+
+			OutputDebugStringA("Closing Handle...");
+			//CloseHandle(serialPort);
+			OutputDebugStringA("Handle Closed!");
 
 		// Close serial port in OSX
 		#elif __APPLE__
@@ -166,6 +179,8 @@ void SerialController::Disconnect() {
 	}
 }
 wxThread::ExitCode SerialController::Entry() {
+
+	threadRunning = true;
 
 	// Clear the serial port
 	#ifdef _WIN32
@@ -198,10 +213,12 @@ wxThread::ExitCode SerialController::Entry() {
 
 		#ifdef _WIN32
 			// Wait for action in the serial port
+		OutputDebugStringA("Waiting for COM event");
 			BOOL waitResult = WaitCommEvent(serialPort, &resultType, NULL);
 
 			if (waitResult) {
 
+				OutputDebugStringA("Got a COM Event!");
 				ClearCommError(serialPort, &errorCode, &status);
 
 				// Get type of event that occured
