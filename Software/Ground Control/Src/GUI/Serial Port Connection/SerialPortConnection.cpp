@@ -13,9 +13,10 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	serialBoxLabel->SetForegroundColour(wxColor(255, 255, 255));
 	serialBox = new wxComboBox(this, -1);
 	serialBoxLayout->Add(serialBoxLabel);
+	serialBoxLayout->AddSpacer(8);
 	serialBoxLayout->Add(serialBox);
 
-	int maxWidth = serialBoxLabel->GetSize().GetWidth();
+	int maxWidth = serialBoxLabel->GetSize().GetWidth()+10;
 
 	// Create baud rate selection row
 	baudBoxLayout = new wxBoxSizer(wxHORIZONTAL);
@@ -118,7 +119,12 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	dtrBoxLayout->AddSpacer(space);
 	dtrBoxLayout->Add(dtrBox);
 
+	buttonLayout = new wxBoxSizer(wxHORIZONTAL);
 	connectButton = new wxButton(this, SerialPortConnection::Actions::ID_CONNECT, _T("Connect"));
+	disconnectButton = new wxButton(this, SerialPortConnection::Actions::ID_DISCONNECT, _T("Disconnect"));
+	buttonLayout->Add(connectButton);
+	buttonLayout->AddSpacer(20);
+	buttonLayout->Add(disconnectButton);
 
 	layout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(layout);
@@ -136,16 +142,17 @@ SerialPortConnection::SerialPortConnection(wxWindow * parent, SerialController *
 	this->GetSizer()->AddSpacer(10);
 	this->GetSizer()->Add(dtrBoxLayout);
 	this->GetSizer()->AddSpacer(30);
-	this->GetSizer()->Add(connectButton);
+	this->GetSizer()->Add(buttonLayout);
 
 	serialWatcher = new SerialWatcherThread(this);
 	isSafeToClose = false;
 
 	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SerialPortConnection::Connect, this, SerialPortConnection::Actions::ID_CONNECT);
-
+	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&SerialPortConnection::Disconnect, this, SerialPortConnection::Actions::ID_DISCONNECT);
 	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&SerialPortConnection::OnClose, this);
 
 	this->SetIcon(wxIcon("IDI_ICON1"));
+	this->Fit();
 }
 
 void SerialPortConnection::GetAvailableSerialPorts() {
@@ -240,8 +247,13 @@ void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
 	std::string stop = stopBox->GetValue().ToStdString();
 	std::string dtr = dtrBox->GetValue().ToStdString();
 
-	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop + " dtr" + dtr;
+	std::string hardwareInfo = "baud=" + baud + " parity=" + parity[0] + " data=" + data + " stop=" + stop +" dtr=" + dtr;
 	serialController->Connect(std::string(serialBox->GetValue().ToStdString()), hardwareInfo);
+}
+
+void SerialPortConnection::Disconnect(wxCommandEvent& WXUNUSED(event)) {
+
+	serialController->Disconnect();
 }
 
 void SerialPortConnection::OnClose(wxCloseEvent& closeEvent){

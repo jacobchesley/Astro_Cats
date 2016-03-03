@@ -26,6 +26,7 @@ private:
 	int GetIndexOfPort(std::string portName);
 	void OnClose(wxCloseEvent& closeEvent);
 	void Connect(wxCommandEvent& WXUNUSED(event));
+	void Disconnect(wxCommandEvent& WXUNUSED(event));
 	wxVector<std::string> allSerialPort;
 
 	wxBoxSizer * layout;
@@ -54,14 +55,17 @@ private:
 	wxStaticText * dtrBoxLabel;
 	wxComboBox * dtrBox;
 
+	wxBoxSizer * buttonLayout;
 	wxButton * connectButton;
+	wxButton * disconnectButton;
 
 	SerialWatcherThread * serialWatcher;
 	SerialController * serialController;
 	bool isSafeToClose;
 
 	enum Actions {
-		ID_CONNECT
+		ID_CONNECT,
+		ID_DISCONNECT
 	};
 };
 
