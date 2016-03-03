@@ -223,15 +223,26 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				gpsViewRocket->UpdateVDOP((float)jsonData["VDOP"]);
 				gpsViewRocket->UpdateSatList((wxString)jsonData["SatList"]);
 				gpsViewRocket->UpdateTime((wxString)jsonData["Time"]);
-				rocketRadioStrength->SetSignalStrength((int)jsonData["SigStrength"]);
 			}
+			// If we are receving Signal Strength Info from the ground..
+			else if (source == "Ground" && messageType == "SignalStrength") {
 
+				wxString signalSource = (wxString)jsonData["SignalSource"];
+				int signalStrength = (int)jsonData["SignalStrength"];
+
+				if (signalSource == "Tracking") {
+					rocketRadioStrength->SetSignalStrength(signalStrength);
+				}
+				else if(signalSource == "PIL"){
+					pilRadioStrength->SetSignalStrength(signalStrength);
+				}
+			}
 			// Update the UI based on the latest JSON data
-			temperatureWindow->SetValue(jsonData["Temp"]);
-			humidityWindow->SetValue(jsonData["Humidity"]);
-			pressureAltitudeWindow->SetPressure(jsonData["Pressure"]);
-			uvWindow->SetValue((float)jsonData["UV"] * 10.0f);
-			pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationY"], (float)jsonData["AccelerationZ"]);
+			//temperatureWindow->SetValue(jsonData["Temp"]);
+			//humidityWindow->SetValue(jsonData["Humidity"]);
+			//pressureAltitudeWindow->SetPressure(jsonData["Pressure"]);
+			//uvWindow->SetValue((float)jsonData["UV"] * 10.0f);
+			//pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationY"], (float)jsonData["AccelerationZ"]);
 		}
 		catch (...) {
 
@@ -252,6 +263,10 @@ void MainWindow::ReciveSerialData(wxString serialData){
 
 SerialController * MainWindow::GetSerialController() {
 	return serialController;
+}
+
+void MainWindow::UpdateStatusBar(wxString statusMessage) {
+	this->SetStatusText(statusMessage);
 }
 
 void MainWindow::ShowSetLogFile(wxCommandEvent& WXUNUSED(event)) {
@@ -426,6 +441,15 @@ wxThread::ExitCode UIUpdateThread::Entry(){
 				append += incomingData[i];
 			}
 			mainWindow->ReciveSerialData(append);
+		}
+
+		// Serial controller is connected to a port, update main windows status bar to show serial port it's connected to
+		if (mainWindow->GetSerialController()->IsConnected()) {
+			mainWindow->UpdateStatusBar("Connected to: " + mainWindow->GetSerialController()->GetSerialPortName());
+		}
+		// Serial controller is not connected to a port, update main windows status bar to show serial port not connected
+		else {
+			mainWindow->UpdateStatusBar("Not connected");
 		}
 
 		this->Sleep(10);

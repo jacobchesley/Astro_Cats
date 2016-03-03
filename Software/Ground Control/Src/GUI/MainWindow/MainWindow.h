@@ -43,6 +43,7 @@ class MainWindow : public wxFrame {
 		*/
 		MainWindow();
 		void ReciveSerialData(wxString serialData);
+		void UpdateStatusBar(wxString statusMessage);
 		SerialController * GetSerialController();
 
 		enum DataParam {
