@@ -280,9 +280,12 @@ void SerialWatcherThread::StopThread() {
 wxThread::ExitCode SerialWatcherThread::Entry() {
 
 	while (continueWatching) {
-		serialWindow->GetAvailableSerialPorts();
-		serialWindow->UpdateAvailableSerialPortsCombo();
-		this->Sleep(100);
+		if (continueWatching) {
+			serialWindow->GetAvailableSerialPorts();
+		}
+		if (continueWatching) {
+			serialWindow->UpdateAvailableSerialPortsCombo();
+		}
 	}
 	return 0;
 }
