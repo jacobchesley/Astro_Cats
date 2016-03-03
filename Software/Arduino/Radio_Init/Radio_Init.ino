@@ -1,3 +1,4 @@
+#include <RadioAPI.h>
 #include <RadioINIT.h>
 
 #define SHUTDOWN_PIN 22
