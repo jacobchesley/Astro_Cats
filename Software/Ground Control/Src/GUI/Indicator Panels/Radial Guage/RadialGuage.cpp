@@ -124,7 +124,7 @@ void RadialBar::Render(wxDC& dc) {
 	int guageStartX = width / 2;
 	int guageStartY = height / 2;
 
-	float pi = 3.14159265358979323846;
+	float pi = (float)3.14159265358979323846;
 
 	// Draw between 225 degrees and -45 degrees, 270 degrees total movement
 	float degreeVal = 225 - newVal;

@@ -99,7 +99,7 @@ void PitchRollView::Render() {
 	float pitch = atan(xAccel / sqrt(x2z2));
 	float roll = atan(yAccel / sqrt(y2z2));
 
-	float pi = 3.14159265358979323846;
+	float pi = (float) 3.14159265358979323846;
 	float pitchDeg = (pitch * 180) / pi;
 	float rollDeg = (roll * 180) / pi;
 
@@ -115,14 +115,14 @@ void PitchRollView::Render() {
 	glBegin(GL_QUADS);
 
 		// Bottom Left Off White
-		glColor3f(0.86, 0.90, 0.92);
-		glVertex2f(-1.5, 1.5);
-		glVertex2f(-1.5, -1.5);
+		glColor3f(0.86f, 0.90f, 0.92f);
+		glVertex2f(-1.5f, 1.5f);
+		glVertex2f(-1.5f, -1.5f);
 
 		// Top Right Teal
-		glColor3f(0.47, 0.71, 0.88);
-		glVertex2f(1.5, -1.5);
-		glVertex2f(1.5, 1.5);
+		glColor3f(0.47f, 0.71f, 0.88f);
+		glVertex2f(1.5f, -1.5f);
+		glVertex2f(1.5f, 1.5f);
 	glEnd();
 	glPopMatrix();
 
@@ -130,7 +130,7 @@ void PitchRollView::Render() {
 	glPushMatrix();
 
 	// Scale to get longer rectangle
-	glScalef(0.3, 1.0, 0.3);
+	glScalef(0.3f, 1.0f, 0.3f);
 
 	// Rotate Pitch
 	glRotatef(pitchDeg, 0.0, 0.0, 1.0);
@@ -140,47 +140,47 @@ void PitchRollView::Render() {
 
 	// Top - Yellow
 	glBegin(GL_POLYGON);
-		glColor3f(1.0, 1.0, 0.0);
-		glVertex3f(0.5, 0.5, 0.5);
-		glVertex3f(0.5, 0.5, -0.5);
-		glVertex3f(-0.5, 0.5, -0.5);
-		glVertex3f(-0.5, 0.5, 0.5);
+		glColor3f(1.0f, 1.0f, 0.0f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
 	glEnd();
 
 	// Bottom - Grey
 	glBegin(GL_POLYGON);
-		glColor3f(0.2, 0.2, 0.2);
-		glVertex3f(0.5, -0.5, -0.5);
-		glVertex3f(0.5, -0.5, 0.5);
-		glVertex3f(-0.5, -0.5, 0.5);
-		glVertex3f(-0.5, -0.5, -0.5);
+		glColor3f(0.2f, 0.2f, 0.2f);
+		glVertex3f(0.5f, -0.5f, -0.5f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, -0.5f);
 	glEnd();
 
 	//Back - White
 	glBegin(GL_POLYGON);
-		glColor3f(1.0, 1.0, 1.0);
-		glVertex3f(0.5, -0.5, 0.5);
-		glVertex3f(0.5, 0.5, 0.5);
-		glVertex3f(-0.5, 0.5, 0.5);
-		glVertex3f(-0.5, -0.5, 0.5);
+		glColor3f(1.0f, 1.0f, 1.0f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
 	glEnd();
 
 	// Right Side - Light Grey
 	glBegin(GL_POLYGON);
-		glColor3f(0.85, 0.85, 0.85);
-		glVertex3f(0.5, -0.5, -0.5);
-		glVertex3f(0.5, 0.5, -0.5);
-		glVertex3f(0.5, 0.5, 0.5);
-		glVertex3f(0.5, -0.5, 0.5);
+		glColor3f(0.85f, 0.85f, 0.85f);
+		glVertex3f(0.5f, -0.5f, -0.5f);
+		glVertex3f(0.5f, 0.5f, -0.5f);
+		glVertex3f(0.5f, 0.5f, 0.5f);
+		glVertex3f(0.5f, -0.5f, 0.5f);
 	glEnd();
 
 	// Left Side - Light Grey
 	glBegin(GL_POLYGON);
-		glColor3f(0.85, 0.85, 0.85);
-		glVertex3f(-0.5, -0.5, 0.5);
-		glVertex3f(-0.5, 0.5, 0.5);
-		glVertex3f(-0.5, 0.5, -0.5);
-		glVertex3f(-0.5, -0.5, -0.5);
+		glColor3f(0.85f, 0.85f, 0.85f);
+		glVertex3f(-0.5f, -0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, 0.5f);
+		glVertex3f(-0.5f, 0.5f, -0.5f);
+		glVertex3f(-0.5f, -0.5f, -0.5f);
 	glEnd();
 
 	glPopMatrix();

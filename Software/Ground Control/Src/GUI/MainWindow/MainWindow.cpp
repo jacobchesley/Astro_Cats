@@ -136,6 +136,7 @@ void MainWindow::OnClose(wxCloseEvent& evt) {
 	playbackWindow->StopThread();
 	serialPortConnection->StopThread();
 	Sleep(200);
+	evt.Skip();
 	this->Destroy();
 }
 

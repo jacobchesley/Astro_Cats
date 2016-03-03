@@ -93,7 +93,7 @@ private:
 	void OnPaint(wxPaintEvent& paintEvent);
 	void OnSize(wxSizeEvent& sizeEvent);
 
-	const float pi = 3.1415926535897932384626433832795028841971693993751;
+	const double pi = 3.1415926535897932384626433832795028841971693993751;
 	float rad;
 	float deg;
 	float CalculateDistance(GPSCoord coord1, GPSCoord coord2);
