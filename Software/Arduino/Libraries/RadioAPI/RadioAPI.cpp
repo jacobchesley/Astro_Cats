@@ -17,13 +17,19 @@ RadioAPI::RadioAPI(HardwareSerial * serial, int shutdownPin){
 
 	maxRXArraySize = 50;
 	maxTXSArraySize = 50;
+	maxATRArraySize = 50;
 
 	rxArray = new RadioPacketRX[maxRXArraySize];
 	txsArray = new RadioPacketTXS[maxTXSArraySize];
+	atrArray = new RadioPacketATR[maxATRArraySize];
+
 	rxArraySize = 0;
 	txsArraySize = 0;
+	atrArraySize = 0;
 
-	for(int i = 0; i < maxRXArraySize; i++){ rxArray[i].data = NULL; }
+	for(int i = 0; i < maxRXArraySize; i++) { rxArray[i].data = NULL; }
+	for(int i = 0; i < maxATRArraySize; i++){ atrArray[i].data = NULL; }
+
 	this->Flush();
 }
 
@@ -50,12 +56,21 @@ RadioAPI::RadioAPI(HardwareSerial * serial, int shutdownPin, int binaryPin){
 	maxRXArraySize = 50;
 	maxTXSArraySize = 50;
 
+	maxRXArraySize = 50;
+	maxTXSArraySize = 50;
+	maxATRArraySize = 50;
+
 	rxArray = new RadioPacketRX[maxRXArraySize];
 	txsArray = new RadioPacketTXS[maxTXSArraySize];
+	atrArray = new RadioPacketATR[maxATRArraySize];
+
 	rxArraySize = 0;
 	txsArraySize = 0;
+	atrArraySize = 0;
 
-	for(int i = 0; i < maxRXArraySize; i++){ rxArray[i].data = NULL; }
+	for(int i = 0; i < maxRXArraySize; i++) { rxArray[i].data = NULL; }
+	for(int i = 0; i < maxATRArraySize; i++){ atrArray[i].data = NULL; }
+
 	this->Flush();
 }
 
@@ -127,6 +142,12 @@ void RadioAPI::GetPackets(){
 				this->AddRXArray(rxPacket);
 			}
 
+			// Build AT Command Response
+			else if(tempPacket.cmdID == 0x88){
+				RadioPacketATR atrPacket = this->BuildATRPacket(&tempPacket);
+				this->AddATRArray(atrPacket);
+			}
+
 			// Build a TXS (Transmit Status) Packet from the raw data packet
 			else if(tempPacket.cmdID == 0x89){
 				RadioPacketTXS txsPacket = this->BuildTXSPacket(&tempPacket);
@@ -137,10 +158,14 @@ void RadioAPI::GetPackets(){
 			else if(tempPacket.cmdID == 0x8A){}
 
 			// Unknown packet
-			else{}
+			else{
+
+			}
 		}
+
+		// Temp packet checksum failed
 		else{
-			Serial.println("Incoming packet checksum failed");
+
 		}
 		delete[] tempPacket.data;
 	}
@@ -176,7 +201,7 @@ byte RadioAPI::CalculateChecksum(byte * data, int dataLength){
 RadioPacketAT RadioAPI::BuildATCommandPacket(char atLetter1, char atLetter2, byte * params, int paramLength){
 	RadioPacketAT outPacket;
 
-	outPacket.length = paramLength + 4;
+	outPacket.dataLength = paramLength + 4;
 
 	// 0x08 is at command
 	outPacket.cmdID = 0x08;
@@ -206,6 +231,54 @@ RadioPacketAT RadioAPI::BuildATCommandPacket(char atLetter1, char atLetter2, byt
 	return outPacket;
 }
 
+void RadioAPI::SendATCommandPacket(RadioPacketAT sendPacket){
+
+	// Send start delimtier
+	hardwareSerial->write(0x7E);
+
+	// Turn length into 2 bytes and send
+	byte lengthMSB = (byte)((sendPacket.dataLength >> 8) & 0xFF);
+	byte lengthLSB = (byte)  sendPacket.dataLength & 0xFF;
+	hardwareSerial->write(lengthMSB);
+	hardwareSerial->write(lengthLSB);
+
+	// Send API ID for AT Command
+	hardwareSerial->write(sendPacket.cmdID);
+
+	// Send Frame ID
+	hardwareSerial->write(sendPacket.frameID);
+
+	// Send AT letters
+	hardwareSerial->write(sendPacket.atLetter1);
+	hardwareSerial->write(sendPacket.atLetter2);
+
+	// Send AT Parameters
+	for(int i = 0; i < sendPacket.dataLength - 4; i++){
+		hardwareSerial->write(sendPacket.parameters[i]);
+	}
+
+	// Send checksum
+	hardwareSerial->write(sendPacket.checksum);
+}
+
+RadioPacketATR RadioAPI::BuildATRPacket(RadioPacket * packet){
+	RadioPacketATR outPacket;
+	outPacket.dataLength = packet->length - 4;
+	outPacket.cmdID = packet->cmdID;
+	outPacket.frameID = packet->data[0];
+	outPacket.atLetter1 = packet->data[1];
+	outPacket.atLetter2 = packet->data[2];
+	outPacket.status = packet->data[3];
+
+	outPacket.data = new byte[outPacket.dataLength];
+
+	for(int i = 4; i < packet->length; i++){
+		outPacket.data[i - 4] = packet->data[i]; 
+	}
+
+	return outPacket;
+}
+
 RadioPacketRX RadioAPI::BuildRXPacket(RadioPacket * packet){
 	RadioPacketRX outPacket;
 	outPacket.dataLength = packet->length - 4;
@@ -223,36 +296,49 @@ RadioPacketRX RadioAPI::BuildRXPacket(RadioPacket * packet){
 
 RadioPacketTXR RadioAPI::BuildTXRPacket(byte * data, int dataLength, int destination, byte frameID){
 	RadioPacketTXR outPacket;
+
+	// length is data length + 5 (cmdID, frameID, 2 bytes destination address, and option)
 	outPacket.dataLength = dataLength + 5;
+
+	// cmdID of 1 is transmit request
 	outPacket.cmdID = 0x01;
+
+	// User specified frameID in byte form, and destination address in decimal number
 	outPacket.frameID = frameID;
 	outPacket.destinationAddress = destination;
-	outPacket.option = 0x00;
-	outPacket.data = new byte[dataLength];
 
+	// Default option, 0x01 disables ACK
+	outPacket.option = 0x00;
+
+	// Copy data
+	outPacket.data = new byte[dataLength];
 	for(int i = 0; i < dataLength; i++){
 		outPacket.data[i] = data[i]; 
 	}
 
+	// Create checksum array
 	byte * checksumData = new byte[outPacket.dataLength];
 
+	// Set first bytes of checksum.  (Elements 2 and 3 convert int to 2 bytes, MSB first, LSB last)
 	checksumData[0] = (byte) outPacket.cmdID;
 	checksumData[1] = (byte) outPacket.frameID;
 	checksumData[2] = (byte)(destination >> 8) & 0XFF;
 	checksumData[3] = (byte) destination & 0xFF;
 	checksumData[4] = (byte) outPacket.option;
 
+	// Copy data into checksum
 	for(int i = 5; i < outPacket.dataLength; i++){
 		checksumData[i] = data[i-5]; 
 	}
 
+	// Calculate and set checksum byte and delete checksum array
 	outPacket.checksum = this->CalculateChecksum(checksumData, outPacket.dataLength);
 	delete[] checksumData;
 
 	return outPacket;
 }
 
-bool RadioAPI::SendTXRPacket(RadioPacketTXR sendPacket){
+void RadioAPI::SendTXRPacket(RadioPacketTXR sendPacket){
 
 	// Send start delimtier
 	hardwareSerial->write(0x7E);
@@ -307,6 +393,11 @@ void RadioAPI::AddRXArray(RadioPacketRX rxPacket){
 	rxArraySize += 1;
 }
 
+void RadioAPI::AddATRArray(RadioPacketATR atrPacket){
+	atrArray[atrArraySize] = atrPacket;
+	atrArraySize += 1;
+}
+
 void RadioAPI::ClearTXSArray(){
 	txsArraySize = 0;
 }
@@ -321,12 +412,26 @@ void RadioAPI::ClearRXArray(){
 	rxArraySize = 0;
 }
 
+void RadioAPI::ClearATRArray(){
+	for(int i = 0; i < maxATRArraySize; i++){
+		if(atrArray[i].data != NULL){
+			delete[] atrArray[i].data;
+			atrArray[i].data = NULL;
+		}
+	}
+	atrArraySize = 0;
+}
+
 int RadioAPI::GetTXSSize(){
 	return txsArraySize;
 }
 
 int RadioAPI::GetRXSize(){
 	return rxArraySize;
+}
+
+int RadioAPI::GetATRSize(){
+	return atrArraySize;
 }
 
 RadioPacketTXS * RadioAPI::GetTXSArray(){

@@ -3,6 +3,7 @@
 
 #include <arduino.h>
 
+// Generic Radio Packet
 struct RadioPacket{
 	int length;
 	byte cmdID;
@@ -10,6 +11,7 @@ struct RadioPacket{
 	byte checksum;
 };
 
+// Recieve
 struct RadioPacketRX : RadioPacket{
 	int dataLength;
 	byte cmdID;
@@ -20,6 +22,7 @@ struct RadioPacketRX : RadioPacket{
 	byte checksum;
 };
 
+// Transmit Request
 struct RadioPacketTXR : RadioPacket{
 	int dataLength;
 	byte cmdID;
@@ -30,6 +33,7 @@ struct RadioPacketTXR : RadioPacket{
 	byte checksum;
 };
 
+// Transmit Status
 struct RadioPacketTXS : RadioPacket{
 	byte cmdID;
 	byte frameID;
@@ -37,13 +41,26 @@ struct RadioPacketTXS : RadioPacket{
 	byte checksum;
 };
 
+// AT Command Request
 struct RadioPacketAT : RadioPacket{
-	int length;
+	int dataLength;
 	byte cmdID;
 	byte frameID;
 	byte atLetter1;
 	byte atLetter2;
 	byte * parameters;
+	byte checksum;
+};
+
+// AT Command Response
+struct RadioPacketATR : RadioPacket{
+	int dataLength;
+	byte cmdID;
+	byte frameID;
+	byte atLetter1;
+	byte atLetter2;
+	byte status;
+	byte * data;
 	byte checksum;
 };
 
@@ -57,16 +74,21 @@ public:
 
 	void ClearRXArray();
 	void ClearTXSArray();
+	void ClearATRArray();
+
 	int GetRXSize();
 	int GetTXSSize();
+	int GetATRSize();
+
 	RadioPacketRX * GetRXArray();
 	RadioPacketTXS * GetTXSArray();
+	RadioPacketATR * GetATRArray();
 
 	RadioPacketTXR BuildTXRPacket(byte * data, int dataLength, int destination, byte frameID);
 	RadioPacketAT BuildATCommandPacket(char atLetter1, char atLetter2, byte * params, int paramLength);
 
-	bool SendTXRPacket(RadioPacketTXR sendPacket);
-	bool SendATPacket(RadioPacketAT sendPacket);
+	void SendTXRPacket(RadioPacketTXR sendPacket);
+	void SendATCommandPacket(RadioPacketAT sendPacket);
 
 	bool Test();
 	bool WaitAndCheckOK();
@@ -75,9 +97,11 @@ private:
 
 	RadioPacketRX BuildRXPacket(RadioPacket * packet);
 	RadioPacketTXS BuildTXSPacket(RadioPacket * packet);
-	
+	RadioPacketATR BuildATRPacket(RadioPacket * packet);
+
 	void AddRXArray(RadioPacketRX rxPacket);
 	void AddTXSArray(RadioPacketTXS txsPacket);
+	void AddATRArray(RadioPacketATR atrPacket);
 
 	bool CheckOK();
 	//bool WaitAndCheckOK();
@@ -100,9 +124,14 @@ private:
 	RadioPacketRX * rxArray;
 	int rxArraySize;
 	int maxRXArraySize;
+
 	RadioPacketTXS * txsArray;
 	int txsArraySize;
 	int maxTXSArraySize;
+
+	RadioPacketATR * atrArray;
+	int atrArraySize;
+	int maxATRArraySize;
 };
 
 #endif
