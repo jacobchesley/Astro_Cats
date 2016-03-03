@@ -223,20 +223,28 @@ int SerialPortConnection::GetIndexOfPort(std::string portName) {
 
 void SerialPortConnection::UpdateAvailableSerialPortsCombo() {
 
+	bool listChanged = false;
 	// Add all serial ports not yet in the combo box, to the combo box
 	for (int i = 0; i < (int)allSerialPort.size(); i++) {
 		if (wxNOT_FOUND == serialBox->FindString(wxString(allSerialPort[i]))) {
 			serialBox->AppendString(wxString(allSerialPort[i]));
+			listChanged = true;
 		}
 	}
 
-	// If port is in combo box but no longer in the actual list, remove it from list
+	// If port is in combo box but no longer in the actual list, remove it from combo box
 	for (int i = 0; i < (int)serialBox->GetCount(); i++) {
 		if (!CheckIfPortInList(std::string(serialBox->GetString(i)))) {
 			serialBox->Delete(i);
+			serialBox->SetValue("");
+			listChanged = true;
 		}
 	}
-	serialBox->SetSelection(serialBox->GetCount());
+
+	// Only set the combo box item if the list changed.
+	if (listChanged) {
+		serialBox->SetSelection(serialBox->GetCount() - 1);
+	}
 }
 
 void SerialPortConnection::Connect(wxCommandEvent& WXUNUSED(event)) {
