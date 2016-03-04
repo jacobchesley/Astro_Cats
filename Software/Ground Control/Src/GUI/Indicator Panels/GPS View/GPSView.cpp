@@ -129,6 +129,25 @@ GPSInfoPanel::GPSInfoPanel(wxWindow * parent, GPSRadarPanel * radarPanel) : wxPa
 	this->GetSizer()->Add(timeLabel);
 	this->GetSizer()->Add(timeText, 0, wxEXPAND);
 
+
+	unitLabel = new wxStaticText(this, -1, "Units ");
+	unitLabel->SetBackgroundColour(wxColor(0, 0, 0));
+	unitLabel->SetForegroundColour(wxColor(200, 200, 200));
+	unitLabel->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+
+	unitBox = new wxComboBox(this, GPSInfoPanel::ID_SET_UNITS);
+	unitBox->SetBackgroundColour(wxColor(0, 0, 0));
+	unitBox->SetForegroundColour(wxColor(255, 255, 255));
+	unitBox->SetFont(wxFont(14, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	unitBox->AppendString("Feet");
+	unitBox->AppendString("Miles");
+	unitBox->AppendString("Meters");
+	unitBox->AppendString("kilometers");
+	unitBox->SetSelection(0);
+
+	this->GetSizer()->Add(unitLabel);
+	this->GetSizer()->Add(unitBox, 0, wxEXPAND);
+
 	setBaseButton = new wxButton(this, GPSInfoPanel::ID_SET_BASE, "Set Base Station");
 	setBaseButton->SetBackgroundColour(wxColor(0, 0, 0));
 	setBaseButton->SetForegroundColour(wxColor(255, 255, 255));
@@ -136,11 +155,29 @@ GPSInfoPanel::GPSInfoPanel(wxWindow * parent, GPSRadarPanel * radarPanel) : wxPa
 	this->GetSizer()->Add(setBaseButton);
 
 	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&GPSInfoPanel::SetBase, this, GPSInfoPanel::ID_SET_BASE);
-
+	this->Bind(wxEVT_COMBOBOX, (wxObjectEventFunction)&GPSInfoPanel::SetUnits, this, GPSInfoPanel::ID_SET_UNITS);
 }
 
 void GPSInfoPanel::SetBase(wxCommandEvent& WXUNUSED(event)) {
 	radar->SetBaseCoord(currentCoord);
+}
+
+void GPSInfoPanel::SetUnits(wxCommandEvent& WXUNUSED(event)) {
+	
+	switch (unitBox->GetSelection()) {
+		case 0 :
+			radar->SetUnits(GPSRadarPanel::Units::FEET);
+			break;
+		case 1:
+			radar->SetUnits(GPSRadarPanel::Units::MILES);
+			break;
+		case 2:
+			radar->SetUnits(GPSRadarPanel::Units::METERS);
+			break;
+		case 3:
+			radar->SetUnits(GPSRadarPanel::Units::KILOMETERS);
+			break;
+	}
 }
 
 void GPSInfoPanel::SetTitleText(wxString title) {
@@ -223,7 +260,8 @@ GPSRadarPanel::GPSRadarPanel(wxWindow * parent) : wxPanel(parent) {
 	rad = pi / 180.0f;
 	deg = 180.0f / pi;
 
-	units = GPSRadarPanel::Units::MILES;
+	this->SetUnits(GPSRadarPanel::Units::FEET);
+
 	this->Bind(wxEVT_PAINT, (wxObjectEventFunction)&GPSRadarPanel::OnPaint, this);
 	this->Bind(wxEVT_SIZE, (wxObjectEventFunction)&GPSRadarPanel::OnSize, this);
 }
@@ -251,8 +289,14 @@ void GPSRadarPanel::Render(wxDC& dc) {
 	int width = this->GetSize().GetWidth();
 	int height = this->GetSize().GetHeight();
 
-	// Draw center point
-	dc.DrawBitmap(wxIcon("IDI_ICON1"), width / 2, height / 2);
+	wxIcon centerIcon("IDI_ICON1");
+	wxIcon mobileIcon("IDI_ICON1");
+
+	int centerIconWidth = centerIcon.GetWidth();
+	int centerIconHeight = centerIcon.GetHeight();
+	int mobileIconWidth = mobileIcon.GetWidth();
+	int mobileIconHeight = mobileIcon.GetHeight();
+
 
 	// Determine radius of circle for outter guage
 	int circleRadius = 0;
@@ -261,19 +305,36 @@ void GPSRadarPanel::Render(wxDC& dc) {
 
 	float guageLen = circleRadius * 0.80f;
 
+	// Start and end points of drawings
 	int guageStartX = width / 2;
 	int guageStartY = height / 2;
-
 	int guageEndX = guageStartX;
 	int guageEndY = guageStartY;
 
+	// Caclualate distance and degree
 	float degreeVal = this->CalculateAngle(baseCoord, mobileCoord);
+	float distanceVal = this->CalculateDistance(baseCoord, mobileCoord);
+
+	// Find endpoint of drawing (mobile point)
 	guageEndX += guageLen * cos(pi * (degreeVal / 180.0f));
 	guageEndY -= guageLen * sin(pi * (degreeVal / 180.0f));
 
+	// Draw line between center and mobile points
+	wxPen linePen(wxColor(0, 0, 0));
+	dc.SetPen(linePen);
+	dc.DrawLine(guageStartX + (centerIconWidth / 2), guageStartY + (centerIconHeight / 2), guageEndX + (mobileIconWidth / 2), guageEndY + (mobileIconHeight / 2));
+
+	// Draw center point
+	dc.DrawBitmap(centerIcon, guageStartX, guageEndY);
+
 	// Draw mobile point
-	dc.DrawBitmap(wxIcon("IDI_ICON1"), guageEndX, guageEndY);
-	
+	dc.DrawBitmap(mobileIcon, guageEndX, guageEndY);
+
+	// Draw distance text under mobile point
+	dc.SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	wxString distance = wxString::Format(wxT("%.2f"), distanceVal);
+	distance += unitString;
+	dc.DrawText(distance, guageEndX, guageEndY + mobileIconHeight);
 }
 
 void GPSRadarPanel::OnPaint(wxPaintEvent& paintEvent) {
@@ -308,6 +369,25 @@ void GPSRadarPanel::OnSize(wxSizeEvent& sizeEvent) {
 	sizeEvent.Skip();
 }
 
+void GPSRadarPanel::SetUnits(int unit) {
+	units = unit;
+	switch (unit) {
+		case GPSRadarPanel::Units::FEET:
+			unitString = " Ft";
+			break;
+		case GPSRadarPanel::Units::MILES:
+			unitString = " Mi";
+			break;
+		case GPSRadarPanel::Units::METERS:
+			unitString = " m";
+			break;
+		case GPSRadarPanel::Units::KILOMETERS:
+			unitString = " Km";
+			break;
+	}
+
+	this->PaintNow();
+}
 float GPSRadarPanel::CalculateDistance(GPSCoord coord1, GPSCoord coord2) {
 
 	if (coord1.EW == "W") { coord1.Lon *= -1.0f; }

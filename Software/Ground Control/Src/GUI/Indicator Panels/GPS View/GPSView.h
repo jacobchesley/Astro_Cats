@@ -39,6 +39,8 @@ public:
 private:
 
 	void SetBase(wxCommandEvent& WXUNUSED(event));
+	void SetUnits(wxCommandEvent& WXUNUSED(event));
+
 	GPSCoord currentCoord;
 
 	GPSRadarPanel * radar;
@@ -74,10 +76,14 @@ private:
 	wxStaticText * timeLabel;
 	wxTextCtrl * timeText;
 
+	wxStaticText * unitLabel;
+	wxComboBox * unitBox;
+
 	wxButton * setBaseButton;
 
 	enum {
-		ID_SET_BASE
+		ID_SET_BASE,
+		ID_SET_UNITS
 	};
 };
 
@@ -86,7 +92,15 @@ public:
 	GPSRadarPanel(wxWindow * parent);
 	void SetBaseCoord(GPSCoord coord);
 	void SetMobileCoord(GPSCoord coord);
+	void SetUnits(int unit);
 	void PaintNow();
+
+	enum Units {
+		MILES,
+		FEET,
+		KILOMETERS,
+		METERS
+	};
 
 private:
 	void Render(wxDC& dc);
@@ -102,12 +116,7 @@ private:
 	GPSCoord mobileCoord;
 
 	int units = 0;
-	enum Units {
-		MILES,
-		FEET,
-		KILOMETERS,
-		METERS	
-	};
+	wxString unitString;
 };
 
 class GPSView : public wxPanel {
