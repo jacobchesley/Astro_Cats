@@ -448,7 +448,7 @@ GPSView::GPSView(wxWindow * parent, wxString title) : wxPanel(parent) {
 
 	this->SetBackgroundColour(wxColor(0, 0, 0));
 
-	splitter = new wxSplitterWindow(this, -1);
+	splitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
 	
 	radar = new GPSRadarPanel(splitter);
 	info = new GPSInfoPanel(splitter, radar);
