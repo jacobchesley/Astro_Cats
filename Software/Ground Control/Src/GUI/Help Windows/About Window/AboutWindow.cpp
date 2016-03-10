@@ -3,7 +3,7 @@
 AboutWindow::AboutWindow(wxWindow * parent) : wxFrame(parent, -1, "About Astro Cats Ground Control") {
 
 	// Update Version HERE!
-	versionText = "Version: 0.1.2";
+	versionText = "Version: 0.2.0";
 
 	this->SetBackgroundColour(wxColor(45, 45, 45));
 	title = new wxStaticText(this, -1, "Astro Cats Ground Control");
