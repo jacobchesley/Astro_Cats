@@ -62,9 +62,9 @@ void SerialController::Connect(std::string portName, std::string hardwareInfo) {
 		// set the timeout values
 		timeouts.ReadIntervalTimeout = 10;
 		timeouts.ReadTotalTimeoutMultiplier = 0;
-		timeouts.ReadTotalTimeoutConstant = 10;
-		timeouts.WriteTotalTimeoutMultiplier = 1;
-		timeouts.WriteTotalTimeoutConstant = 1;
+		timeouts.ReadTotalTimeoutConstant = 0;
+		timeouts.WriteTotalTimeoutMultiplier = 0;
+		timeouts.WriteTotalTimeoutConstant = 0;
 
 		if (!SetCommTimeouts(serialPort, &timeouts)) {
 			OutputDebugStringA("Set Comm Timeout Fail");
@@ -193,7 +193,6 @@ wxThread::ExitCode SerialController::Entry() {
 
 	#ifdef _WIN32
 
-		DWORD resultType = 0;
 		DWORD errorCode = 0;
 		COMSTAT status = {0};
 		memset(&status, 0, sizeof(COMSTAT));
@@ -212,7 +211,7 @@ wxThread::ExitCode SerialController::Entry() {
 		#ifdef _WIN32
 
 			ClearCommError(serialPort, &errorCode, &status);
-			ReadBuffer(status);
+			ReadBuffer();
 				
 		#elif __APPLE__
 
@@ -253,7 +252,17 @@ void SerialController::ClearReadData() {
 	currentIndex = 0;
 }
 
-void SerialController::ReadBuffer(COMSTAT status){
+void SerialController::WriteData(wxString data) {
+
+	DWORD bytesWritten = 0;
+	char buffer[16384];
+	for (int i = 0; i < (int)data.Length(); i++) {
+		buffer[i] = data[i];
+	}
+	WriteFile(serialPort, &buffer, data.Length(), &bytesWritten, NULL);
+}
+
+void SerialController::ReadBuffer(){
 
 	char buffer[16384] = { 0 };
 	memset(buffer, 0, 16384);
@@ -261,7 +270,6 @@ void SerialController::ReadBuffer(COMSTAT status){
 	#ifdef _WIN32
 
 		// Get number of bytes to read
-		DWORD bytesToRead = status.cbInQue;
 		DWORD bytesRead = 0;
 
 		// Read all bytes

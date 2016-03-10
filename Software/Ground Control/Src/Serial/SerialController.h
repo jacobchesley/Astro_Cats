@@ -24,6 +24,8 @@ class SerialController : wxThread{
 		wxVector<char> GetAllData();
 		void ClearAllData();
 
+		void WriteData(wxString data);
+
 		void StopSerial();
 		void Stop();
 		bool IsConnected();
@@ -33,7 +35,7 @@ class SerialController : wxThread{
 
 	private:
 
-		void ReadBuffer(COMSTAT comstat);
+		void ReadBuffer();
 		int WriteBuffer(char * dataToWrite);
 		wxString serialPortName;
 
