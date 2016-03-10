@@ -8,7 +8,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuBar = new wxMenuBar;
 	menuFile = new wxMenu;
 	menuSerial = new wxMenu;
-	menuPIL = new wxMenu;
+	menuCommand = new wxMenu;
 	menuView = new wxMenu;
 	menuHelp = new wxMenu;
 
@@ -20,8 +20,9 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuSerial->Append(MainWindow::MenuBar::ID_CONNECT_SERIAL, _("Connect to a Serial Port"));
 	menuSerial->Append(MainWindow::MenuBar::ID_SHOW_PLAYBACK, _("Playback Data"));
 
-	// Pil Menu
-	menuPIL->Append(MainWindow::MenuBar::ID_SEND_PIL_COMMAND, _("Send Commands to the PIL"));
+	// Command Menu
+	menuCommand->Append(MainWindow::MenuBar::ID_VIEW_COMMANDS, _("Send Commands to Rocket and PIL"));
+	menuCommand->Append(MainWindow::MenuBar::ID_VIEW_COMMANDS_RESPONSE, _("Command Response from Rocket and PIL"));
 
 	// View Menu
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PILSTRENGTH, _("PIL Signal Strength"));
@@ -47,7 +48,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	// Append menus to menu bar
 	menuBar->Append(menuFile, _("&File"));
 	menuBar->Append(menuSerial, _("&Serial Connections"));
-	menuBar->Append(menuPIL, _("&PIL"));
+	menuBar->Append(menuCommand, _("&Commands"));
 	menuBar->Append(menuView, _("&View"));
 	menuBar->Append(menuHelp, _("&Help"));
 
@@ -75,6 +76,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSetLogFile, this, MainWindow::MenuBar::ID_SET_LOG_FILE);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSerialConnection, this, MainWindow::MenuBar::ID_CONNECT_SERIAL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPlayback, this, MainWindow::MenuBar::ID_SHOW_PLAYBACK);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowCommands, this, MainWindow::MenuBar::ID_VIEW_COMMANDS);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowCommandsResponse, this, MainWindow::MenuBar::ID_VIEW_COMMANDS_RESPONSE);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPilSignalStrength, this, MainWindow::MenuBar::ID_VIEW_PILSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowRocketSignalStrength, this, MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
@@ -97,6 +100,9 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	logger = new Logger();
 	uiUpdater = new UIUpdateThread(this);
 
+	mainCommandWindow = new MainCommandWindow(this, "Send Commands to Rocket and PIL", serialController);
+	commandResponseWindow = new CommandResponseWindow(this, "Command Reponse from Rocket and PIL");
+
 	pilRadioStrength = new RadioSignalStrengthWindow(this, "PIL Radio Strength");
 	rocketRadioStrength = new RadioSignalStrengthWindow(this, "Rocket Radio Strength");
 	temperatureWindow = new LinearWindow(this, "Temperature", -20.0f, 40.0f, wxColor(255,0,0), true, true, " C", " F", 10, 1.8f, 32.0f);
@@ -105,8 +111,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	solarWindow = new RadialWindow(this, "Solar Irradiance", 0.0f, 1250.0f, wxColor(255, 255, 0), " W/M2", 10);
 	pressureAltitudeWindow = new PressureAltitudeWindow(this, "Air Pressure & Altitude", 600.0f, 1100.0f, 10, 0, 5500, 10);
 	pitchRollWindow = new PitchRollWindow(this, "Pitch & Roll");
-	gpsViewRocket = new GPSViewWindow(this, "Rocket GPS");
-	gpsViewPIL= new GPSViewWindow(this, "PIL GPS");
+	gpsViewRocket = new GPSViewWindow(this, "Rocket GPS", wxIcon("IDI_ICON2"), wxIcon("IDI_ICON3"));
+	gpsViewPIL= new GPSViewWindow(this, "PIL GPS", wxIcon("IDI_ICON2"), wxIcon("IDI_ICON4"));
 	playbackWindow = new PlaybackWindow(this, this);
 	docWindow = new DocumentationWindow(this);
 	aboutWindow = new AboutWindow(this);
@@ -210,7 +216,7 @@ void MainWindow::ReciveSerialData(wxString serialData){
 			wxString source = jsonData["Source"];
 			wxString messageType = jsonData["MessageType"];
 
-			// If we are receving GPS Data from the rocket...
+			// If we are recieving GPS Data from the rocket...
 			if(source == "Rocket" && messageType == "Data") {
 
 				// Update coordinates of Rocket GPS
@@ -230,6 +236,12 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				gpsViewRocket->UpdateSatList((wxString)jsonData["SatList"]);
 				gpsViewRocket->UpdateTime((wxString)jsonData["Time"]);
 			}
+
+			// If we are recieving a command response from rocket...
+			else if (source == "Rocket" && messageType == "CommandResponse") {
+				commandResponseWindow->RecieveResponseRocket((wxString)jsonData["Command"], (wxString)jsonData["Value"]);
+			}
+
 			// If we are receving Signal Strength Info from the ground..
 			else if (source == "Ground" && messageType == "SignalStrength") {
 
@@ -301,6 +313,14 @@ void MainWindow::ShowPlayback(wxCommandEvent& WXUNUSED(event)) {
 	playbackWindow->SetPosition(bottomRight);
 
 	playbackWindow->Show();
+}
+
+void MainWindow::ShowCommands(wxCommandEvent& WXUNUSED(event)) {
+	mainCommandWindow->Show();
+}
+
+void MainWindow::ShowCommandsResponse(wxCommandEvent& WXUNUSED(event)) {
+	commandResponseWindow->Show();
 }
 
 void MainWindow::ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event)) {
@@ -499,14 +519,14 @@ wxThread::ExitCode PlaybackThread::Entry() {
 
 	reader = new Logger(playback);
 
-	for (int i = 0; i < reader->GetNumLines(); i++){
+	for (int i = 0; i < reader->GetNumLines(); i += 2){
 
 		// Spin wait while paused
 		while (pause) {
 			this->Sleep(100);
 		}
 		mainWindow->ReciveSerialData(reader->ReadLine(i));
-		
+		mainWindow->ReciveSerialData(reader->ReadLine(i+1));
 		// Stop, return from loop
 		if (stop) {
 			return 0;

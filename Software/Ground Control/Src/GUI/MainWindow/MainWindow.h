@@ -14,6 +14,7 @@
 #include "wx/url.h"
 
 #include "Serial\SerialController.h"
+#include "GUI\Command Window\CommandWindow.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
 #include "GUI\Indicator Panels\Linear Guage\LinearGuage.h"
@@ -56,13 +57,15 @@ class MainWindow : public wxFrame {
 		wxMenuBar * menuBar;
 		wxMenu * menuFile;
 		wxMenu * menuSerial;
-		wxMenu * menuPIL;
+		wxMenu * menuCommand;
 		wxMenu * menuView;
 		wxMenu * menuHelp;
 
 		void ShowSetLogFile(wxCommandEvent& WXUNUSED(event));
 		void ShowSerialConnection(wxCommandEvent& WXUNUSED(event));
 		void ShowPlayback(wxCommandEvent& WXUNUSED(event));
+		void ShowCommands(wxCommandEvent& WXUNUSED(event));
+		void ShowCommandsResponse(wxCommandEvent& WXUNUSED(event));
 		void ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
@@ -96,6 +99,10 @@ class MainWindow : public wxFrame {
 		// Serial Port Connection window
 		SerialPortConnection * serialPortConnection;
 		PlaybackWindow * playbackWindow;
+
+		// Command Window
+		MainCommandWindow * mainCommandWindow;
+		CommandResponseWindow * commandResponseWindow;
 
 		// Data display windows
 		RadioSignalStrengthWindow * pilRadioStrength;
@@ -145,7 +152,8 @@ class MainWindow : public wxFrame {
 			ID_LOG,
 			ID_CONNECT_SERIAL,
 			ID_SHOW_PLAYBACK,
-			ID_SEND_PIL_COMMAND,
+			ID_VIEW_COMMANDS,
+			ID_VIEW_COMMANDS_RESPONSE,
 			ID_VIEW_PILSTRENGTH,
 			ID_VIEW_ROCKETSTRENGTH,
 			ID_VIEW_TEMP,
