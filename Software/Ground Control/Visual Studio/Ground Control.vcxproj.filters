@@ -68,6 +68,9 @@
     <Filter Include="Source Files\GUI\Help Windows\Documentation Window">
       <UniqueIdentifier>{7611b465-2ef7-417e-9e89-a0de2b5b4787}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\Command Window">
+      <UniqueIdentifier>{359f6267-b94c-4eb2-a95a-163c2a4b7a75}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -117,6 +120,9 @@
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.cpp">
       <Filter>Source Files\GUI\Help Windows\Documentation Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Command Window\CommandWindow.cpp">
+      <Filter>Source Files\GUI\Command Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,11 +180,17 @@
     <ClInclude Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.h">
       <Filter>Source Files\GUI\Help Windows\Documentation Window</Filter>
     </ClInclude>
+    <ClInclude Include="..\Src\GUI\Command Window\CommandWindow.h">
+      <Filter>Source Files\GUI\Command Window</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Icon\favicon.ico">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="..\Icon\PC.ico" />
+    <Image Include="..\Icon\Rocket.ico" />
+    <Image Include="..\Icon\Satellite.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Ground Control.rc">

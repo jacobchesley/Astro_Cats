@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp" />
+    <ClCompile Include="..\Src\GUI\Command Window\CommandWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Help Windows\About Window\AboutWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.cpp" />
@@ -54,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
+    <ClInclude Include="..\Src\GUI\Command Window\CommandWindow.h" />
     <ClInclude Include="..\Src\GUI\Help Windows\About Window\AboutWindow.h" />
     <ClInclude Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.h" />
@@ -77,6 +79,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Icon\favicon.ico" />
+    <Image Include="..\Icon\PC.ico" />
+    <Image Include="..\Icon\Rocket.ico" />
+    <Image Include="..\Icon\Satellite.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>Ground Control</ProjectName>
