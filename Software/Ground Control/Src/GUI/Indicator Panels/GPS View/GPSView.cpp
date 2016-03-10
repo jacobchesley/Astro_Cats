@@ -255,7 +255,7 @@ void GPSInfoPanel::UpdateTime(wxString time) {
 	timeText->SetValue(hours + " : " + minutes + " : " + seconds);
 }
 
-GPSRadarPanel::GPSRadarPanel(wxWindow * parent) : wxPanel(parent) {
+GPSRadarPanel::GPSRadarPanel(wxWindow * parent, wxIcon centerIcon, wxIcon mobileIcon) : wxPanel(parent) {
 	this->SetBackgroundColour(wxColor(60, 130, 25));
 	rad = pi / 180.0f;
 	deg = 180.0f / pi;
@@ -264,6 +264,14 @@ GPSRadarPanel::GPSRadarPanel(wxWindow * parent) : wxPanel(parent) {
 
 	this->Bind(wxEVT_PAINT, (wxObjectEventFunction)&GPSRadarPanel::OnPaint, this);
 	this->Bind(wxEVT_SIZE, (wxObjectEventFunction)&GPSRadarPanel::OnSize, this);
+
+	baseCoord.Lat = 0.0f;
+	baseCoord.Lon = 0.0f;
+	mobileCoord.Lat = 0.0f;
+	mobileCoord.Lon = 0.0f;
+
+	centerImg = centerIcon;
+	mobileImg = mobileIcon;
 }
 
 void GPSRadarPanel::SetBaseCoord(GPSCoord coord) {
@@ -289,13 +297,11 @@ void GPSRadarPanel::Render(wxDC& dc) {
 	int width = this->GetSize().GetWidth();
 	int height = this->GetSize().GetHeight();
 
-	wxIcon centerIcon("IDI_ICON1");
-	wxIcon mobileIcon("IDI_ICON1");
 
-	int centerIconWidth = centerIcon.GetWidth();
-	int centerIconHeight = centerIcon.GetHeight();
-	int mobileIconWidth = mobileIcon.GetWidth();
-	int mobileIconHeight = mobileIcon.GetHeight();
+	int centerIconWidth = centerImg.GetWidth();
+	int centerIconHeight = centerImg.GetHeight();
+	int mobileIconWidth = mobileImg.GetWidth();
+	int mobileIconHeight = mobileImg.GetHeight();
 
 
 	// Determine radius of circle for outter guage
@@ -325,10 +331,10 @@ void GPSRadarPanel::Render(wxDC& dc) {
 	dc.DrawLine(guageStartX + (centerIconWidth / 2), guageStartY + (centerIconHeight / 2), guageEndX + (mobileIconWidth / 2), guageEndY + (mobileIconHeight / 2));
 
 	// Draw center point
-	dc.DrawBitmap(centerIcon, guageStartX, guageEndY);
+	dc.DrawBitmap(centerImg, guageStartX, guageEndY);
 
 	// Draw mobile point
-	dc.DrawBitmap(mobileIcon, guageEndX, guageEndY);
+	dc.DrawBitmap(mobileImg, guageEndX, guageEndY);
 
 	// Draw distance text under mobile point
 	dc.SetFont(wxFont(10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
@@ -444,13 +450,13 @@ float GPSRadarPanel::CalculateAngle(GPSCoord coord1, GPSCoord coord2) {
 	return fmod((deg*(atan2f(deltaLon, dPhi)) + 360.0),  360.0f);
 }
 
-GPSView::GPSView(wxWindow * parent, wxString title) : wxPanel(parent) {
+GPSView::GPSView(wxWindow * parent, wxString title, wxIcon centerIcon, wxIcon mobileIcon) : wxPanel(parent) {
 
 	this->SetBackgroundColour(wxColor(0, 0, 0));
 
 	splitter = new wxSplitterWindow(this, -1, wxDefaultPosition, wxDefaultSize, wxSP_LIVE_UPDATE);
 	
-	radar = new GPSRadarPanel(splitter);
+	radar = new GPSRadarPanel(splitter, centerIcon, mobileIcon);
 	info = new GPSInfoPanel(splitter, radar);
 	splitter->SplitVertically(info, radar);
 	splitter->SetSashGravity(0.4);
@@ -500,11 +506,11 @@ void GPSView::UpdateTime(wxString time) {
 	info->UpdateTime(time);
 }
 
-GPSViewWindow::GPSViewWindow(wxWindow * parent, wxString title) : wxFrame(parent, -1, title) {
+GPSViewWindow::GPSViewWindow(wxWindow * parent, wxString title, wxIcon centerIcon, wxIcon mobileIcon) : wxFrame(parent, -1, title) {
 
 	this->SetBackgroundColour(wxColor(0, 0, 0));
 
-	view = new GPSView(this, title);
+	view = new GPSView(this, title, centerIcon, mobileIcon);
 
 	layout = new wxBoxSizer(wxVERTICAL);
 	this->SetSizer(layout);

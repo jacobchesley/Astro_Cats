@@ -89,7 +89,7 @@ private:
 
 class GPSRadarPanel : public wxPanel {
 public:
-	GPSRadarPanel(wxWindow * parent);
+	GPSRadarPanel(wxWindow * parent, wxIcon centerIcon, wxIcon mobileIcon);
 	void SetBaseCoord(GPSCoord coord);
 	void SetMobileCoord(GPSCoord coord);
 	void SetUnits(int unit);
@@ -114,6 +114,8 @@ private:
 	float CalculateAngle(GPSCoord coord1, GPSCoord coord2);
 	GPSCoord baseCoord;
 	GPSCoord mobileCoord;
+	wxIcon centerImg;
+	wxIcon mobileImg;
 
 	int units = 0;
 	wxString unitString;
@@ -121,7 +123,7 @@ private:
 
 class GPSView : public wxPanel {
 public:
-	GPSView(wxWindow * parent, wxString title);
+	GPSView(wxWindow * parent, wxString title, wxIcon cenerIcon, wxIcon mobileIcon);
 	void UpdateGPSPos(GPSCoord pos);
 	void UpdateAltitude(float altitude);
 	void UpdateQuality(int quality);
@@ -141,7 +143,7 @@ private:
 
 class GPSViewWindow : public wxFrame {
 public:
-	GPSViewWindow(wxWindow * parent, wxString title);
+	GPSViewWindow(wxWindow * parent, wxString title, wxIcon centerIcon, wxIcon mobileIcon);
 	void UpdateGPSPos(GPSCoord pos);
 	void UpdateAltitude(float altitude);
 	void UpdateQuality(int quality);
