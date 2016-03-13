@@ -14,6 +14,8 @@ class IncomingDataStream : public wxPanel {
 
 public:
 	IncomingDataStream(wxWindow * parent, wxString title, int maxLines = 50);
+	void SetMaxLines(int maxLines);
+	void SetAutoscroll(bool setAutoscroll);
 	void AppendText(wxString appendedText);
 	void ClearText();
 
@@ -27,6 +29,7 @@ private:
 	wxVector<wxString> allLines;
 
 	int maxLineNum;
+	bool autoScroll;
 
 	long numLines;
 };

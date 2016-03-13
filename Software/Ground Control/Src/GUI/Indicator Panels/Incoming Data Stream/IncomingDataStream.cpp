@@ -28,6 +28,7 @@ IncomingDataStream::IncomingDataStream(wxWindow * parent, wxString title, int ma
 	this->GetSizer()->Layout();
 	numLines = 0;
 	maxLineNum = maxLines + 1;
+	autoScroll = true;
 
 }
 
@@ -50,11 +51,22 @@ void IncomingDataStream::AppendText(wxString appendedText) {
 			newString += lines[i];
 		}
 		dataText->SetValue(newString);
-		dataText->ScrollLines(maxLineNum);
+
+		if (autoScroll) {
+			//dataText->ScrollLines(maxLineNum);
+		}
 	}
 }
 
 void IncomingDataStream::ClearText() {
 	allText = "";
 	dataText->SetValue(allText);
+}
+
+void IncomingDataStream::SetMaxLines(int maxLines) {
+	maxLineNum = maxLines;
+}
+
+void IncomingDataStream::SetAutoscroll(bool setAutoScroll) {
+	autoScroll = setAutoScroll;
 }
