@@ -142,7 +142,7 @@ GPSInfoPanel::GPSInfoPanel(wxWindow * parent, GPSRadarPanel * radarPanel) : wxPa
 	unitBox->AppendString("Feet");
 	unitBox->AppendString("Miles");
 	unitBox->AppendString("Meters");
-	unitBox->AppendString("kilometers");
+	unitBox->AppendString("Kilometers");
 	unitBox->SetSelection(0);
 
 	this->GetSizer()->Add(unitLabel);
@@ -191,8 +191,28 @@ void GPSInfoPanel::UpdateGPSPos(GPSCoord pos) {
 	lonLatText->SetValue(std::to_string(pos.Lat) + pos.NS + " , " + std::to_string(pos.Lon) + pos.EW);
 }
 
-void GPSInfoPanel::UpdateAltitude(float altitude) {
-	altitudeText->SetValue(std::to_string(altitude));
+void GPSInfoPanel::UpdateAltitude(float altitudeMeters) {
+
+	float altitude = 0.0f;
+	wxString units = "";
+
+	if (unitBox->GetValue() == "Feet") {
+		altitude = altitudeMeters * 3.28084f;
+		units = " Ft";
+	}
+	else if (unitBox->GetValue() == "Miles") {
+		altitude = altitudeMeters * 0.000621371f;
+		units = " Mi";
+	}
+	else if (unitBox->GetValue() == "Meters") {
+		altitude = altitudeMeters;
+		units = " m";
+	}
+	else if (unitBox->GetValue() == "kilometers") {
+		altitude = altitudeMeters * 0.001f;
+		units = " Km";
+	}
+	altitudeText->SetValue(std::to_string(altitude) + units);
 }
 
 void GPSInfoPanel::UpdateQuality(int quality) {
@@ -331,7 +351,7 @@ void GPSRadarPanel::Render(wxDC& dc) {
 	dc.DrawLine(guageStartX + (centerIconWidth / 2), guageStartY + (centerIconHeight / 2), guageEndX + (mobileIconWidth / 2), guageEndY + (mobileIconHeight / 2));
 
 	// Draw center point
-	dc.DrawBitmap(centerImg, guageStartX, guageEndY);
+	dc.DrawBitmap(centerImg, guageStartX, guageStartY);
 
 	// Draw mobile point
 	dc.DrawBitmap(mobileImg, guageEndX, guageEndY);
