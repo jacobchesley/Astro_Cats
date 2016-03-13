@@ -32,7 +32,7 @@ RadioSignalStrength::RadioSignalStrength(wxWindow * parent, wxString title) : wx
 
 void RadioSignalStrength::SetSignalStrength(int signalStrength) {
 	bars->SetSignalStrength(signalStrength);
-	signalText->SetValue(std::to_string(signalStrength));
+	signalText->SetValue(std::to_string(signalStrength) + " dBm");
 }
 
 void RadioSignalStrength::SetTitle(wxString newTitle) {
@@ -41,7 +41,7 @@ void RadioSignalStrength::SetTitle(wxString newTitle) {
 
 // Radio Signal Strength Bars class
 RadioSignalStrengthBar::RadioSignalStrengthBar(wxWindow * parent) : IndicatorPanel(parent){
-	signalStrength = 0;
+	signalStrength = -200;
 	this->PaintNow();
 }
 
@@ -77,6 +77,10 @@ void RadioSignalStrengthBar::Render(wxDC& dc){
 	// 7 - Green
 	wxColor barColor;
 	int numBar = 0;
+
+	if (signalStrength <= -100) {
+		barColor.SetRGB(0x000000FF);
+	}
 	if (signalStrength > -100 && signalStrength <= -91) {
 		barColor.SetRGB(0x000000FF);
 		numBar = 0;
