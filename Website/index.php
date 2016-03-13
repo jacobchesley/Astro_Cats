@@ -113,7 +113,7 @@
                 
                 <a class="PhotoLink" href="./team/#Nick">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/nick.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/nick.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Nick Fagan</div>
                             <div class="TeamMemberInfo">Team Lead</div>
@@ -122,7 +122,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Aaron">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/aaron.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/aaron.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Aaron Deutsch</div>
                             <div class="TeamMemberInfo">Safety Officer &</br> Mission Assurance</div>
@@ -131,7 +131,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Kevin">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/kevin.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/kevin.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Kevin Eliason</div>
                             <div class="TeamMemberInfo">Rocket Design & Construction</div>
@@ -140,7 +140,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Gabriel">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/gabriel.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/gabriel.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Gabriel Puente-Lay</div>
                             <div class="TeamMemberInfo">Rocket Design & Construction</div>
@@ -149,7 +149,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Brandon">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/brandon.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/brandon.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Brandon Horne</div>
                             <div class="TeamMemberInfo">Payload Design & Construction</div>
@@ -158,16 +158,17 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Cameron">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/cameron.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/cameron.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Cameron Crippa</div>
                             <div class="TeamMemberInfo">Payload Design & Construction</div>
                         </div>
                     </div>
                 </a>
+            
                 <a class="PhotoLink" href="./team/#Jacob">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/jacob.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/jacob.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Jacob Chesley</div>
                             <div class="TeamMemberInfo">Electronics / Programming</div>
@@ -176,7 +177,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Caleb">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/caleb.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/caleb.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Caleb Wasmund</div>
                             <div class="TeamMemberInfo">Avionics & Recovery</div>
@@ -185,7 +186,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Andrew">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/andrew.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/andrew.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Andrew Auffenberg</div>
                             <div class="TeamMemberInfo">Payload / Ground Operations</div>
@@ -194,7 +195,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Justin">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/justin.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/justin.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Justin Mulloney</div>
                             <div class="TeamMemberInfo">Simulations</div>
@@ -203,7 +204,7 @@
                 </a>
                 <a class="PhotoLink" href="./team/#Tim">
                     <div class="TeamMember">
-                        <img class="TeamPhoto" src="./images/team/tim.JPG"/>
+                        <img class="TeamPhoto" src="./images/team/tim.jpg"/>
                         <div class="TeamMemberDescript">
                             <div class="TeamMemberName">Tim Arnett</div>
                             <div class="TeamMemberInfo">Team Mentor</div>
@@ -239,19 +240,37 @@
                     <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%20Presentation%202016.pdf">Download Preliminary Design Review Presentation</a>
                 </div>
                 <div class="Doc">
-                    <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%20Flysheet.pdf">Download Milestone Review Flysheet</a>
+                    <a class="DocDownload" target="_blank" href="./docs/pdr/University%20of%20Cincinnati%20NASA%20USLI%20PDR%20Flysheet.pdf">Download PDR Milestone Review Flysheet</a>
                 </div>
-            </div>
+            </div>            
             <div class="DocSection">
                 Critical Design Review Documents
-                <div class="NoDoc">
-                    CDR Documents will be available by January 15, 2016 at 8:00 AM Central Time
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/cdr/University%20of%20Cincinnati%20NASA%20USLI%20CDR%202016.pdf">Download Critical Design Review</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/cdr/University%20of%20Cincinnati%20NASA%20USLI%20CDR%20Presentation%202016.pdf">Download Critical Design Review Presentation</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/cdr/University%20of%20Cincinnati%20NASA%20USLI%20CDR%20Flysheet%202016.pdf">Download CDR Milestone Review Flysheet</a>
                 </div>
             </div>
             <div class="DocSection">
                 Flight Readiness Review Documents
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/frr/University%20of%20Cincinnati%20NASA%20USLI%20FRR%202016.pdf">Download Flight Readiness Review</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/frr/University%20of%20Cincinnati%20NASA%20USLI%20FRR%20Presentation%202016.pdf">Download Flight Readiness Review Presentation</a>
+                </div>
+                <div class="Doc">
+                    <a class="DocDownload" target="_blank" href="./docs/frr/University%20of%20Cincinnati%20NASA%20USLI%20FRR%20Flysheet%202016.pdf">Download FRR Milestone Review Flysheet</a>
+                </div>
+            </div>
+            <div class="DocSection">
+                Post-Launch Assessment Review
                 <div class="NoDoc">
-                    FRR Documents will be available by March 14, 2016 at 8:00 AM Central Time
+                    PLAR Documents will be available by April 29, 2016 at 8:00 AM Central Time
                 </div>
             </div>
             <div class="DocSection">
@@ -345,7 +364,7 @@
         </div>
         
         <a name="Contact" id="Contact" class="Anchor"></a>
-        <form class="ContactBlock" action="./Contact/ContactProcess.php" method="post">
+        <form class="ContactBlock" action="./contact/ContactProcess.php" method="post">
             <div class="ContactTitle">
                   Contact University of Cincinnati Astro Cats
             </div>
@@ -433,7 +452,7 @@
             <img class="SocialMediaLogo" src="./images/icons/YouTubeLogo.png"/>
         </a>
         <div class="Copyright">
-            Copyright 2015.  University of Cincinnati Astro Cats.  All rights reserved.
+            Copyright 2015 - 2016.  University of Cincinnati Astro Cats.  All rights reserved.
         </div>
     </div>
 </body>

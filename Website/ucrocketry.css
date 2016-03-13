@@ -93,6 +93,15 @@ input.RocketButton:hover{background:url(./images/icons/rocketfire.png);backgroun
 @media screen and (max-width: 800px) {
 .ContactBlock{padding-left:3%;padding-right:3%}
 }
+.SoftwareBlock{padding-left:15%;padding-right:15%;padding-top:3%;text-align:center;background:rgba(255,248,220,1.0);min-height:80%}
+.SoftwareTitle{font-family:"Arial";font-size:2em;text-align:center;font-weight:600;color:#282828;margin-bottom: 4em;}
+.SoftwareDownloadSection{display:inline;float:none}
+.SoftwareDownload{display:inline-block;float:none;margin:2em;text-align:center}
+.SoftwareLogo{width:15%;min-width:8em}
+.SoftwareName{padding-top:1em;color:#282828;font-family:"Arial";font-size:1.3em;font-weight:700}
+@media screen and (max-width: 800px) {
+.SoftwareBlock{padding-left:3%;padding-right:3%}
+}
 .FooterBlock{padding-top:2%;padding-bottom:2%;background-color:rgba(43,43,43,1.0);text-align:center}
 .SocialMediaLogo{width:3em;height:auto;padding-left:1em;padding-right:1em;display:inline-block}
 .Copyright{color:rgba(220,220,220,1.0);font-family:"Arial";padding-top:1em}

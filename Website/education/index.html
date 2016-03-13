@@ -35,7 +35,22 @@
             <li><a class="NavButton" href="#About">About</a></li>
             <li><a class="NavButton" href="#Locations">Locations</a></li>
             <li><a class="NavButton" href="#Docs">Educational Docs</a></li>
-            <li><a class='NavButton' href='../'>Back</a></li>
+            <li><a class="NavButton" id="BackButton" href='../'>Back</a></li>
+            
+            <script>
+                if(document.referrer.indexOf("ucrocketry.com") > -1){
+                    // Get nav float right element and append history button to it.
+                    var navFloatRight = document.getElementsById("BackButton");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='javascript:history.back()'>Back</a></li>"
+
+                }
+                else{
+                    // Get nav float right element and append back button to home page
+                    var navFloatRight = document.getElementsById("BackButton");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='../'>Back</a></li>"
+                }
+            </script>
+
             
             <script>
                 if(document.referrer.indexOf("ucrocketry.com") > -1){
@@ -118,7 +133,7 @@
             <img class="SocialMediaLogo" src="../images/icons/YouTubeLogo.png"/>
         </a>
         <div class="Copyright">
-            Copyright 2015.  University of Cincinnati Astro Cats.  All rights reserved.
+            Copyright 2015 - 2016.  University of Cincinnati Astro Cats.  All rights reserved.
         </div>
     </div>
 </body>
