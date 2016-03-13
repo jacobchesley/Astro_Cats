@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#940000">
+<meta name="description" content="Univeristy of Cincinnati Astro Cats Software.  NASA USLI Team.">
+<head>
+    <title>UC Astro Cats - Software </title>
+    <link href="../ucrocketry.css" rel="stylesheet" type="text/css" />
+  
+    <link rel="apple-touch-icon" sizes="57x57" href="../images/icons/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="../images/icons/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="../images/icons/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="../images/icons/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="../images/icons/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="../images/icons/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="../images/icons/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="../images/icons/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/icons/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="../images/icons/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../images/icons/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="../images/icons/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../images/icons/favicons/favicon-16x16.png">
+</head>
+<body> 
+    <ul class="Nav">
+        <div class="NavFloatLeft">
+            <li><a class="TopLeftTitle" href="../#Astrocats">UC Astro Cats</a></li>
+        </div>
+        <div class="NavFloatRight">
+            <li><a class='NavButton' href='../'>Back</a></li>
+            
+            <script>
+                if(document.referrer.indexOf("ucrocketry.com") > -1){
+                    // Get nav float right element and append history button to it.
+                    var navFloatRight = document.getElementsByClassName("NavFloatRight");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='javascript:history.back()'>Back</a></li>"
+
+                }
+                else{
+                    // Get nav float right element and append back button to home page
+                    var navFloatRight = document.getElementsByClassName("NavFloatRight");
+                    navFloatRight[0].innerHTML = "<li><a class='NavButton' href='../'>Back</a></li>"
+                }
+            </script>
+        </div>
+    </ul>
+    <div class="SoftwareBlock">
+        <div class="SoftwareTitle">Ground Control Software Download</div>
+        <div class="SoftwareDownloadSection">
+            <a class="PhotoLink" href="./AstroCatsGroundControl.exe">
+                <div class="SoftwareDownload">
+                    <img class="SoftwareLogo" src="../images/icons/WindowsLogo.png"/>
+                    <div class="SoftwareName">Windows Ground Control</div>
+                </div>
+            </a>
+            <a class="PhotoLink" href="./sample.astrocat" download target="_blank">
+                <div class="SoftwareDownload">
+                    <img class="SoftwareLogo" src="../images/icons/favicons/android-icon-192x192.png"/>
+                    <div class="SoftwareName">Sample Playback</div>
+                </div>
+            </a>
+            <!--
+            <a class="PhotoLink" href="./AstroCatsGroundControl.dmg">
+                <div class="SoftwareDownload">
+                    <img class="SoftwareLogo" src="../images/icons/AppleLogo.png"/>
+                    <div class="SoftwareName">Apple Ground Control</div>
+                </div>
+            </a>
+            -->
+        </div>
+    </div>
+    <div class="FooterBlock">
+        <a class="PhotoLink" href="http://www.facebook.com/UCAstrocats">
+            <img class="SocialMediaLogo" src="../images/icons/FacebookLogo.png"/>
+        </a>
+        <a class="PhotoLink" href="http://www.twitter.com/UCAstrocats">
+            <img class="SocialMediaLogo" src="../images/icons/TwitterLogo.png"/>
+        </a>
+        <a class="PhotoLink" href="http://www.youtube.com/channel/UCt1g0heSd5HSnuIS1gwwzdA">
+            <img class="SocialMediaLogo" src="../images/icons/YouTubeLogo.png"/>
+        </a>
+        <div class="Copyright">
+            Copyright 2015 - 2016.  University of Cincinnati Astro Cats.  All rights reserved.
+        </div>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(".NavFloatRight").addClass("NavFloatRight").before('<img class="ThreeBar" src="../images/icons/menu.png"></img>');
+        $(".ThreeBar").click(function(){
+            $(".NavFloatRight").toggle();
+        });
+        $(window).resize(function(){
+            if(window.innerWidth > 768) {
+                $(".NavFloatRight").removeAttr("style");
+            }
+        });
+    </script>
+
+</body>
+</html>
