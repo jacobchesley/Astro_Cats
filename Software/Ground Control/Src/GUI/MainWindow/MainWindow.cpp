@@ -15,6 +15,10 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	// File Menu
 	menuFile->Append(MainWindow::MenuBar::ID_SET_LOG_FILE, _("Set Recording File"));
 	menuFile->AppendCheckItem(MainWindow::MenuBar::ID_LOG, _("Record Data"));
+	menuFile->AppendSeparator();
+	menuFile->Append(MainWindow::MenuBar::ID_SHOW_SETTINGS, _("Settings"));
+	menuFile->AppendSeparator();
+	menuFile->Append(MainWindow::MenuBar::ID_CLOSE, _("Exit"));
 
 	// Serial Menu
 	menuSerial->Append(MainWindow::MenuBar::ID_CONNECT_SERIAL, _("Connect to a Serial Port"));
@@ -63,7 +67,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	serialController = new SerialController();
 	serialPortConnection = new SerialPortConnection(this, serialController);
 	
-	dataWindow = new IncomingDataStream(this, "Radio Data", 20);
+	dataWindow = new IncomingDataStream(this, "Radio Data", 100);
 
 	// Set main layout
 	mainLayout = new wxBoxSizer(wxVERTICAL);
@@ -74,6 +78,8 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->GetSizer()->Layout();
 
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSetLogFile, this, MainWindow::MenuBar::ID_SET_LOG_FILE);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSettings, this, MainWindow::MenuBar::ID_SHOW_SETTINGS);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::OnClose, this, MainWindow::MenuBar::ID_CLOSE);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowSerialConnection, this, MainWindow::MenuBar::ID_CONNECT_SERIAL);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPlayback, this, MainWindow::MenuBar::ID_SHOW_PLAYBACK);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowCommands, this, MainWindow::MenuBar::ID_VIEW_COMMANDS);
@@ -100,6 +106,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	logger = new Logger();
 	uiUpdater = new UIUpdateThread(this);
 
+	mainWindowSettings = new MainWindowSettings(this, dataWindow);
 	mainCommandWindow = new MainCommandWindow(this, "Send Commands to Rocket and PIL", serialController);
 	commandResponseWindow = new CommandResponseWindow(this, "Command Reponse from Rocket and PIL");
 
@@ -121,11 +128,6 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	wxCommandEvent repositionEvent(wxEVT_COMMAND_MENU_SELECTED, MainWindow::MenuBar::ID_REPO_ALL);
 	repositionEvent.SetEventObject(this);
 	this->GetEventHandler()->ProcessEvent(repositionEvent);
-
-	int screenWidth = wxSystemSettings::GetMetric(wxSYS_SCREEN_X);
-	int width = this->GetSize().GetWidth();
-	wxPoint topRight(screenWidth - width, 0);
-	this->SetPosition(topRight);
 
 	this->IsUpdatesAvailable();
 
@@ -188,7 +190,6 @@ void MainWindow::ReciveSerialData(wxString serialData){
 	tempJsonData += serialData;
 
 	if (!playbackWindow->IsPlaying() && menuFile->IsChecked(MainWindow::MenuBar::ID_LOG)) {
-		OutputDebugStringA("LOGGING!");
 		logger->Log(serialData);
 	}
 
@@ -299,6 +300,10 @@ void MainWindow::ShowSetLogFile(wxCommandEvent& WXUNUSED(event)) {
 	OutputDebugStringA(saveFileDialog.GetPath().char_str());
 }
 
+void MainWindow::ShowSettings(wxCommandEvent& WXUNUSED(event)) {
+	mainWindowSettings->Show();
+}
+
 void MainWindow::ShowSerialConnection(wxCommandEvent& WXUNUSED(event)) {
 	serialPortConnection->Show();
 }
@@ -379,8 +384,8 @@ void MainWindow::ShowAll(wxCommandEvent& WXUNUSED(event)) {
 	solarWindow->Show();
 	pressureAltitudeWindow->Show();
 	pitchRollWindow->Show();
-	//gpsViewRocket->Show();
-	//gpsViewPIL->Show();
+	gpsViewRocket->Show();
+	gpsViewPIL->Show();
 }
 
 void MainWindow::HideAll(wxCommandEvent& WXUNUSED(event)) {
@@ -402,7 +407,7 @@ void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
 
 	// Size and position the PIL Radio Strength
 	pilRadioPos = wxPoint(0, 0);
-	pilRadioSize = wxSize(screenWidth / 7.0f, screenHeight / 4.0f);
+	pilRadioSize = wxSize(screenWidth / 6.2f, screenHeight / 4.0f);
 	pilRadioStrength->SetPosition(pilRadioPos);
 	pilRadioStrength->SetSize(pilRadioSize);
 
@@ -447,6 +452,70 @@ void MainWindow::RepositionAll(wxCommandEvent& WXUNUSED(event)) {
 	pitchSize = solarSize;
 	pitchRollWindow->SetPosition(pitchPos);
 	pitchRollWindow->SetSize(pitchSize);
+
+	// Size and position Rocket GPS
+	rocketGPSPos = wxPoint(uvWindow->GetSize().GetWidth() + solarWindow->GetSize().GetWidth() + pressureAltitudeWindow->GetSize().GetWidth(), 0);
+	rocketGPSSize = wxSize(tempSize.GetWidth() * 3, tempSize.GetHeight()*0.75);
+	gpsViewRocket->SetPosition(rocketGPSPos);
+	gpsViewRocket->SetSize(rocketGPSSize);
+
+	// Size and position PIL GPS
+	pilGPSPos = wxPoint(gpsViewRocket->GetPosition().x, gpsViewRocket->GetPosition().y + gpsViewRocket->GetSize().GetHeight());
+	pilGPSSize = rocketGPSSize;
+	gpsViewPIL->SetPosition(pilGPSPos);
+	gpsViewPIL->SetSize(pilGPSSize);
+
+	// Size and position of main window
+	mainWindowPoint = wxPoint(gpsViewRocket->GetPosition().x, gpsViewPIL->GetPosition().y + gpsViewPIL->GetSize().GetHeight());
+	mainWindowSize = wxSize(gpsViewPIL->GetSize().GetWidth(), pitchSize.GetHeight());
+	this->SetPosition(mainWindowPoint);
+	this->SetSize(mainWindowSize);
+}
+
+MainWindowSettings::MainWindowSettings(wxWindow * parent, IncomingDataStream * inDataStream) : wxFrame(parent, -1, "Settings"){
+
+	dataStream = inDataStream;
+
+	this->SetBackgroundColour(wxColor(45, 45, 45));
+
+	numLinesLayout = new wxBoxSizer(wxHORIZONTAL);
+	numLinesLabel = new wxStaticText(this, -1, "Number of Data Lines to Display ");
+	numLinesLabel->SetBackgroundColour(this->GetBackgroundColour());
+	numLinesLabel->SetForegroundColour(wxColor(200, 200, 200));
+	numLinesLabel->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+	numLinesText = new wxTextCtrl(this, -1, "100");
+	numLinesText->SetBackgroundColour(this->GetBackgroundColour());
+	numLinesText->SetForegroundColour(wxColor(255, 255, 255));
+	numLinesText->SetFont(wxFont(12, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
+
+	numLinesLayout->Add(numLinesLabel);
+	numLinesLayout->Add(numLinesText);
+
+	applyButton = new wxButton(this, ID_APPLY, "Apply Settings");
+	layout = new wxBoxSizer(wxVERTICAL);
+	this->SetSizer(layout);
+
+	this->GetSizer()->Add(numLinesLayout);
+	this->GetSizer()->AddStretchSpacer();
+	this->GetSizer()->Add(applyButton);
+
+	this->Bind(wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&MainWindowSettings::ApplySettings, this, MainWindowSettings::ID_APPLY);
+	this->Bind(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&MainWindowSettings::OnClose, this);
+
+	this->SetIcon(wxIcon("IDI_ICON1"));
+
+}
+
+void MainWindowSettings::OnClose(wxCloseEvent& closeEvent) {
+	this->Hide();
+	closeEvent.Veto();
+}
+
+
+void MainWindowSettings::ApplySettings(wxCommandEvent& WXUNUSED(event)) {
+	wxString numLinesStr = numLinesText->GetValue();
+	int numLinesInt = wxAtoi(numLinesStr);
+	dataStream->SetMaxLines(numLinesInt);
 }
 
 UIUpdateThread::UIUpdateThread(MainWindow * window) : wxThread(wxTHREAD_DETACHED){

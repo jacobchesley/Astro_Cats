@@ -32,6 +32,7 @@
 class UIUpdateThread;
 class PlaybackThread;
 class PlaybackWindow;
+class MainWindowSettings;
 
 /**
 	Main Window is the main window of the Ground Control.
@@ -60,6 +61,8 @@ class MainWindow : public wxFrame {
 		wxMenu * menuCommand;
 		wxMenu * menuView;
 		wxMenu * menuHelp;
+
+		void ShowSettings(wxCommandEvent& WXUNUSED(event));
 
 		void ShowSetLogFile(wxCommandEvent& WXUNUSED(event));
 		void ShowSerialConnection(wxCommandEvent& WXUNUSED(event));
@@ -95,6 +98,8 @@ class MainWindow : public wxFrame {
 
 		IncomingDataStream * dataWindow;
 		wxString tempJsonData;
+
+		MainWindowSettings * mainWindowSettings;
 
 		// Serial Port Connection window
 		SerialPortConnection * serialPortConnection;
@@ -147,9 +152,20 @@ class MainWindow : public wxFrame {
 		wxPoint pitchPos;
 		wxSize pitchSize;
 
+		wxPoint rocketGPSPos;
+		wxSize rocketGPSSize;
+
+		wxPoint pilGPSPos;
+		wxSize pilGPSSize;
+
+		wxPoint mainWindowPoint;
+		wxSize mainWindowSize;
+
 		enum MenuBar{
 			ID_SET_LOG_FILE,
 			ID_LOG,
+			ID_SHOW_SETTINGS,
+			ID_CLOSE,
 			ID_CONNECT_SERIAL,
 			ID_SHOW_PLAYBACK,
 			ID_VIEW_COMMANDS,
@@ -170,6 +186,30 @@ class MainWindow : public wxFrame {
 			ID_DOC,
 			ID_ABOUT
 		};
+};
+
+class MainWindowSettings : public wxFrame {
+public:
+	MainWindowSettings(wxWindow * parent, IncomingDataStream * inDataStream);
+	
+private:
+	void ApplySettings(wxCommandEvent& WXUNUSED(event));
+	void OnClose(wxCloseEvent& closeEvent);
+
+	IncomingDataStream * dataStream;
+
+	wxBoxSizer * layout;
+
+	wxBoxSizer * numLinesLayout;
+	wxStaticText * numLinesLabel;
+	wxTextCtrl * numLinesText;
+
+	wxButton * applyButton;
+
+	enum {
+		ID_APPLY
+	};
+
 };
 
 // Thread to update user interface with serial data
