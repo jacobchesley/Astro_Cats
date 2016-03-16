@@ -219,7 +219,6 @@ void MainWindow::ReciveSerialData(wxString serialData){
 
 			// If we are recieving GPS Data from the rocket...
 			if(source == "Rocket" && messageType == "Data") {
-
 				// Update coordinates of Rocket GPS
 				GPSCoord rocketCoord; 
 				rocketCoord.Lat = (float)jsonData["Lat"];
@@ -236,6 +235,33 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				gpsViewRocket->UpdateVDOP((float)jsonData["VDOP"]);
 				gpsViewRocket->UpdateSatList((wxString)jsonData["SatList"]);
 				gpsViewRocket->UpdateTime((wxString)jsonData["Time"]);
+			}
+
+			// If we are recieving data from PIL...
+			else if (source == "PIL" && messageType == "Data") {
+				temperatureWindow->SetValue(jsonData["Temp"]);
+				humidityWindow->SetValue(jsonData["Humidity"]);
+				pressureAltitudeWindow->SetPressure(jsonData["Pressure"]);
+				uvWindow->SetValue((float)jsonData["UV"] * 10.0f);
+				solarWindow->SetValue((float)jsonData["Solar"]);
+				pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationY"], (float)jsonData["AccelerationZ"]);
+
+				// Update coordinates of PIL GPS
+				GPSCoord pilCoord;
+				pilCoord.Lat = (float)jsonData["Lat"];
+				pilCoord.Lon = (float)jsonData["Lon"];
+				pilCoord.NS = (wxString)jsonData["NS"];
+				pilCoord.EW = (wxString)jsonData["EW"];
+				gpsViewPIL->UpdateGPSPos(pilCoord);
+
+				gpsViewPIL->UpdateAltitude((float)jsonData["Altitude"]);
+				gpsViewPIL->UpdateQuality((int)jsonData["Quality"]);
+				gpsViewPIL->UpdateNumSat((int)jsonData["NumSat"]);
+				gpsViewPIL->UpdatePDOP((float)jsonData["PDOP"]);
+				gpsViewPIL->UpdateHDOP((float)jsonData["HDOP"]);
+				gpsViewPIL->UpdateVDOP((float)jsonData["VDOP"]);
+				gpsViewPIL->UpdateSatList((wxString)jsonData["SatList"]);
+				gpsViewPIL->UpdateTime((wxString)jsonData["Time"]);
 			}
 
 			// If we are recieving a command response from rocket...
