@@ -30,6 +30,8 @@ class SerialController : wxThread{
 		void Stop();
 		bool IsConnected();
 
+		bool TestPort(wxString portName);
+
 	protected:
 		virtual ExitCode Entry();
 

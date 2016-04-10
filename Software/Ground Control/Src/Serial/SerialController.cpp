@@ -323,6 +323,9 @@ void SerialController::Stop() {
 	stop = true;
 }
 
+bool SerialController::TestPort(wxString portName) {
+	return true;
+}
 #ifdef __APPLE__
 std::string SerialController::GetStringAfterComma(std::string inString, int numCommas) {
 
