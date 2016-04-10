@@ -299,6 +299,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <Version>
       </Version>
+      <LinkTimeCodeGeneration>
+      </LinkTimeCodeGeneration>
     </Link>
     <Bscmake>
       <OutputFile>vc_mswu\display_vc9.bsc</OutputFile>
