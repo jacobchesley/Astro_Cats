@@ -3,7 +3,6 @@
 #include <RadioINIT.h>
 
 #define SHUTDOWN_PIN 22
-#define BINARY_PIN 23
 
 RadioAPI * radio;
 RadioINIT * radioAddresses;
@@ -25,7 +24,7 @@ void setup() {
   while(Serial1.available()){
     Serial1.read();
   }
-  radio = new RadioAPI(&Serial1, SHUTDOWN_PIN, BINARY_PIN);
+  radio = new RadioAPI(&Serial1, SHUTDOWN_PIN);
   radioAddresses = new RadioINIT();
   
   radio->ClearRXArray();
@@ -130,7 +129,7 @@ void SendMessage(){
   if(destination < 0){ return; }
 
   int len = incomingMessage.length();
-  char * jsonCharBuffer = new char[len + 2];
+  char jsonCharBuffer[400];
   for(int i = 0; i < len+2; i++){
     jsonCharBuffer[i] = ' ';
   }
@@ -144,6 +143,12 @@ void SendMessage(){
   
   RadioPacketTXR transmitPacket = radio->BuildTXRPacket(jsonByteBuffer, len+2, destination, frameID);
   radio->SendTXRPacket(transmitPacket);
+
+  
+  frameID = (frameID + 0x01) % 0xFF;
+  if(frameID == 0x00){
+    frameID +=1;
+  }
 }
 
 
