@@ -127,6 +127,7 @@ PILCommandDisplay::PILCommandDisplay(wxWindow * parent, SerialController * contr
 	updateRateList.push_back("500,000 uS");
 	updateRateList.push_back("250,000 uS");
 	updateRateList.push_back("100,000 uS");
+
 	// Create JSON Parameters
 	wxVector<wxString> updateRateJSON;
 	updateRateJSON.push_back("5000000");
@@ -144,15 +145,17 @@ PILCommandDisplay::PILCommandDisplay(wxWindow * parent, SerialController * contr
 
 	wxVector<wxString> emptyList;
 
-	// Create command windows for capture image and parachute release
+	// Create command windows for capture image, parachute release, and parachute lock
 	takePhotoCommand = new CommandDisplay(notebook, controller, "PIL", "Capture Image", "CapureImage", emptyList, emptyList);
+	lockParachuteCommand = new CommandDisplay(notebook, controller, "PIL", "Lock Parachute", "LockParachute", emptyList, emptyList);
 	releaseParachuteCommand = new CommandDisplay(notebook, controller, "PIL", "Release Parachute", "ReleaseParachute", emptyList, emptyList);
-
+	
 	// Add the pages
 	notebook->InsertPage(0, setRadioPowerCommand, setRadioPowerCommand->GetCommandNameTitle());
 	notebook->InsertPage(1, setUpdateRateCommand, setUpdateRateCommand->GetCommandNameTitle());
 	notebook->InsertPage(2, takePhotoCommand, takePhotoCommand->GetCommandNameTitle());
-	notebook->InsertPage(3, releaseParachuteCommand, releaseParachuteCommand->GetCommandNameTitle());
+	notebook->InsertPage(3, lockParachuteCommand, lockParachuteCommand->GetCommandNameTitle());
+	notebook->InsertPage(4, releaseParachuteCommand, releaseParachuteCommand->GetCommandNameTitle());
 
 	// Create and add layout to window
 	layout = new wxBoxSizer(wxVERTICAL);
@@ -289,7 +292,8 @@ void CommandResponseWindow::OnClose(wxCloseEvent& evt) {
 
 void CommandResponseWindow::RecieveResponsePIL(wxString commandName, wxString commandValue) {
 
-	long index = rocketCommands->InsertItem(1000000, commandName);
+	OutputDebugStringA("Got PIL Success!");
+	long index = pilCommands->InsertItem(1000000, commandName);
 	pilCommands->SetItem(index, 1, commandValue);
 }
 

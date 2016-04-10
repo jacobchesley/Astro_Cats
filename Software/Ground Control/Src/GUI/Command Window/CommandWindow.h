@@ -57,6 +57,7 @@ private:
 	CommandDisplay * setRadioPowerCommand;
 	CommandDisplay * setUpdateRateCommand;
 	CommandDisplay * takePhotoCommand;
+	CommandDisplay * lockParachuteCommand;
 	CommandDisplay * releaseParachuteCommand;
 };
 
