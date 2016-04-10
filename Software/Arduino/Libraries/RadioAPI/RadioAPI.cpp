@@ -55,9 +55,6 @@ RadioAPI::RadioAPI(HardwareSerial * serial, int shutdownPin, int binaryPin){
 
 	maxRXArraySize = 50;
 	maxTXSArraySize = 50;
-
-	maxRXArraySize = 50;
-	maxTXSArraySize = 50;
 	maxATRArraySize = 50;
 
 	rxArray = new RadioPacketRX[maxRXArraySize];
@@ -85,89 +82,98 @@ void RadioAPI::GetPackets(){
 
 	RadioPacket tempPacket;
 
-	if(hardwareSerial->available() >= 4){
+	bool continueRead = true;
 
-		// Read start delimiter
-		hardwareSerial->read();
+	while(continueRead){
+		if(hardwareSerial->available() >= 4){
 
-		// Read Length;
-		byte lengthMSB = hardwareSerial->read();
-		byte lengthLSB = hardwareSerial->read();
+			// Read start delimiter
+			hardwareSerial->read();
+		
+			// Read Length;
+			byte lengthMSB = hardwareSerial->read();
+			byte lengthLSB = hardwareSerial->read();
 
-		// Read ID
-		tempPacket.cmdID = hardwareSerial->read();
+			// Read ID
+			tempPacket.cmdID = hardwareSerial->read();
 
-		// Get size of data and create new data array
-		int dataSize = (lengthMSB << 8) + lengthLSB;
-		tempPacket.length = dataSize - 1;
+			// Get size of data and create new data array
+			int dataSize = (lengthMSB << 8) + lengthLSB;
+			tempPacket.length = dataSize - 1;
 
-		byte * tempData = new byte[tempPacket.length];
-		//tempPacket.data = new byte[dataSize - 1];
+			byte * tempData = new byte[tempPacket.length];
+			//tempPacket.data = new byte[dataSize - 1];
 
-		bool nextEscape = false;
-		int trueIndex = 0;
+			bool nextEscape = false;
+			int trueIndex = 0;
 
-		// Populate packet data
-		for(int i = 0; i < tempPacket.length; i++){
+			// Populate packet data
+			for(int i = 0; i < tempPacket.length; i++){
 
+				while(!hardwareSerial->available()){}
+				tempData[trueIndex] = hardwareSerial->read();
+		
+				if(nextEscape){
+					nextEscape = false;
+					tempData[trueIndex] ^= 0x20;
+				}
+				//if(tempData[i] == escapeByte){
+				//	nextEscape = true;
+				//	continue;
+				//}
+				trueIndex += 1;
+			}
+			tempPacket.length = trueIndex;
+
+			// Copy only elements we want to packet
+			tempPacket.data = new byte[trueIndex];
+			memcpy(tempPacket.data, tempData, trueIndex);
+			delete[] tempData;
+
+			// Get checksum
 			while(!hardwareSerial->available()){}
-			tempData[trueIndex] = hardwareSerial->read();
-	
-			if(nextEscape){
-				nextEscape = false;
-				tempData[trueIndex] ^= 0x20;
-			}
-			//if(tempData[i] == escapeByte){
-			//	nextEscape = true;
-			//	continue;
-			//}
-			trueIndex += 1;
-		}
-		tempPacket.length = trueIndex;
+			tempPacket.checksum = hardwareSerial->read();
 
-		// Copy only elements we want to packet
-		tempPacket.data = new byte[trueIndex];
-		memcpy(tempPacket.data, tempData, trueIndex);
-		delete[] tempData;
+			if(this->VerifyChecksum(&tempPacket)){
 
-		// Get checksum
-		while(!hardwareSerial->available()){}
-		tempPacket.checksum = hardwareSerial->read();
+				// Build a RX (Recive) Packet from the raw data packet
+				if(tempPacket.cmdID == 0x81){
+					RadioPacketRX rxPacket = this->BuildRXPacket(&tempPacket);
+					this->AddRXArray(rxPacket);
+				}
 
-		if(this->VerifyChecksum(&tempPacket)){
+				// Build AT Command Response
+				else if(tempPacket.cmdID == 0x88){
+					RadioPacketATR atrPacket = this->BuildATRPacket(&tempPacket);
+					this->AddATRArray(atrPacket);
+				}
 
-			// Build a RX (Recive) Packet from the raw data packet
-			if(tempPacket.cmdID == 0x81){
-				RadioPacketRX rxPacket = this->BuildRXPacket(&tempPacket);
-				this->AddRXArray(rxPacket);
-			}
+				// Build a TXS (Transmit Status) Packet from the raw data packet
+				else if(tempPacket.cmdID == 0x89){
+					RadioPacketTXS txsPacket = this->BuildTXSPacket(&tempPacket);
+					this->AddTXSArray(txsPacket);	
 
-			// Build AT Command Response
-			else if(tempPacket.cmdID == 0x88){
-				RadioPacketATR atrPacket = this->BuildATRPacket(&tempPacket);
-				this->AddATRArray(atrPacket);
+				}
+
+				// Module status packet
+				else if(tempPacket.cmdID == 0x8A){
+				}
+
+				// Unknown packet
+				else{
+
+				}
 			}
 
-			// Build a TXS (Transmit Status) Packet from the raw data packet
-			else if(tempPacket.cmdID == 0x89){
-				RadioPacketTXS txsPacket = this->BuildTXSPacket(&tempPacket);
-				this->AddTXSArray(txsPacket);		
-			}
-
-			// Module status packet
-			else if(tempPacket.cmdID == 0x8A){}
-
-			// Unknown packet
+			// Temp packet checksum failed
 			else{
 
 			}
+			delete[] tempPacket.data;
 		}
-
-		// Temp packet checksum failed
 		else{
-
+			continueRead = false;
 		}
-		delete[] tempPacket.data;
 	}
 }
 
@@ -311,13 +317,10 @@ RadioPacketTXR RadioAPI::BuildTXRPacket(byte * data, int dataLength, int destina
 	outPacket.option = 0x00;
 
 	// Copy data
-	outPacket.data = new byte[dataLength];
-	for(int i = 0; i < dataLength; i++){
-		outPacket.data[i] = data[i]; 
-	}
+	outPacket.data = data;
 
 	// Create checksum array
-	byte * checksumData = new byte[outPacket.dataLength];
+	byte checksumData[1024];
 
 	// Set first bytes of checksum.  (Elements 2 and 3 convert int to 2 bytes, MSB first, LSB last)
 	checksumData[0] = (byte) outPacket.cmdID;
@@ -333,7 +336,6 @@ RadioPacketTXR RadioAPI::BuildTXRPacket(byte * data, int dataLength, int destina
 
 	// Calculate and set checksum byte and delete checksum array
 	outPacket.checksum = this->CalculateChecksum(checksumData, outPacket.dataLength);
-	delete[] checksumData;
 
 	return outPacket;
 }
@@ -365,12 +367,12 @@ void RadioAPI::SendTXRPacket(RadioPacketTXR sendPacket){
 	hardwareSerial->write(sendPacket.option);
 
 	// Send data
-	for(int i = 0; i < sendPacket.dataLength - 5; i++){
-		hardwareSerial->write(sendPacket.data[i]);
-	}
+	hardwareSerial->write(sendPacket.data, sendPacket.dataLength - 5);
 
 	// Send checksum
 	hardwareSerial->write(sendPacket.checksum);
+
+	hardwareSerial->flush();
 }
 
 RadioPacketTXS RadioAPI::BuildTXSPacket(RadioPacket * packet){
@@ -442,26 +444,6 @@ RadioPacketRX * RadioAPI::GetRXArray(){
 	return rxArray;
 }
 
-bool RadioAPI::CheckOK(){
-
-	char ok[3];
-	ok[0] = 79;
-	ok[1] = 75;
-	ok[2] = 13;
-
-	char temp;
-	for(int i = 0; i < 3; i++){
-		temp = hardwareSerial->read();
-		if(temp != ok[i]){
-			return false;
-		}
-	}
-	return true;
-}
-
-bool RadioAPI::WaitAndCheckOK(){
-
-	while(hardwareSerial->available() <= 0){ delay(20); }
-	delay(50);
-	return this->CheckOK();
+RadioPacketATR * RadioAPI::GetATRArray(){
+	return atrArray;
 }
