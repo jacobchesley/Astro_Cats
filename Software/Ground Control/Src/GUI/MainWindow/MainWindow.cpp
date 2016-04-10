@@ -244,7 +244,7 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				pressureAltitudeWindow->SetPressure(jsonData["Pressure"]);
 				uvWindow->SetValue((float)jsonData["UV"] * 10.0f);
 				solarWindow->SetValue((float)jsonData["Solar"]);
-				pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationY"], (float)jsonData["AccelerationZ"]);
+				pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationZ"], (float)jsonData["AccelerationY"]);
 
 				// Update coordinates of PIL GPS
 				GPSCoord pilCoord;
@@ -269,6 +269,11 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				commandResponseWindow->RecieveResponseRocket((wxString)jsonData["Command"], (wxString)jsonData["Value"]);
 			}
 
+			// If we are recieving a command response from PIL...
+			else if (source == "PIL" && messageType == "CommandResponse") {
+				OutputDebugStringA("PIL Command Response Detected...");
+				commandResponseWindow->RecieveResponsePIL((wxString)jsonData["Command"], (wxString)jsonData["Value"]);
+			}
 			// If we are receving Signal Strength Info from the ground..
 			else if (source == "Ground" && messageType == "SignalStrength") {
 
