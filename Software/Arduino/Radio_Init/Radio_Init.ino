@@ -7,8 +7,8 @@ RadioINIT * initRadio;
 
 void setup() {
   Serial.begin(115200);
-  Serial1.begin(115200);
-  delay(100);
+  Serial1.begin(9600);
+  delay(3000);
   
   while(Serial.available()){ Serial.read(); }
   initRadio = new RadioINIT(&Serial1, SHUTDOWN_PIN);

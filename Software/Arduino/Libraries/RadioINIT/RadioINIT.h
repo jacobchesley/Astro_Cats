@@ -2,7 +2,7 @@
 #define RadioINIT_H
 
 #include <arduino.h>
-#include <radioAPI.h>
+#include "../RadioAPI/radioAPI.h"
 
 class RadioINIT{
 public:
@@ -10,7 +10,7 @@ public:
 	const int GROUND_ADDRESS_INT = 4794;
 	const String GROUND_ADDRESS_HEX_STR = "12BA";
 
-	const static int TRACKING_ADDRESS_INT = 4795;
+	const int TRACKING_ADDRESS_INT = 4795;
 	const String TRACKING_ADDRESS_HEX_STR = "12BB";
 
 	const int PIL_ADDRESS_INT = 4796;
