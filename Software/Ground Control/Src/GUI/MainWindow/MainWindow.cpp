@@ -24,9 +24,11 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	menuSerial->Append(MainWindow::MenuBar::ID_CONNECT_SERIAL, _("Connect to a Serial Port"));
 	menuSerial->Append(MainWindow::MenuBar::ID_SHOW_PLAYBACK, _("Playback Data"));
 
-	// Command Menu
+	// Command and Error Menu
 	menuCommand->Append(MainWindow::MenuBar::ID_VIEW_COMMANDS, _("Send Commands to Rocket and PIL"));
 	menuCommand->Append(MainWindow::MenuBar::ID_VIEW_COMMANDS_RESPONSE, _("Command Response from Rocket and PIL"));
+	menuCommand->AppendSeparator();
+	menuCommand->Append(MainWindow::MenuBar::ID_VIEW_ERRORS, _("Errors from Rocket and PIL"));
 
 	// View Menu
 	menuView->Append(MainWindow::MenuBar::ID_VIEW_PILSTRENGTH, _("PIL Signal Strength"));
@@ -84,6 +86,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPlayback, this, MainWindow::MenuBar::ID_SHOW_PLAYBACK);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowCommands, this, MainWindow::MenuBar::ID_VIEW_COMMANDS);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowCommandsResponse, this, MainWindow::MenuBar::ID_VIEW_COMMANDS_RESPONSE);
+	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowErrors, this, MainWindow::MenuBar::ID_VIEW_ERRORS);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowPilSignalStrength, this, MainWindow::MenuBar::ID_VIEW_PILSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowRocketSignalStrength, this, MainWindow::MenuBar::ID_VIEW_ROCKETSTRENGTH);
 	this->Bind(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&MainWindow::ShowTemperature, this, MainWindow::MenuBar::ID_VIEW_TEMP);
@@ -109,6 +112,7 @@ MainWindow::MainWindow() : wxFrame(NULL, -1, "Astro Cats Ground Control", wxDefa
 	mainWindowSettings = new MainWindowSettings(this, dataWindow);
 	mainCommandWindow = new MainCommandWindow(this, "Send Commands to Rocket and PIL", serialController);
 	commandResponseWindow = new CommandResponseWindow(this, "Command Reponse from Rocket and PIL");
+	errorWindow = new ErrorWindow(this, "Errors from Rocket and PIL");
 
 	pilRadioStrength = new RadioSignalStrengthWindow(this, "PIL Radio Strength");
 	rocketRadioStrength = new RadioSignalStrengthWindow(this, "Rocket Radio Strength");
@@ -242,11 +246,12 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				temperatureWindow->SetValue(jsonData["Temp"]);
 				humidityWindow->SetValue(jsonData["Humidity"]);
 				pressureAltitudeWindow->SetPressure(jsonData["Pressure"]);
-				uvWindow->SetValue((float)jsonData["UV"] * 10.0f);
+				uvWindow->SetValue((float)jsonData["UV"]);
 				solarWindow->SetValue((float)jsonData["Solar"]);
 				pitchRollWindow->SetAccelerationData((float)jsonData["AccelerationX"], (float)jsonData["AccelerationZ"], (float)jsonData["AccelerationY"]);
 
 				// Update coordinates of PIL GPS
+				/*
 				GPSCoord pilCoord;
 				pilCoord.Lat = (float)jsonData["Lat"];
 				pilCoord.Lon = (float)jsonData["Lon"];
@@ -262,7 +267,8 @@ void MainWindow::ReciveSerialData(wxString serialData){
 				gpsViewPIL->UpdateVDOP((float)jsonData["VDOP"]);
 				gpsViewPIL->UpdateSatList((wxString)jsonData["SatList"]);
 				gpsViewPIL->UpdateTime((wxString)jsonData["Time"]);
-			}
+				*/
+			}	
 
 			// If we are recieving a command response from rocket...
 			else if (source == "Rocket" && messageType == "CommandResponse") {
@@ -271,9 +277,24 @@ void MainWindow::ReciveSerialData(wxString serialData){
 
 			// If we are recieving a command response from PIL...
 			else if (source == "PIL" && messageType == "CommandResponse") {
-				OutputDebugStringA("PIL Command Response Detected...");
 				commandResponseWindow->RecieveResponsePIL((wxString)jsonData["Command"], (wxString)jsonData["Value"]);
 			}
+
+			// If we are recieving a file chunk from PIL...
+			else if (source == "PIL" && messageType == "File") {
+				wxString test = (wxString)jsonData["Chunk"];
+			}
+
+			// If we are recieving an error from rocket...
+			else if (source == "Rocket" && messageType == "Error") {
+				errorWindow->RecieveErrorRocket((wxString)jsonData["Error"], (wxString)jsonData["Description"]);
+			}
+
+			// If we are recieving an error from PIL...
+			else if (source == "PIL" && messageType == "Error") {
+				errorWindow->RecieveErrorPIL((wxString)jsonData["Error"], (wxString)jsonData["Description"]);
+			}
+
 			// If we are receving Signal Strength Info from the ground..
 			else if (source == "Ground" && messageType == "SignalStrength") {
 
@@ -357,6 +378,10 @@ void MainWindow::ShowCommands(wxCommandEvent& WXUNUSED(event)) {
 
 void MainWindow::ShowCommandsResponse(wxCommandEvent& WXUNUSED(event)) {
 	commandResponseWindow->Show();
+}
+
+void MainWindow::ShowErrors(wxCommandEvent& WXUNUSED(event)) {
+	errorWindow->Show();
 }
 
 void MainWindow::ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event)) {

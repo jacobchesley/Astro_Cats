@@ -57,8 +57,13 @@ private:
 	CommandDisplay * setRadioPowerCommand;
 	CommandDisplay * setUpdateRateCommand;
 	CommandDisplay * takePhotoCommand;
+	CommandDisplay * startPhotosCommand;
+	CommandDisplay * stopPhotosCommand;
 	CommandDisplay * lockParachuteCommand;
 	CommandDisplay * releaseParachuteCommand;
+	CommandDisplay * lockPedalsCommand;
+	CommandDisplay * releasePedalsCommand;
+
 };
 
 class RocketCommandDisplay : public wxPanel {

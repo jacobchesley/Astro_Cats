@@ -26,7 +26,6 @@ void setup() {
   delay(50);
 
   pil = new PIL();
-  Serial.println("Made it to end of setup");
 }
 
 void loop() {

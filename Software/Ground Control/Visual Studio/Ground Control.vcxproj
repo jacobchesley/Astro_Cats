@@ -37,6 +37,7 @@
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp" />
     <ClCompile Include="..\Src\GUI\Command Window\CommandWindow.cpp" />
+    <ClCompile Include="..\Src\GUI\Error Window\ErrorWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Help Windows\About Window\AboutWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.cpp" />
     <ClCompile Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.cpp" />
@@ -56,6 +57,7 @@
   <ItemGroup>
     <ClInclude Include="..\Src\App\GroundControl.h" />
     <ClInclude Include="..\Src\GUI\Command Window\CommandWindow.h" />
+    <ClInclude Include="..\Src\GUI\Error Window\ErrorWindow.h" />
     <ClInclude Include="..\Src\GUI\Help Windows\About Window\AboutWindow.h" />
     <ClInclude Include="..\Src\GUI\Help Windows\Documentation Window\DocumentationWindow.h" />
     <ClInclude Include="..\Src\GUI\Indicator Panels\GPS View\GPSView.h" />

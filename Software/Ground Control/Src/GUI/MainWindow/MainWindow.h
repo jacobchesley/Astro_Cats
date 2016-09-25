@@ -15,6 +15,7 @@
 
 #include "Serial\SerialController.h"
 #include "GUI\Command Window\CommandWindow.h"
+#include "GUI\Error Window\ErrorWindow.h"
 #include "GUI\Indicator Panels\Radio Signal Strength\RadioSignalStrength.h"
 #include "GUI\Indicator Panels\Incoming Data Stream\IncomingDataStream.h"
 #include "GUI\Indicator Panels\Linear Guage\LinearGuage.h"
@@ -69,6 +70,7 @@ class MainWindow : public wxFrame {
 		void ShowPlayback(wxCommandEvent& WXUNUSED(event));
 		void ShowCommands(wxCommandEvent& WXUNUSED(event));
 		void ShowCommandsResponse(wxCommandEvent& WXUNUSED(event));
+		void ShowErrors(wxCommandEvent& WXUNUSED(event));
 		void ShowPilSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowRocketSignalStrength(wxCommandEvent& WXUNUSED(event));
 		void ShowTemperature(wxCommandEvent& WXUNUSED(event));
@@ -108,6 +110,9 @@ class MainWindow : public wxFrame {
 		// Command Window
 		MainCommandWindow * mainCommandWindow;
 		CommandResponseWindow * commandResponseWindow;
+
+		// Error Window
+		ErrorWindow * errorWindow;
 
 		// Data display windows
 		RadioSignalStrengthWindow * pilRadioStrength;
@@ -170,6 +175,7 @@ class MainWindow : public wxFrame {
 			ID_SHOW_PLAYBACK,
 			ID_VIEW_COMMANDS,
 			ID_VIEW_COMMANDS_RESPONSE,
+			ID_VIEW_ERRORS,
 			ID_VIEW_PILSTRENGTH,
 			ID_VIEW_ROCKETSTRENGTH,
 			ID_VIEW_TEMP,

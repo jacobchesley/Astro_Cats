@@ -145,17 +145,25 @@ PILCommandDisplay::PILCommandDisplay(wxWindow * parent, SerialController * contr
 
 	wxVector<wxString> emptyList;
 
-	// Create command windows for capture image, parachute release, and parachute lock
-	takePhotoCommand = new CommandDisplay(notebook, controller, "PIL", "Capture Image", "CapureImage", emptyList, emptyList);
+	// Create command windows for capture image, parachute release, parachute lock, pedal release and pedal lock.
+	takePhotoCommand = new CommandDisplay(notebook, controller, "PIL", "Capture Image", "CaptureImage", emptyList, emptyList);
+	startPhotosCommand = new CommandDisplay(notebook, controller, "PIL", "Start Taking Photos", "StartPhotos", emptyList, emptyList);
+	stopPhotosCommand = new CommandDisplay(notebook, controller, "PIL", "Stop Taking Photos", "StopPhotos", emptyList, emptyList);
 	lockParachuteCommand = new CommandDisplay(notebook, controller, "PIL", "Lock Parachute", "LockParachute", emptyList, emptyList);
 	releaseParachuteCommand = new CommandDisplay(notebook, controller, "PIL", "Release Parachute", "ReleaseParachute", emptyList, emptyList);
-	
+	lockPedalsCommand = new CommandDisplay(notebook, controller, "PIL", "Lock Pedals", "LockPedals", emptyList, emptyList);
+	releasePedalsCommand = new CommandDisplay(notebook, controller, "PIL", "Release Pedals", "ReleasePedals", emptyList, emptyList);
+
 	// Add the pages
 	notebook->InsertPage(0, setRadioPowerCommand, setRadioPowerCommand->GetCommandNameTitle());
 	notebook->InsertPage(1, setUpdateRateCommand, setUpdateRateCommand->GetCommandNameTitle());
 	notebook->InsertPage(2, takePhotoCommand, takePhotoCommand->GetCommandNameTitle());
-	notebook->InsertPage(3, lockParachuteCommand, lockParachuteCommand->GetCommandNameTitle());
-	notebook->InsertPage(4, releaseParachuteCommand, releaseParachuteCommand->GetCommandNameTitle());
+	notebook->InsertPage(3, startPhotosCommand, startPhotosCommand->GetCommandNameTitle());
+	notebook->InsertPage(4, stopPhotosCommand, stopPhotosCommand->GetCommandNameTitle());
+	notebook->InsertPage(5, lockParachuteCommand, lockParachuteCommand->GetCommandNameTitle());
+	notebook->InsertPage(6, releaseParachuteCommand, releaseParachuteCommand->GetCommandNameTitle());
+	notebook->InsertPage(7, lockPedalsCommand, lockPedalsCommand->GetCommandNameTitle());
+	notebook->InsertPage(8, releasePedalsCommand, releasePedalsCommand->GetCommandNameTitle());
 
 	// Create and add layout to window
 	layout = new wxBoxSizer(wxVERTICAL);
@@ -261,6 +269,7 @@ CommandResponseWindow::CommandResponseWindow(wxWindow * parent, wxString name) :
 	rocketCommands = new wxListCtrl(notebook, -1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
 	pilCommands = new wxListCtrl(notebook, -1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT);
 
+	// Style the command lists
 	rocketCommands->SetBackgroundColour(wxColor(0, 0, 0));
 	rocketCommands->SetForegroundColour(wxColor(255, 255, 255));
 	rocketCommands->InsertColumn(0, "Command Name");
@@ -292,13 +301,12 @@ void CommandResponseWindow::OnClose(wxCloseEvent& evt) {
 
 void CommandResponseWindow::RecieveResponsePIL(wxString commandName, wxString commandValue) {
 
-	OutputDebugStringA("Got PIL Success!");
-	long index = pilCommands->InsertItem(1000000, commandName);
+	long index = pilCommands->InsertItem(100000000, commandName);
 	pilCommands->SetItem(index, 1, commandValue);
 }
 
 void CommandResponseWindow::RecieveResponseRocket(wxString commandName, wxString commandValue) {
 
-	long index = rocketCommands->InsertItem(1000000, commandName);
+	long index = rocketCommands->InsertItem(100000000, commandName);
 	rocketCommands->SetItem(index, 1, commandValue);
 }

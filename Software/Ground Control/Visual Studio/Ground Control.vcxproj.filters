@@ -71,6 +71,9 @@
     <Filter Include="Source Files\GUI\Command Window">
       <UniqueIdentifier>{359f6267-b94c-4eb2-a95a-163c2a4b7a75}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\GUI\Error Window">
+      <UniqueIdentifier>{c4a3205c-6450-46f2-8815-70dca947fbb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Src\App\GroundControl.cpp">
@@ -123,6 +126,9 @@
     </ClCompile>
     <ClCompile Include="..\Src\GUI\Command Window\CommandWindow.cpp">
       <Filter>Source Files\GUI\Command Window</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\GUI\Error Window\ErrorWindow.cpp">
+      <Filter>Source Files\GUI\Error Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -182,6 +188,9 @@
     </ClInclude>
     <ClInclude Include="..\Src\GUI\Command Window\CommandWindow.h">
       <Filter>Source Files\GUI\Command Window</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Src\GUI\Error Window\ErrorWindow.h">
+      <Filter>Source Files\GUI\Error Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
